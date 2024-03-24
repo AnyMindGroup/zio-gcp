@@ -1,0 +1,3 @@
+# Google Cloud authentication over HTTP
+
+Draft...
