@@ -105,3 +105,26 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
       "io.github.cquiroz" %%% "scala-java-time" % "2.5.0"
     )
   )
+
+lazy val docs = project
+  .in(file("zio-gc-auth-docs"))
+  .settings(
+    moduleName := "zio-gc-auth-docs",
+    scalacOptions -= "-Yno-imports",
+    scalacOptions -= "-Xfatal-warnings",
+    projectName                                := "ZIO Google Cloud Auth",
+    mainModuleName                             := (zioGcpAuth.jvm / moduleName).value,
+    projectStage                               := ProjectStage.Development,
+    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioGcpAuth.jvm),
+    readmeDocumentation                        := "",
+    readmeContribution                         := "",
+    readmeSupport                              := "",
+    readmeLicense                              := "",
+    readmeAcknowledgement                      := "",
+    readmeCodeOfConduct                        := "",
+    readmeCredits                              := "",
+    readmeBanner                               := "",
+    readmeMaintainers                          := "",
+  )
+  .enablePlugins(WebsitePlugin)
+  .dependsOn(zioGcpAuth.jvm)
