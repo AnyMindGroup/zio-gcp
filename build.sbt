@@ -19,6 +19,10 @@ inThisBuild(
   )
 )
 
+lazy val sttpClient4Version = "4.0.0-M11"
+
+lazy val zioJsonVersion = "0.6.2"
+
 lazy val commonSettings = List(
   libraryDependencies ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
@@ -83,14 +87,16 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
   .settings(
     scalacOptions --= List("-Wunused:nowarn"),
     libraryDependencies ++= Seq(
-      "dev.zio"                       %%% "zio"      % zioVersion.value,
-      "com.softwaremill.sttp.client4" %%% "core"     % "4.0.0-M11",
-      "dev.zio"                       %%% "zio-json" % "0.6.2",
+      "dev.zio"                       %%% "zio"          % zioVersion.value,
+      "com.softwaremill.sttp.client4" %%% "core"         % sttpClient4Version,
+      "dev.zio"                       %%% "zio-json"     % zioJsonVersion,
+      "dev.zio"                       %%% "zio-test"     % zioVersion.value % Test,
+      "dev.zio"                       %%% "zio-test-sbt" % zioVersion.value % Test,
     ),
   )
   .jvmSettings(
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.client4" %%% "zio" % "4.0.0-M11"
+      "com.softwaremill.sttp.client4" %%% "zio" % sttpClient4Version
     )
   )
   .nativeSettings(

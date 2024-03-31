@@ -2,8 +2,8 @@ package sttp.client4.impl.zio
 
 import _root_.zio.*
 import sttp.client4.*
-import sttp.client4.curl.internal.CurlApi.*
 import sttp.client4.curl.AbstractCurlBackend
+import sttp.client4.curl.internal.CurlApi.*
 import sttp.client4.curl.internal.CurlCode.CurlCode
 import sttp.client4.wrappers.FollowRedirectsBackend
 

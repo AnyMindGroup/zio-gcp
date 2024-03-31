@@ -1,7 +1,8 @@
 package sttp.client4.impl.zio
 
-import sttp.monad.{Canceler, MonadError, MonadAsyncError}
-import zio.{ZIO, RIO}
+import sttp.monad.{Canceler, MonadAsyncError, MonadError}
+
+import zio.{RIO, ZIO}
 
 class RIOMonadAsyncError[R] extends MonadAsyncError[RIO[R, *]] with RIOMonadError[R] {
   override def async[T](register: (Either[Throwable, T] => Unit) => Canceler): RIO[R, T] =
