@@ -3,13 +3,14 @@ enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
 inThisBuild(
   List(
-    name                 := "ZIO Google Cloud authentication",
-    zioVersion           := "2.0.21",
-    organization         := "com.anymindgroup",
-    licenses             := Seq(License.Apache2),
-    homepage             := Some(url("https://anymindgroup.com")),
-    crossScalaVersions   := Seq("3.3.3", "2.13.13"),
-    ciEnabledBranches    := Seq("master"),
+    name               := "ZIO Google Cloud authentication",
+    zioVersion         := "2.0.21",
+    organization       := "com.anymindgroup",
+    licenses           := Seq(License.Apache2),
+    homepage           := Some(url("https://anymindgroup.com")),
+    crossScalaVersions := Seq("3.3.3", "2.13.13"),
+    ciEnabledBranches  := Seq("main"),
+    ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
     ciTargetJavaVersions := Seq("17", "21"),
     scalafmt             := true,
     scalafmtSbtCheck     := true,
@@ -38,7 +39,7 @@ lazy val commonSettings = List(
   Compile / scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) => Seq("-Ymacro-annotations", "-Xsource:3")
-      case _            => Seq("-source:future")
+      case _            => Seq("-source:future", "-rewrite")
     }
   },
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),

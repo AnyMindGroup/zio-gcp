@@ -17,6 +17,6 @@ package object http {
 
   // from sttp.client4.UriContext
   implicit class UriContext(val sc: StringContext) {
-    def uri(args: Any*): Uri = UriInterpolator.interpolate(sc, args: _*)
+    def uri(args: Any*): Uri = UriInterpolator.interpolate(sc, args*)
   }
 }
