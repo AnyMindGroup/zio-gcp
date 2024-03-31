@@ -4,8 +4,6 @@ title: "Getting Started with ZIO Google Auth"
 sidebar_label: "Getting Started"
 ---
 
-# Google Cloud authentication over HTTP
-
 Google Cloud authentitcation methods over HTTP with [zio](https://zio.dev) and [sttp](https://sttp.softwaremill.com). 
 
 Supported credentials for token provider:
@@ -32,7 +30,7 @@ To get started with sbt, add the dependency to your project in `build.sbt`
 libraryDependencies += "com.anymindgroup" %% "zio-gc-auth" % "@VERSION@"
 ```
 
-In a cross-platform project use:
+In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use:
 ```scala
 libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "@VERSION@"
 ```

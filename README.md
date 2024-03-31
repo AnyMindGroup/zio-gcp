@@ -2,8 +2,6 @@
 [//]: # (So please do not edit it manually. Instead, change "docs/index.md" file or sbt setting keys)
 [//]: # (e.g. "readmeDocumentation" and "readmeSupport".)
 
-# ZIO Google Cloud Auth
-
 # Google Cloud authentication over HTTP
 
 Google Cloud authentitcation methods over HTTP with [zio](https://zio.dev) and [sttp](https://sttp.softwaremill.com). 
@@ -32,7 +30,7 @@ To get started with sbt, add the dependency to your project in `build.sbt`
 libraryDependencies += "com.anymindgroup" %% "zio-gc-auth" % "<version>"
 ```
 
-In a cross-platform project use:
+In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use:
 ```scala
 libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "<version>"
 ```
