@@ -16,7 +16,7 @@ Cross-platform support:
    - tested java versions: 17, 21
  - ✅ Native with LLVM (via [scala-native](https://scala-native.org/))
    - requires [libuv](https://libuv.org) and [curl](https://curl.se/libcurl)
-   - http backend uses sync curl implementation, [async backend](https://github.com/softwaremill/sttp/issues/1424) might be added soon...
+   - http backend uses sync curl implementation, [async backend](https://github.com/softwaremill/sttp/issues/1424) might be added at some point...
  - ❌ JavaScript (via [scala-js](https://www.scala-js.org), could be potentially added)
   
 Scala versions support: 

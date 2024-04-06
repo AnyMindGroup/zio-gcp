@@ -16,6 +16,13 @@ object AccessTokenSpec extends ZIOSpecDefault {
         _    <- assertTrue(token.token == Config.Secret("abc123"))
         _    <- assertTrue(token.expiresIn == Duration.fromSeconds(3599))
       } yield assertCompletes
-    }
+    },
+    test("calculate expiration by percentage") {
+      val token = AccessToken(Config.Secret(""), Duration.fromSeconds(100))
+
+      assertTrue(token.expiresInOfPercent(0.85) == Duration.fromSeconds(85)) &&
+        assertTrue(token.expiresInOfPercent(0.009) == Duration.fromSeconds(1)) &&
+        assertTrue(token.expiresInOfPercent(0.004) == Duration.fromSeconds(0))
+    },
   )
 }

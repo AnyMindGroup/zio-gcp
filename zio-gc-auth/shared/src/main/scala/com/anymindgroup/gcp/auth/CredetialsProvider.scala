@@ -29,11 +29,12 @@ object Credentials {
   // https://cloud.google.com/compute/docs/metadata/overview
   final case class ComputeServiceAccount(email: String) extends Credentials
   object ComputeServiceAccount {
-    private[auth] val baseUri: Uri            = uri"http://metadata.google.internal"
-    private[auth] val computeMetadataUri: Uri = baseUri.addPath("computeMetadata/v1/instance/service-accounts/default")
-    private[auth] val email: Uri              = computeMetadataUri.addPath("email")
-    private[auth] val token: Uri              = computeMetadataUri.addPath("token")
-    private[auth] val baseReq                 = basicRequest.header(Header("Metadata-Flavor", "Google"))
+    private[auth] val baseUri: Uri = uri"http://metadata.google.internal"
+    private[auth] val computeMetadataUri: Uri =
+      baseUri.addPath("computeMetadata", "v1", "instance", "service-accounts", "default")
+    private[auth] val email: Uri = computeMetadataUri.addPath("email")
+    private[auth] val token: Uri = computeMetadataUri.addPath("token")
+    private[auth] val baseReq    = basicRequest.header(Header("Metadata-Flavor", "Google"))
 
     val emailRequest: Request[Either[String, ComputeServiceAccount]] = baseReq
       .get(ComputeServiceAccount.email)
@@ -65,13 +66,22 @@ object Credentials {
       case e: Throwable                          => CredentialsException.Unexpected(e)
     }
 
-  private def parseApplicationCredentialsJson(p: Path): IO[CredentialsException, Json.Obj] =
+  private def findApplicationCredentialsJson(p: Path): IO[CredentialsException, Option[Json.Obj]] =
     ZIO
       .readFile(p)
+      .map(Some(_))
+      .catchSome { case _: java.io.FileNotFoundException =>
+        ZIO.none
+      }
       .mapError(CredentialsException.IOException(_))
-      .flatMap(c =>
-        ZIO.fromEither(c.fromJson[Json.Obj]).mapError(err => CredentialsException.InvalidCredentialsFile(err))
-      )
+      .flatMap {
+        case Some(c) =>
+          ZIO
+            .fromEither(c.fromJson[Json.Obj])
+            .mapError(err => CredentialsException.InvalidCredentialsFile(err))
+            .map(Some(_))
+        case _ => ZIO.none
+      }
 
   private def credentialsFromJson(json: Json.Obj): Either[String, CredentialsKey] =
     json.get(JsonCursor.field("type").isString).map(_.value) match {
@@ -98,7 +108,7 @@ object Credentials {
               ZIO.log(s"Attempting to read application credentials from $p")
             }
     json <- path match {
-              case Some(p) => parseApplicationCredentialsJson(p).map(Some(_))
+              case Some(p) => findApplicationCredentialsJson(p)
               case None    => ZIO.none
             }
     creds <- json match {
