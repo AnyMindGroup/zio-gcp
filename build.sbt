@@ -5,7 +5,7 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
   case s: Step.SingleStep if s.name.contains("Install libuv") =>
     Step.SingleStep(
       name = "Install libuv",
-      run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev curl"),
+      run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev"),
     )
   case s => s
 })
