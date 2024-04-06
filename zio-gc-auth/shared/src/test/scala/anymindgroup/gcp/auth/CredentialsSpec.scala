@@ -40,18 +40,23 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
     test("read credentials from path set by GOOGLE_APPLICATION_CREDENTIALS") {
-      val appCredsPath =
+      val userCredsPath =
         Path
-          .of("zio-gc-auth/shared/src/test/resources/.config/gcloud/application_default_credentials.json")
+          .of("zio-gc-auth/shared/src/test/resources/application_default_credentials.json")
           .toAbsolutePath()
 
       for {
-        _     <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", appCredsPath.toString())
-        creds <- Credentials.auto
-        _ <- assertTrue(creds match {
+        _         <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", userCredsPath.toString())
+        userCreds <- Credentials.auto
+        _ <- assertTrue(userCreds match {
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
                case _                                                                                   => false
              })
+        // fail on service account as it's not supported (yet)
+        serviceCredsPath = Path.of("zio-gc-auth/shared/src/test/resources/service_account.json").toAbsolutePath()
+        _               <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", serviceCredsPath.toString())
+        serviceCreds    <- Credentials.auto.exit
+        _               <- assert(serviceCreds)(failsWithA[CredentialsException.InvalidCredentialsFile])
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
   )
