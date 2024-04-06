@@ -1,6 +1,15 @@
 import zio.sbt.githubactions.{Job, Step}
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
+def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
+  case s: Step.SingleStep if s.name.contains("Install libuv") =>
+    Step.SingleStep(
+      name = "Install libuv",
+      run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev curl"),
+    )
+  case s => s
+})
+
 inThisBuild(
   List(
     name               := "ZIO Google Cloud authentication",
@@ -10,6 +19,7 @@ inThisBuild(
     homepage           := Some(url("https://anymindgroup.com")),
     crossScalaVersions := Seq("3.3.3", "2.13.13"),
     ciEnabledBranches  := Seq("main"),
+    ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
     ciTargetJavaVersions := Seq("17", "21"),
     scalafmt             := true,
