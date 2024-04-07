@@ -55,8 +55,8 @@ object Main extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
       // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
       tokenProvider <- TokenProvider.defaultAutoRefreshTokenProvider(
                          // Optional parameter: retry Schedule on token retrieval failures.
-                         // Dafault: Schedule.recurs(5)
-                         refreshRetrySchedule = Schedule.recurs(5),
+                         // Dafault: Schedule.recurs(10)
+                         refreshRetrySchedule = Schedule.recurs(10),
                          // Optional parameter: at what stage of expiration in percent to request a new token.
                          // Default: 0.9 (90%)
                          // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)

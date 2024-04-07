@@ -55,7 +55,6 @@ lazy val commonSettings = List(
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Xfatal-warnings"),
-  version ~= { v => if (v.contains('+')) s"${v.replace('+', '-')}-SNAPSHOT" else v },
   credentials += {
     for {
       username <- sys.env.get("ARTIFACT_REGISTRY_USERNAME")
