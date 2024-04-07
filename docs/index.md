@@ -1,7 +1,7 @@
 ---
 id: index
-title: "Getting Started with ZIO Google Auth"
-sidebar_label: "Getting Started"
+title: "ZIO Google Cloud Auth"
+sidebar_label: "ZIO Google Cloud Auth"
 ---
 
 Google Cloud authentitcation methods over HTTP with [zio](https://zio.dev) and [sttp](https://sttp.softwaremill.com). 
@@ -37,7 +37,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "@VERSION@"
 
 ## Usage examples
 
-#### Using default auto refresh token provider:
+### Using default auto refresh token provider
 
 ```scala
 import zio.*
@@ -72,7 +72,7 @@ object Main extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
 }
 ```
 
-#### Change credentials lookup order:
+### Change credentials lookup order
 
 ```scala
 import zio.*
@@ -91,7 +91,7 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
 }
 ```
 
-#### Use specific credentials:
+### Use specific credentials
 
 ```scala
 import zio.*
@@ -112,7 +112,7 @@ object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatf
 }
 ```
 
-#### Change log level:
+### Change log level
 
 All logging is using `ZIO.log`. This allows you to override the log level
 as e.g. described in this [zio logging tutorial guide](https://zio.dev/guides/tutorials/enable-logging-in-a-zio-application#overriding-log-levels).  

@@ -2,7 +2,7 @@ const sidebars = {
   sidebar: [
     {
       type: "category",
-      label: "Google Cloud authentication over HTTP",
+      label: "ZIO Google Cloud Auth",
       collapsed: false,
       link: { type: "doc", id: "index" },
       items: []
