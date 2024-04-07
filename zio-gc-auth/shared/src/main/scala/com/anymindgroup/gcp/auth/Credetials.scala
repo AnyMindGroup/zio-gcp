@@ -23,28 +23,25 @@ sealed trait Credentials
 sealed trait CredentialsKey extends Credentials
 object Credentials {
   final case class UserAccount(refreshToken: String, clientId: String, clientSecret: Secret) extends CredentialsKey
-  // Service account key credentials might be supported later (at least on JVM as it requires signed JWT)
-  // final case class ServiceAccountKey(email: String, privateKey: Secret) extends CredentialsKey
+  final case class ServiceAccountKey(email: String, privateKey: Secret)                      extends CredentialsKey
 
   // https://cloud.google.com/compute/docs/metadata/overview
   final case class ComputeServiceAccount(email: String) extends Credentials
   object ComputeServiceAccount {
-    private[auth] val baseUri: Uri            = uri"http://metadata.google.internal"
-    private[auth] val computeMetadataUri: Uri = baseUri.addPath("computeMetadata/v1/instance/service-accounts/default")
-    private[auth] val email: Uri              = computeMetadataUri.addPath("email")
-    private[auth] val token: Uri              = computeMetadataUri.addPath("token")
-    private[auth] val baseReq                 = basicRequest.header(Header("Metadata-Flavor", "Google"))
+    private[auth] val baseUri            = uri"http://metadata.google.internal"
+    private[auth] val computeMetadataUri = uri"$baseUri/computeMetadata/v1/instance/service-accounts/default"
+    private[auth] val email              = uri"$computeMetadataUri/email"
+    private[auth] val token              = uri"$computeMetadataUri/token"
+    private[auth] val baseReq            = basicRequest.header(Header("Metadata-Flavor", "Google"))
 
-    val emailRequest: Request[Either[String, ComputeServiceAccount]] = baseReq
-      .get(ComputeServiceAccount.email)
-      .mapResponseRight(email => Credentials.ComputeServiceAccount(email))
+    val emailRequest: Request[Either[String, ComputeServiceAccount]] =
+      baseReq.get(email).mapResponseRight(email => Credentials.ComputeServiceAccount(email))
 
-    val tokenRequest: Request[Either[String, AccessToken]] = basicRequest
-      .get(ComputeServiceAccount.token)
-      .mapResponse(_.flatMap(AccessToken.fromJsonString))
+    val tokenRequest: Request[Either[String, AccessToken]] =
+      basicRequest.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
   }
 
-  private def defaultApplicationCredentialsPath: IO[CredentialsException, Option[Path]] =
+  private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =
     ZIO.systemWith { system =>
       system
         .env("GOOGLE_APPLICATION_CREDENTIALS")
@@ -65,13 +62,22 @@ object Credentials {
       case e: Throwable                          => CredentialsException.Unexpected(e)
     }
 
-  private def parseApplicationCredentialsJson(p: Path): IO[CredentialsException, Json.Obj] =
+  private def findApplicationCredentialsJson(p: Path): IO[CredentialsException, Option[Json.Obj]] =
     ZIO
       .readFile(p)
+      .map(Some(_))
+      .catchSome { case _: java.io.FileNotFoundException =>
+        ZIO.none
+      }
       .mapError(CredentialsException.IOException(_))
-      .flatMap(c =>
-        ZIO.fromEither(c.fromJson[Json.Obj]).mapError(err => CredentialsException.InvalidCredentialsFile(err))
-      )
+      .flatMap {
+        case Some(c) =>
+          ZIO
+            .fromEither(c.fromJson[Json.Obj])
+            .mapError(err => CredentialsException.InvalidCredentialsFile(err))
+            .map(Some(_))
+        case _ => ZIO.none
+      }
 
   private def credentialsFromJson(json: Json.Obj): Either[String, CredentialsKey] =
     json.get(JsonCursor.field("type").isString).map(_.value) match {
@@ -82,23 +88,20 @@ object Credentials {
           clientSecret <- json.get(JsonCursor.field("client_secret").isString).map(j => Secret(j.value))
         } yield Credentials.UserAccount(refreshToken = refreshToken, clientId = clientId, clientSecret = clientSecret)
       case Right("service_account") =>
-        json.get(JsonCursor.field("client_email").isString).map(_.value) match {
-          case Right(email) =>
-            Left(
-              s"Found credentials for service account $email. Service account key credentials are not supported yet."
-            )
-          case Left(err) => Left(err)
-        }
+        for {
+          email      <- json.get(JsonCursor.field("client_email").isString).map(_.value)
+          privateKey <- json.get(JsonCursor.field("private_key").isString).map(j => Secret(j.value))
+        } yield Credentials.ServiceAccountKey(email = email, privateKey = privateKey)
       case Right(value) => Left(s"Unknown credentials key type: $value")
       case Left(err)    => Left(s"Missing type in credentials file: $err")
     }
 
-  def defaultApplicationCredentials: IO[CredentialsException, Option[CredentialsKey]] = for {
-    path <- defaultApplicationCredentialsPath.tapSome { case Some(p) =>
+  def applicationCredentials: IO[CredentialsException, Option[CredentialsKey]] = for {
+    path <- applicationCredentialsPath.tapSome { case Some(p) =>
               ZIO.log(s"Attempting to read application credentials from $p")
             }
     json <- path match {
-              case Some(p) => parseApplicationCredentialsJson(p).map(Some(_))
+              case Some(p) => findApplicationCredentialsJson(p)
               case None    => ZIO.none
             }
     creds <- json match {
@@ -124,18 +127,17 @@ object Credentials {
         CredentialsException.Unexpected(e)
       }
 
-  def auto: ZIO[HttpBackend, CredentialsException, Option[Credentials]] = for {
-    defaultCreds <- defaultApplicationCredentials
-    creds <- defaultCreds match {
-               case Some(u: Credentials.UserAccount) =>
-                 ZIO.log(s"Found user credentials with client id ${u.clientId}").as(Some(u))
-               case None =>
-                 ZIO.log(s"No application credentials found.") *>
-                   computeServiceAccount.tap {
-                     case Some(Credentials.ComputeServiceAccount(email)) =>
-                       ZIO.log(s"Found service account credentials for $email via compute metadata")
-                     case _ => ZIO.log(s"No credentials were found")
-                   }
-             }
-  } yield creds
+  def auto: ZIO[HttpBackend, CredentialsException, Option[Credentials]] = applicationCredentials.flatMap {
+    case Some(c: Credentials.UserAccount) =>
+      ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
+    case Some(c: Credentials.ServiceAccountKey) =>
+      ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
+    case None =>
+      ZIO.log(s"No application credentials found.") *>
+        computeServiceAccount.tap {
+          case Some(Credentials.ComputeServiceAccount(email)) =>
+            ZIO.log(s"Found service account credentials for $email via compute metadata")
+          case _ => ZIO.log(s"No credentials were found")
+        }
+  }
 }

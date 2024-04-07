@@ -1,6 +1,6 @@
 package com.anymindgroup.gcp.auth
 
-import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, UserAccount}
+import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, ServiceAccountKey, UserAccount}
 import com.anymindgroup.http.*
 import sttp.model.*
 
@@ -114,5 +114,14 @@ object TokenProvider {
             refreshAtExpirationPercent,
           )
         }
+      // Service account key credentials might be supported later (at least on JVM as it requires signed JWT)
+      case ServiceAccountKey(email, _) =>
+        ZIO.fail(
+          TokenProviderException.CredentialsFailure(
+            CredentialsException.InvalidCredentialsFile(
+              s"Got credentials for service account $email. Service account key credentials are not supported yet."
+            )
+          )
+        )
     }
 }
