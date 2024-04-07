@@ -52,11 +52,13 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
                case _                                                                                   => false
              })
-        // fail on service account as it's not supported (yet)
         serviceCredsPath = Path.of("zio-gc-auth/shared/src/test/resources/service_account.json").toAbsolutePath()
         _               <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", serviceCredsPath.toString())
-        serviceCreds    <- Credentials.auto.exit
-        _               <- assert(serviceCreds)(failsWithA[CredentialsException.InvalidCredentialsFile])
+        serviceCreds    <- Credentials.auto
+        _ <- assertTrue(serviceCreds match {
+               case Some(Credentials.ServiceAccountKey("test@gcp-project.iam.gserviceaccount.com", _)) => true
+               case _                                                                                  => false
+             })
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
   )

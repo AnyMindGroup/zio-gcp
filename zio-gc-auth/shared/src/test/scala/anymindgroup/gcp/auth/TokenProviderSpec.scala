@@ -28,6 +28,12 @@ object TokenProviderSpec extends ZIOSpecDefault {
         _     <- assertTrue(token.token.token == Config.Secret("user"))
       } yield assertCompletes
     }.provide(googleStubBackendLayer),
+    test("fail on service account as it's not supported (yet)") {
+      val svcAcc = Credentials.ServiceAccountKey("email", Config.Secret("123"))
+      for {
+        exit <- TokenProvider.autoRefreshTokenProvider(svcAcc).exit
+      } yield assert(exit)(failsWithA[TokenProviderException.CredentialsFailure])
+    }.provide(googleStubBackendLayer),
     test("request token from compute metadata server") {
       for {
         tp    <- TokenProvider.autoRefreshTokenProvider(Credentials.ComputeServiceAccount(""))
