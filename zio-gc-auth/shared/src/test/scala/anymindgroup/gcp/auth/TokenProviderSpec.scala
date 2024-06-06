@@ -24,7 +24,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
     test("request token for user account") {
       for {
         tp    <- TokenProvider.autoRefreshTokenProvider(okUserAccount)
-        token <- tp.accessToken
+        token <- tp.token
         _     <- assertTrue(token.token.token == Config.Secret("user"))
       } yield assertCompletes
     }.provide(googleStubBackendLayer),
@@ -37,7 +37,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
     test("request token from compute metadata server") {
       for {
         tp    <- TokenProvider.autoRefreshTokenProvider(Credentials.ComputeServiceAccount(""))
-        token <- tp.accessToken
+        token <- tp.token
         _     <- assertTrue(token.token.token == Config.Secret("compute"))
       } yield assertCompletes
     }.provide(googleStubBackendLayer),
@@ -48,10 +48,10 @@ object TokenProviderSpec extends ZIOSpecDefault {
                   credentials = Credentials.ComputeServiceAccount(""),
                   refreshAtExpirationPercent = expiryPercent,
                 )
-          tokenA   <- tp.accessToken
+          tokenA   <- tp.token
           adustSecs = Duration.ofSeconds((tokenExpirySeconds * expiryPercent).round).plusSeconds(1)
           _        <- TestClock.adjust(adustSecs)
-          tokenB   <- tp.accessToken
+          tokenB   <- tp.token
           _        <- assertTrue(tokenA.receivedAt.isBefore(tokenB.receivedAt))
         } yield assertCompletes
       }

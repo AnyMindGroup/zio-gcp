@@ -32,13 +32,17 @@ object Credentials {
     private[auth] val computeMetadataUri = uri"$baseUri/computeMetadata/v1/instance/service-accounts/default"
     private[auth] val email              = uri"$computeMetadataUri/email"
     private[auth] val token              = uri"$computeMetadataUri/token"
+    private[auth] val identity           = uri"$computeMetadataUri/identity"
     private[auth] val baseReq            = basicRequest.header(Header("Metadata-Flavor", "Google"))
 
     val emailRequest: Request[Either[String, ComputeServiceAccount]] =
       baseReq.get(email).mapResponseRight(email => Credentials.ComputeServiceAccount(email))
 
-    val tokenRequest: Request[Either[String, AccessToken]] =
+    val accessTokenRequest: Request[Either[String, AccessToken]] =
       basicRequest.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
+
+    val idTokenRequest: Request[Either[String, IdToken]] =
+      basicRequest.get(token).mapResponse(_.flatMap(IdToken.fromString))
   }
 
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =

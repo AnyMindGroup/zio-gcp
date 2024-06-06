@@ -6,10 +6,14 @@
 
 Google Cloud authentitcation methods over HTTP with [zio](https://zio.dev) and [sttp](https://sttp.softwaremill.com). 
 
-Supported credentials for token provider:
- - ✅ [user account](https://cloud.google.com/docs/authentication#user-accounts)
- - ✅ attached [service account](https://cloud.google.com/docs/authentication#service-accounts) via [compute metadata server](https://cloud.google.com/compute/docs/metadata/overview)
- - ❌ service account private key (can be added in the future if needed, requires signed JWT) 
+
+Currently supported credentials and tokens:
+
+| Credentials | [Access token](https://cloud.google.com/docs/authentication/token-types#access) | [ID token](https://cloud.google.com/docs/authentication/token-types#id) |
+| --- | --- | --- |
+| [User credentials](https://cloud.google.com/docs/authentication/application-default-credentials#personal) | ✅ | ❌ |
+| [Service account](https://cloud.google.com/docs/authentication#service-accounts) (via [compute metadata](https://cloud.google.com/compute/docs/metadata/overview)) | ✅ | ✅ |
+| Service account (via private key) | ❌ | ❌ |
 
 Cross-platform support: 
  - ✅ JVM 
