@@ -42,7 +42,7 @@ object Credentials {
       basicRequest.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
 
     val idTokenRequest: Request[Either[String, IdToken]] =
-      basicRequest.get(token).mapResponse(_.flatMap(IdToken.fromString))
+      basicRequest.get(identity).mapResponse(_.flatMap(IdToken.fromString))
   }
 
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =

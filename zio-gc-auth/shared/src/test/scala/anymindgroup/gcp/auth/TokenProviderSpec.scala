@@ -112,6 +112,8 @@ object TokenProviderSpec extends ZIOSpecDefault {
         })
       }
       .thenRespondF(
-        failures.getAndUpdate(_ + 1).as(Response("", StatusCode.Forbidden))
+        failures
+          .getAndUpdate(_ + 1)
+          .as(ResponseStub("", StatusCode.Forbidden))
       )
 }

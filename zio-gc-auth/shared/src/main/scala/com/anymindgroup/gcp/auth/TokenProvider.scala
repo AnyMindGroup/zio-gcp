@@ -15,11 +15,8 @@ object TokenProviderException {
 }
 
 trait TokenProvider[T <: Token] {
-  def token: UIO[T]
+  def token: UIO[TokenReceipt[T]]
 }
-
-trait AccessTokenProvider extends TokenProvider[AccessToken]
-trait IdTokenProvider     extends TokenProvider[IdToken]
 
 object TokenProvider {
   // POST https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/PRIV_SA:generateIdToken
@@ -30,9 +27,9 @@ object TokenProvider {
     val refreshAtExpirationPercent: Double            = 0.9
   }
 
-  private[auth] def responseToToken(
-    res: Response[Either[String, Token]]
-  ): IO[TokenProviderException, Token] =
+  private[auth] def responseToToken[T <: Token](
+    res: Response[Either[String, T]]
+  ): IO[TokenProviderException, T] =
     res.body match {
       case Right(token) => ZIO.succeed(token)
       case Left(err)    => ZIO.fail(TokenProviderException.TokenRequestFailure(s"Failure on getting token: $err"))
@@ -49,7 +46,7 @@ object TokenProvider {
             |  "client_secret": "${creds.clientSecret.value.mkString}"
             |}""".stripMargin
       )
-      .header(Header.contentType(MediaType.ApplicationJson), replaceExisting = true)
+      .header(Header.contentType(MediaType.ApplicationJson) /*, replaceExisting = true*/ )
       .mapResponse(_.flatMap(AccessToken.fromJsonString))
 
   private[auth] def autoRefreshTokenProviderByRequest[T <: Token](
@@ -58,7 +55,7 @@ object TokenProvider {
     refreshRetrySchedule: Schedule[Any, Any, Any],
     refreshAtExpirationPercent: Double,
   ): IO[TokenProviderException, TokenProvider[T]] = {
-    def requestToken: IO[TokenProviderException, AccessTokenReceipt] = for {
+    def requestToken: IO[TokenProviderException, TokenReceipt[T]] = for {
       _ <- ZIO.log("Requesting new access token...")
       token <- backend
                  .send(req)
@@ -66,9 +63,9 @@ object TokenProvider {
                  .flatMap(responseToToken)
       now <- Clock.instant
       _   <- ZIO.log(s"Retrieved new token with expiry in ${token.expiresIn.getSeconds()}s")
-    } yield token
+    } yield TokenReceipt(token, now)
 
-    def refreshTokenJob(ref: Ref[AccessTokenReceipt]) =
+    def refreshTokenJob(ref: Ref[TokenReceipt[T]]) =
       (for {
         current   <- ref.get
         _         <- ZIO.sleep(current.token.expiresInOfPercent(refreshAtExpirationPercent))
@@ -81,14 +78,14 @@ object TokenProvider {
       ref   <- zio.Ref.make(token)
       _     <- refreshTokenJob(ref).fork
     } yield new TokenProvider[T] {
-      override def token: UIO[AccessTokenReceipt] = ref.get
+      override def token: UIO[TokenReceipt[T]] = ref.get
     }
   }
 
   def defaultAutoRefreshTokenProvider(
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider] =
+  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
     Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
       case None              => ZIO.fail(TokenProviderException.CredentialsNotFound)
       case Some(credentials) => autoRefreshTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
@@ -98,7 +95,7 @@ object TokenProvider {
     credentials: Credentials,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider] =
+  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
     credentials match {
       case ComputeServiceAccount(_) =>
         ZIO.serviceWithZIO[HttpBackend] { backend =>
