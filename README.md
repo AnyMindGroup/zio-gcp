@@ -44,12 +44,10 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "<version>"
 ### Using default auto refresh token provider
 
 ```scala
-import zio.*
-import com.anymindgroup.gcp.auth.*
-import com.anymindgroup.http.HttpClientBackendPlatformSpecific
+import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object Main extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Any, Any, ExitCode] =
+  def run: ZIO[Any, Any, Any] =
     (for {
       // Looks up credentials in the following order
       // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
@@ -57,31 +55,29 @@ object Main extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
       //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
       //    Windows: %APPDATA%\gcloud\application_default_credentials.json
       // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
-      tokenProvider <- TokenProvider.defaultAutoRefreshTokenProvider(
+      tokenProvider <- TokenProvider.defaultAutoRefreshAccessTokenProvider(
                          // Optional parameter: retry Schedule on token retrieval failures.
-                         // Dafault: Schedule.recurs(10)
-                         refreshRetrySchedule = Schedule.recurs(10),
+                         // Dafault: Schedule.recurs(5)
+                         refreshRetrySchedule = Schedule.recurs(5),
                          // Optional parameter: at what stage of expiration in percent to request a new token.
                          // Default: 0.9 (90%)
                          // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
                          refreshAtExpirationPercent = 0.9,
                        )
       // ^^^ pass tokenProvider to the service that requires authentication
-      tokenReceipt <- tokenProvider.accessToken
+      tokenReceipt <- tokenProvider.token
       token         = tokenReceipt.token
       _            <- Console.printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
       _            <- Console.printLine(s"Received token at ${tokenReceipt.receivedAt}")
       _            <- Console.printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
-    } yield ExitCode.success).provide(httpBackendLayer())
+    } yield ()).provide(httpBackendLayer())
 }
 ```
 
 ### Change credentials lookup order
 
 ```scala
-import zio.*
-import com.anymindgroup.gcp.auth.*
-import com.anymindgroup.http.HttpClientBackendPlatformSpecific
+import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
   def run: ZIO[Any, Any, Any] =
@@ -90,7 +86,7 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
       case None    => Credentials.applicationCredentials
     }.flatMap {
       case None              => ZIO.dieMessage("No credentials found")
-      case Some(credentials) => TokenProvider.autoRefreshTokenProvider(credentials)
+      case Some(credentials) => TokenProvider.autoRefreshAccessTokenProvider(credentials)
     }.provide(httpBackendLayer())
 }
 ```
@@ -98,14 +94,12 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
 ### Use specific credentials
 
 ```scala
-import zio.*
-import com.anymindgroup.gcp.auth.*
-import com.anymindgroup.http.HttpClientBackendPlatformSpecific
+import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
   def run: ZIO[Any, Any, Any] =
     TokenProvider
-      .autoRefreshTokenProvider(
+      .autoRefreshAccessTokenProvider(
         Credentials.UserAccount(
           refreshToken = "refresh_token",
           clientId = "123.apps.googleusercontent.com",
@@ -122,13 +116,11 @@ All logging is using `ZIO.log`. This allows you to override the log level
 as e.g. described in this [zio logging tutorial guide](https://zio.dev/guides/tutorials/enable-logging-in-a-zio-application#overriding-log-levels).  
 Example of setting the token provider log level to debug:
 ```scala
-import zio.*
-import com.anymindgroup.gcp.auth.*
-import com.anymindgroup.http.HttpClientBackendPlatformSpecific
+import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
   def run: ZIO[Any, Any, Any] =
-    ZIO.logLevel(LogLevel.Debug)(TokenProvider.defaultAutoRefreshTokenProvider()).provide(httpBackendLayer())
+    ZIO.logLevel(LogLevel.Debug)(TokenProvider.defaultAutoRefreshAccessTokenProvider()).provide(httpBackendLayer())
 }
 ```
 
