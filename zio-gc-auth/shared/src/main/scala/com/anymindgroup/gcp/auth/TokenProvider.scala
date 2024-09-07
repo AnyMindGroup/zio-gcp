@@ -46,7 +46,7 @@ object TokenProvider {
             |  "client_secret": "${creds.clientSecret.value.mkString}"
             |}""".stripMargin
       )
-      .header(Header.contentType(MediaType.ApplicationJson) /*, replaceExisting = true*/ )
+      .header(Header.contentType(MediaType.ApplicationJson), onDuplicate = DuplicateHeaderBehavior.Replace)
       .mapResponse(_.flatMap(AccessToken.fromJsonString))
 
   private[auth] def autoRefreshTokenProviderByRequest[T <: Token](
@@ -82,16 +82,63 @@ object TokenProvider {
     }
   }
 
-  def defaultAutoRefreshTokenProvider(
+  def defaultAutoRefreshAccessTokenProvider(
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
   ): ZIO[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
     Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
-      case None              => ZIO.fail(TokenProviderException.CredentialsNotFound)
-      case Some(credentials) => autoRefreshTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
+      case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+      case Some(credentials) =>
+        autoRefreshAccessTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
     }
 
-  def autoRefreshTokenProvider(
+  def defaultAutoRefreshIdTokenProvider(
+    audience: String,
+    refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
+    refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
+  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
+    Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
+      case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+      case Some(credentials) =>
+        autoRefreshIdTokenProvider(audience, credentials, refreshRetrySchedule, refreshAtExpirationPercent)
+    }
+
+  def autoRefreshIdTokenProvider(
+    audience: String,
+    credentials: Credentials,
+    refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
+    refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
+  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
+    credentials match {
+      case ComputeServiceAccount(_) =>
+        ZIO.serviceWithZIO[HttpBackend] { backend =>
+          autoRefreshTokenProviderByRequest(
+            backend,
+            ComputeServiceAccount.idTokenRequest(audience),
+            refreshRetrySchedule,
+            refreshAtExpirationPercent,
+          )
+        }
+      case _: UserAccount =>
+        ZIO.fail(
+          TokenProviderException.CredentialsFailure(
+            CredentialsException.InvalidCredentialsFile(
+              s"Getting ID token by user account credentials is not supported yet."
+            )
+          )
+        )
+      // Service account key credentials might be supported later
+      case ServiceAccountKey(email, _) =>
+        ZIO.fail(
+          TokenProviderException.CredentialsFailure(
+            CredentialsException.InvalidCredentialsFile(
+              s"Got credentials for service account $email. Service account key credentials are not supported yet."
+            )
+          )
+        )
+    }
+
+  def autoRefreshAccessTokenProvider(
     credentials: Credentials,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
@@ -115,7 +162,7 @@ object TokenProvider {
             refreshAtExpirationPercent,
           )
         }
-      // Service account key credentials might be supported later (at least on JVM as it requires signed JWT)
+      // Service account key credentials might be supported later
       case ServiceAccountKey(email, _) =>
         ZIO.fail(
           TokenProviderException.CredentialsFailure(
@@ -125,4 +172,8 @@ object TokenProvider {
           )
         )
     }
+
+  def noTokenProvider: TokenProvider[Token] = new TokenProvider[Token] {
+    override def token: UIO[TokenReceipt[Token]] = Clock.instant.map(TokenReceipt(Token.noop, _))
+  }
 }

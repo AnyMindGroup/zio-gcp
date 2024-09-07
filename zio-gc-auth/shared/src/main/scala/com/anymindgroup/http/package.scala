@@ -9,11 +9,13 @@ package object http {
   import sttp.client4 as sttp_client
   // import sttp.client3 as sttp_client
 
-  type HttpBackend          = sttp_client.GenericBackend[Task, Any]
-  type Request[T]           = sttp_client.Request[T]
-  type Response[T]          = sttp_client.Response[T]
-  type SttpConnectException = sttp_client.SttpClientException.ConnectException
-  val basicRequest = sttp_client.basicRequest
+  type HttpBackend             = sttp_client.GenericBackend[Task, Any]
+  type Request[T]              = sttp_client.Request[T]
+  type Response[T]             = sttp_client.Response[T]
+  type SttpConnectException    = sttp_client.SttpClientException.ConnectException
+  type DuplicateHeaderBehavior = sttp_client.DuplicateHeaderBehavior
+  val DuplicateHeaderBehavior = sttp_client.DuplicateHeaderBehavior
+  val basicRequest            = sttp_client.basicRequest
 
   // from sttp.client4.UriContext
   implicit class UriContext(val sc: StringContext) {
