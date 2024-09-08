@@ -1,7 +1,7 @@
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Any, Any, Any] =
+object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     (for {
       // choose the required token provider
       //
@@ -36,10 +36,16 @@ object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpe
       ),
       httpBackendLayer(),
     )
-}
 
-object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+// access token retrieval without caching and auto refreshing
+object SimpleTokenRetrieval extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run = for {
+    receipt <- ZIO.scoped(TokenProvider.defaultAccessTokenProvider().flatMap(_.token)).provide(httpBackendLayer())
+    _       <- printLine(s"got access token: ${receipt.token.token.value.mkString} at ${receipt.receivedAt}")
+  } yield ()
+
+object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     Credentials.computeServiceAccount.flatMap {
       case Some(c) => ZIO.some(c)
       case None    => Credentials.applicationCredentials
@@ -47,10 +53,9 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
       case None              => ZIO.dieMessage("No credentials found")
       case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials))
     }.provide(httpBackendLayer())
-}
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     TokenProvider
       .accessTokenProvider(
         Credentials.UserAccount(
@@ -60,11 +65,9 @@ object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatf
         )
       )
       .provideSome[Scope](httpBackendLayer())
-}
 
-object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     ZIO
       .logLevel(LogLevel.Debug)(TokenProvider.defaultAccessTokenProvider())
       .provideSome[Scope](httpBackendLayer())
-}

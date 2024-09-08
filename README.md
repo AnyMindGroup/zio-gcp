@@ -46,18 +46,18 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "<version>"
 ```scala
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Any, Any, Any] =
+object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     (for {
       // choose the required token provider
       //
-      // TokenProvider[AccessToken] if the authentication does not require identity information
+      // use TokenProvider[AccessToken] if the application doesn't require identity information
       // see https://cloud.google.com/docs/authentication/token-types#access for more information
       //
-      // TokenProvider[IdToken] if the authentication requires identity information
+      // use TokenProvider[IdToken] if the token needs to be inspected by the application
       // see https://cloud.google.com/docs/authentication/token-types#id for more information
       //
-      // TokenProvider[Token] if it doesn't matter whether the provided token is an Access or ID token
+      // use TokenProvider[Token] if it doesn't matter whether the provided token is an Access or ID token
       tokenProvider <- ZIO.service[TokenProvider[AccessToken]]
       tokenReceipt  <- tokenProvider.token
       token          = tokenReceipt.token
@@ -82,7 +82,17 @@ object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpe
       ),
       httpBackendLayer(),
     )
-}
+```
+
+### Simple access token retrieval without caching and auto refreshing
+```scala
+import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
+
+object SimpleTokenRetrieval extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run = for {
+    receipt <- ZIO.scoped(TokenProvider.defaultAccessTokenProvider().flatMap(_.token)).provide(httpBackendLayer())
+    _       <- printLine(s"got access token: ${receipt.token.token.value.mkString} at ${receipt.receivedAt}")
+  } yield ()
 ```
 
 ### Change credentials lookup order
@@ -90,8 +100,8 @@ object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpe
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     Credentials.computeServiceAccount.flatMap {
       case Some(c) => ZIO.some(c)
       case None    => Credentials.applicationCredentials
@@ -99,7 +109,6 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
       case None              => ZIO.dieMessage("No credentials found")
       case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials))
     }.provide(httpBackendLayer())
-}
 ```
 
 ### Use specific credentials
@@ -107,8 +116,8 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     TokenProvider
       .accessTokenProvider(
         Credentials.UserAccount(
@@ -118,7 +127,6 @@ object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatf
         )
       )
       .provideSome[Scope](httpBackendLayer())
-}
 ```
 
 ### Change log level
@@ -129,15 +137,18 @@ Example of setting the token provider log level to debug:
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific {
-  def run: ZIO[Scope, Any, Any] =
+object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+  def run =
     ZIO
       .logLevel(LogLevel.Debug)(TokenProvider.defaultAccessTokenProvider())
       .provideSome[Scope](httpBackendLayer())
-}
 ```
 
-See all examples under [examples.scala](./examples/src/main/scala/examples.scala).
+See all examples under [examples.scala](./examples/src/main/scala/examples.scala).  
+Run examples with sbt:
+```shell
+sbt +examples/run
+```
 
 ## Documentation
 
