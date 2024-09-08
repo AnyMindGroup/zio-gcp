@@ -4,7 +4,7 @@ import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, ServiceAcco
 import com.anymindgroup.http.*
 import sttp.model.*
 
-import zio.{Clock, IO, Ref, Schedule, UIO, ZIO}
+import zio.*
 
 sealed trait TokenProviderException
 object TokenProviderException {
@@ -14,7 +14,7 @@ object TokenProviderException {
   final case class Unexpected(cause: Throwable)                    extends TokenProviderException
 }
 
-trait TokenProvider[T <: Token] {
+trait TokenProvider[+T <: Token] {
   def token: UIO[TokenReceipt[T]]
 }
 
@@ -54,7 +54,7 @@ object TokenProvider {
     req: Request[Either[String, T]],
     refreshRetrySchedule: Schedule[Any, Any, Any],
     refreshAtExpirationPercent: Double,
-  ): IO[TokenProviderException, TokenProvider[T]] = {
+  ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
     def requestToken: IO[TokenProviderException, TokenReceipt[T]] = for {
       _ <- ZIO.log("Requesting new access token...")
       token <- backend
@@ -76,39 +76,39 @@ object TokenProvider {
     for {
       token <- requestToken
       ref   <- zio.Ref.make(token)
-      _     <- refreshTokenJob(ref).fork
+      _     <- refreshTokenJob(ref).forkScoped
     } yield new TokenProvider[T] {
       override def token: UIO[TokenReceipt[T]] = ref.get
     }
   }
 
-  def defaultAutoRefreshAccessTokenProvider(
+  def defaultAccessTokenProvider(
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
+  ): ZIO[Scope & HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
     Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
       case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
       case Some(credentials) =>
-        autoRefreshAccessTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
+        accessTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
     }
 
-  def defaultAutoRefreshIdTokenProvider(
+  def defaultIdTokenProvider(
     audience: String,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
+  ): ZIO[Scope & HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
     Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
       case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
       case Some(credentials) =>
-        autoRefreshIdTokenProvider(audience, credentials, refreshRetrySchedule, refreshAtExpirationPercent)
+        idTokenProvider(audience, credentials, refreshRetrySchedule, refreshAtExpirationPercent)
     }
 
-  def autoRefreshIdTokenProvider(
+  def idTokenProvider(
     audience: String,
     credentials: Credentials,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
+  ): ZIO[Scope & HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
     credentials match {
       case ComputeServiceAccount(_) =>
         ZIO.serviceWithZIO[HttpBackend] { backend =>
@@ -123,7 +123,7 @@ object TokenProvider {
         ZIO.fail(
           TokenProviderException.CredentialsFailure(
             CredentialsException.InvalidCredentialsFile(
-              s"Getting ID token by user account credentials is not supported yet."
+              s"Getting ID token by user account credentials is not supported."
             )
           )
         )
@@ -132,17 +132,17 @@ object TokenProvider {
         ZIO.fail(
           TokenProviderException.CredentialsFailure(
             CredentialsException.InvalidCredentialsFile(
-              s"Got credentials for service account $email. Service account key credentials are not supported yet."
+              s"Got credentials for service account $email. Service account key credentials are not supported."
             )
           )
         )
     }
 
-  def autoRefreshAccessTokenProvider(
+  def accessTokenProvider(
     credentials: Credentials,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
+  ): ZIO[Scope & HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
     credentials match {
       case ComputeServiceAccount(_) =>
         ZIO.serviceWithZIO[HttpBackend] { backend =>
@@ -167,7 +167,7 @@ object TokenProvider {
         ZIO.fail(
           TokenProviderException.CredentialsFailure(
             CredentialsException.InvalidCredentialsFile(
-              s"Got credentials for service account $email. Service account key credentials are not supported yet."
+              s"Got credentials for service account $email. Service account key credentials are not supported."
             )
           )
         )
@@ -176,4 +176,17 @@ object TokenProvider {
   def noTokenProvider: TokenProvider[Token] = new TokenProvider[Token] {
     override def token: UIO[TokenReceipt[Token]] = Clock.instant.map(TokenReceipt(Token.noop, _))
   }
+
+  def defaultAccessTokenProviderLayer(
+    refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
+    refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
+  ): ZLayer[HttpBackend, TokenProviderException, TokenProvider[AccessToken]] =
+    ZLayer.scoped(defaultAccessTokenProvider(refreshRetrySchedule, refreshAtExpirationPercent))
+
+  def defaultIdTokenProviderLayer(
+    audience: String,
+    refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
+    refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
+  ): ZLayer[HttpBackend, TokenProviderException, TokenProvider[IdToken]] =
+    ZLayer.scoped(defaultIdTokenProvider(audience, refreshRetrySchedule, refreshAtExpirationPercent))
 }

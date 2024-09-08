@@ -76,4 +76,4 @@ object IdToken {
     }
 }
 
-case class TokenReceipt[T <: Token](token: T, receivedAt: Instant)
+case class TokenReceipt[+T <: Token](token: T, receivedAt: Instant)

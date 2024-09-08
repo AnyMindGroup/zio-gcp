@@ -10,8 +10,13 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
   case s => s
 })
 
-lazy val _scala3   = "3.3.3"
+lazy val _scala3 = "3.3.3"
+
 lazy val _scala213 = "2.13.14"
+
+lazy val sttpClient4Version = "4.0.0-M17"
+
+lazy val zioJsonVersion = "0.7.3"
 
 inThisBuild(
   List(
@@ -34,10 +39,6 @@ inThisBuild(
     ),
   )
 )
-
-lazy val sttpClient4Version = "4.0.0-M17"
-
-lazy val zioJsonVersion = "0.7.3"
 
 lazy val commonSettings = List(
   libraryDependencies ++= {
@@ -118,6 +119,16 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     )
+  )
+
+lazy val examples = (project in file("examples"))
+  .dependsOn(zioGcpAuth.jvm)
+  .settings(noPublishSettings)
+  .settings(
+    scalaVersion       := _scala3,
+    crossScalaVersions := Seq(_scala3),
+    coverageEnabled    := false,
+    fork               := true,
   )
 
 lazy val docs = project

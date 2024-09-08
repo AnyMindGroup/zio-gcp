@@ -31,50 +31,50 @@ object TokenProviderSpec extends ZIOSpecDefault {
     },
     test("request access token for user account") {
       for {
-        tp    <- TokenProvider.autoRefreshAccessTokenProvider(okUserAccount)
+        tp    <- TokenProvider.accessTokenProvider(okUserAccount)
         token <- tp.token
         _     <- assertTrue(token.token.token == Config.Secret("user"))
       } yield assertCompletes
-    }.provide(googleStubBackendLayer()),
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on service account as it's not supported (yet)") {
       val svcAcc = Credentials.ServiceAccountKey("email", Config.Secret("123"))
       for {
-        _ <- assertZIO(TokenProvider.autoRefreshAccessTokenProvider(svcAcc).exit)(
+        _ <- assertZIO(TokenProvider.accessTokenProvider(svcAcc).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
-        _ <- assertZIO(TokenProvider.autoRefreshIdTokenProvider("", svcAcc).exit)(
+        _ <- assertZIO(TokenProvider.idTokenProvider("", svcAcc).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
       } yield assertCompletes
-    }.provide(googleStubBackendLayer()),
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on getting id token for a user account as it's not supported (yet)") {
       val user = Credentials.UserAccount("", "", Config.Secret(""))
       for {
-        _ <- assertZIO(TokenProvider.autoRefreshIdTokenProvider("", user).exit)(
+        _ <- assertZIO(TokenProvider.idTokenProvider("", user).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
       } yield assertCompletes
-    }.provide(googleStubBackendLayer()),
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("request access token from compute metadata server") {
       for {
-        tp    <- TokenProvider.autoRefreshAccessTokenProvider(Credentials.ComputeServiceAccount(""))
+        tp    <- TokenProvider.accessTokenProvider(Credentials.ComputeServiceAccount(""))
         token <- tp.token
         _     <- assertTrue(token.token.token == Config.Secret("compute"))
       } yield assertCompletes
-    }.provide(googleStubBackendLayer()),
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("request id token from compute metadata server") {
       val audience = "http://test.com"
       (for {
         tp <-
-          TokenProvider.autoRefreshIdTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""))
+          TokenProvider.idTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""))
         token <- tp.token
         _     <- assertTrue(token.token.token == Config.Secret(testIdToken))
-      } yield assertCompletes).provide(googleStubBackendLayer(audience))
+      } yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
     },
     test("token is refreshed automatically at given expiry stage") {
       checkN(10)(Gen.double(0.1, 0.9)) { expiryPercent =>
         for {
-          tp <- TokenProvider.autoRefreshAccessTokenProvider(
+          tp <- TokenProvider.accessTokenProvider(
                   credentials = Credentials.ComputeServiceAccount(""),
                   refreshAtExpirationPercent = expiryPercent,
                 )
@@ -85,23 +85,23 @@ object TokenProviderSpec extends ZIOSpecDefault {
           _        <- assertTrue(tokenA.receivedAt.isBefore(tokenB.receivedAt))
         } yield assertCompletes
       }
-    }.provide(googleStubBackendLayer()),
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("retry on failures by given schedule") {
       for {
         retries   <- Ref.make(0)
         maxRetries = 5
         tp <- TokenProvider
-                .autoRefreshAccessTokenProvider(
+                .accessTokenProvider(
                   credentials = failUserAccount,
                   refreshRetrySchedule = Schedule.recurs(maxRetries),
                 )
-                .provide(googleStubBackendLayerWithFailureCount(retries))
+                .provideSome[Scope](googleStubBackendLayerWithFailureCount(retries))
                 .exit
         _ <- assert(tp)(fails(anything))
         _ <- assertZIO(retries.get)(equalTo(maxRetries))
       } yield assertCompletes
     },
-  ).provideLayerShared(zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none))
+  ).provideSomeLayerShared[Scope](zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none))
 
   def googleStubBackendLayerWithFailureCount(ref: Ref[Int]): ULayer[GenericBackend[Task, Any]] =
     ZLayer.succeed(googleStubBackend(ref, ""))
