@@ -10,14 +10,24 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
   case s => s
 })
 
+lazy val _scala3 = "3.3.3"
+
+lazy val _scala213 = "2.13.14"
+
+lazy val sttpClient4Version = "4.0.0-M17"
+
+lazy val zioJsonVersion = "0.7.3"
+
 inThisBuild(
   List(
     name               := "ZIO Google Cloud authentication",
-    zioVersion         := "2.0.21",
+    zioVersion         := "2.1.9",
     organization       := "com.anymindgroup",
     licenses           := Seq(License.Apache2),
     homepage           := Some(url("https://anymindgroup.com")),
-    crossScalaVersions := Seq("3.3.3", "2.13.13"),
+    scala3             := _scala3,
+    scala213           := _scala213,
+    crossScalaVersions := Seq(_scala3, _scala213),
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
@@ -29,10 +39,6 @@ inThisBuild(
     ),
   )
 )
-
-lazy val sttpClient4Version = "4.0.0-M11"
-
-lazy val zioJsonVersion = "0.6.2"
 
 lazy val commonSettings = List(
   libraryDependencies ++= {
@@ -111,8 +117,18 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
   )
   .nativeSettings(
     libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % "2.5.0"
+      "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     )
+  )
+
+lazy val examples = (project in file("examples"))
+  .dependsOn(zioGcpAuth.jvm)
+  .settings(noPublishSettings)
+  .settings(
+    scalaVersion       := _scala3,
+    crossScalaVersions := Seq(_scala3),
+    coverageEnabled    := false,
+    fork               := true,
   )
 
 lazy val docs = project

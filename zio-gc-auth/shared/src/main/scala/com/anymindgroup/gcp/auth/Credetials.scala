@@ -26,19 +26,24 @@ object Credentials {
   final case class ServiceAccountKey(email: String, privateKey: Secret)                      extends CredentialsKey
 
   // https://cloud.google.com/compute/docs/metadata/overview
+  // https://cloud.google.com/compute/docs/metadata/predefined-metadata-keys#instance-metadata
   final case class ComputeServiceAccount(email: String) extends Credentials
   object ComputeServiceAccount {
     private[auth] val baseUri            = uri"http://metadata.google.internal"
     private[auth] val computeMetadataUri = uri"$baseUri/computeMetadata/v1/instance/service-accounts/default"
     private[auth] val email              = uri"$computeMetadataUri/email"
     private[auth] val token              = uri"$computeMetadataUri/token"
+    private[auth] val identity           = uri"$computeMetadataUri/identity"
     private[auth] val baseReq            = basicRequest.header(Header("Metadata-Flavor", "Google"))
 
     val emailRequest: Request[Either[String, ComputeServiceAccount]] =
       baseReq.get(email).mapResponseRight(email => Credentials.ComputeServiceAccount(email))
 
-    val tokenRequest: Request[Either[String, AccessToken]] =
+    val accessTokenRequest: Request[Either[String, AccessToken]] =
       basicRequest.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
+
+    def idTokenRequest(audience: String): Request[Either[String, IdToken]] =
+      basicRequest.get(identity.addParam("audience", audience)).mapResponse(_.flatMap(IdToken.fromString))
   }
 
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =
