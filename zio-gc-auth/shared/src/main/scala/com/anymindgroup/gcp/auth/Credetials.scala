@@ -40,10 +40,10 @@ object Credentials {
       baseReq.get(email).mapResponseRight(email => Credentials.ComputeServiceAccount(email))
 
     val accessTokenRequest: Request[Either[String, AccessToken]] =
-      basicRequest.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
+      baseReq.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
 
     def idTokenRequest(audience: String): Request[Either[String, IdToken]] =
-      basicRequest.get(identity.addParam("audience", audience)).mapResponse(_.flatMap(IdToken.fromString))
+      baseReq.get(identity.addParam("audience", audience)).mapResponse(_.flatMap(IdToken.fromString))
   }
 
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =
