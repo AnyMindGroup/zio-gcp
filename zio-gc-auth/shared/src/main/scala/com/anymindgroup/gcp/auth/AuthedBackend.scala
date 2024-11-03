@@ -1,6 +1,5 @@
 package com.anymindgroup.gcp.auth
 
-import com.anymindgroup.gcp.auth.{Token, TokenProvider}
 import sttp.capabilities.Effect
 import sttp.client4.{GenericBackend, GenericRequest, Response}
 import sttp.monad.MonadError
