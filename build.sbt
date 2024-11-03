@@ -10,18 +10,18 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
   case s => s
 })
 
-lazy val _scala3 = "3.3.3"
+lazy val _scala3 = "3.3.4"
 
-lazy val _scala213 = "2.13.14"
+lazy val _scala213 = "2.13.15"
 
-lazy val sttpClient4Version = "4.0.0-M17"
+lazy val sttpClient4Version = "4.0.0-M19"
 
 lazy val zioJsonVersion = "0.7.3"
 
 inThisBuild(
   List(
     name               := "ZIO Google Cloud authentication",
-    zioVersion         := "2.1.9",
+    zioVersion         := "2.1.11",
     organization       := "com.anymindgroup",
     licenses           := Seq(License.Apache2),
     homepage           := Some(url("https://anymindgroup.com")),

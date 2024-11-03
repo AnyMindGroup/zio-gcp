@@ -2,15 +2,21 @@ package com.anymindgroup.http
 
 import scala.annotation.tailrec
 
+import com.anymindgroup.gcp.auth.{AuthedBackend, Token, TokenProvider}
+import sttp.client4.GenericBackend
 import sttp.client4.impl.zio.CurlZioBackend
 
-import zio.{Cause, ZIO, ZLayer}
+import zio.{Cause, Task, ZIO, ZLayer}
 
 trait HttpClientBackendPlatformSpecific {
-  def httpBackendLayer(): ZLayer[Any, Throwable, HttpBackend] =
+  def httpBackendLayer(): ZLayer[Any, Throwable, GenericBackend[Task, Any]] =
     ZLayer.scoped(
-      ZIO.acquireRelease(ZIO.attempt(CurlZioBackend[Any]()))(c => ZIO.attempt(c.close()).orDie)
+      ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(c => ZIO.attempt(c.close()).ignore)
     )
+
+  def authedHttpBackendLayer()
+    : ZLayer[TokenProvider[Token] & GenericBackend[Task, Any], Throwable, GenericBackend[Task, Any]] =
+    ZLayer.fromFunction(AuthedBackend[Any](_, _))
 }
 
 class UnresolvedAddressException(underlying: Throwable) extends Throwable(underlying)

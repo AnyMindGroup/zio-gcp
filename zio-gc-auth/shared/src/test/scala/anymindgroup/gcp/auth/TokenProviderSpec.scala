@@ -33,7 +33,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       for {
         tp    <- TokenProvider.accessTokenProvider(okUserAccount)
         token <- tp.token
-        _     <- assertTrue(token.token.token == Config.Secret("user"))
+        _     <- assertTrue(token.token.token == "user")
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on service account as it's not supported (yet)") {
@@ -59,7 +59,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       for {
         tp    <- TokenProvider.accessTokenProvider(Credentials.ComputeServiceAccount(""))
         token <- tp.token
-        _     <- assertTrue(token.token.token == Config.Secret("compute"))
+        _     <- assertTrue(token.token.token == "compute")
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request id token from compute metadata server") {
@@ -68,7 +68,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
         tp <-
           TokenProvider.idTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""))
         token <- tp.token
-        _     <- assertTrue(token.token.token == Config.Secret(testIdToken))
+        _     <- assertTrue(token.token.token == testIdToken)
       } yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
     },
     test("token is refreshed automatically at given expiry stage") {
@@ -103,16 +103,16 @@ object TokenProviderSpec extends ZIOSpecDefault {
     },
   ).provideSomeLayerShared[Scope](zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none))
 
-  def googleStubBackendLayerWithFailureCount(ref: Ref[Int]): ULayer[GenericBackend[Task, Any]] =
+  def googleStubBackendLayerWithFailureCount(ref: Ref[Int]): ULayer[Backend[Task]] =
     ZLayer.succeed(googleStubBackend(ref, ""))
 
-  def googleStubBackendLayer(idTokenAudience: String = ""): ZLayer[Any, Nothing, GenericBackend[Task, Any]] = ZLayer {
+  def googleStubBackendLayer(idTokenAudience: String = ""): ZLayer[Any, Nothing, Backend[Task]] = ZLayer {
     Ref.make(0).map { ref =>
       googleStubBackend(ref, idTokenAudience)
     }
   }
 
-  def googleStubBackend(failures: Ref[Int], idTokenAudience: String): GenericBackend[Task, Any] =
+  def googleStubBackend(failures: Ref[Int], idTokenAudience: String): Backend[Task] =
     BackendStub[Task](new RIOMonadAsyncError[Any])
       .whenRequestMatches(
         _.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email")

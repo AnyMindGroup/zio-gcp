@@ -7,15 +7,15 @@ import sttp.client4.curl.internal.CurlApi.*
 import sttp.client4.curl.internal.CurlCode.CurlCode
 import sttp.client4.wrappers.FollowRedirectsBackend
 
-class CurlZioBackend[R] private (verbose: Boolean)
-    extends AbstractCurlBackend[RIO[R, *]](new RIOMonadAsyncError, verbose)
-    with Backend[RIO[R, *]] {
+class CurlZioBackend private (verbose: Boolean)
+    extends AbstractCurlBackend[Task](new RIOMonadAsyncError, verbose)
+    with Backend[Task] {
 
   override def performCurl(c: CurlHandle): Task[CurlCode] = ZIO.attemptBlocking(c.perform)
 
 }
 
 object CurlZioBackend {
-  def apply[R](verbose: Boolean = false): Backend[RIO[R, *]] =
-    FollowRedirectsBackend(new CurlZioBackend[R](verbose))
+  def apply(verbose: Boolean = false): Backend[Task] =
+    FollowRedirectsBackend(new CurlZioBackend(verbose))
 }

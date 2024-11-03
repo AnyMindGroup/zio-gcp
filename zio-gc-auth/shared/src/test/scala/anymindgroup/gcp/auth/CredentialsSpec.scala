@@ -2,7 +2,6 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
-import com.anymindgroup.http.HttpBackend
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
@@ -10,10 +9,10 @@ import sttp.model.*
 
 import zio.test.*
 import zio.test.Assertion.*
-import zio.{Scope, Task, ZLayer, ZLogger}
+import zio.{Task, ZLayer, ZLogger}
 
 object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpClientBackendPlatformSpecific {
-  override def spec: Spec[TestEnvironment & Scope, Any] = suite("CredentialsSpec")(
+  override def spec: Spec[TestEnvironment, Any] = suite("CredentialsSpec")(
     test("return none if no credentials were found") {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
@@ -80,7 +79,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
       .whenRequestMatches(_.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email"))
       .thenRespond("""{"access_token":"abc123","expires_in":3599,"token_type":"Bearer"}""")
 
-  val defaultTestLayer: ZLayer[Any, Throwable, HttpBackend] =
+  val defaultTestLayer: ZLayer[Any, Throwable, GenericBackend[Task, Any]] =
     (zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none)) >>> httpBackendLayer()
 
   val metadataStubLayer: ZLayer[Any, Nothing, GenericBackend[Task, Any]] =
