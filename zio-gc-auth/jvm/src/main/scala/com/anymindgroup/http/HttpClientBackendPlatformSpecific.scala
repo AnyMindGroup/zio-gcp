@@ -14,16 +14,17 @@ trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, StreamBackend[Task, ZioStreams]] =
     ZLayer.scoped(
       ZIO
-        .fromAutoCloseable(
+        .acquireRelease(
           ZIO.attempt(
-            HttpClient
-              .newBuilder()
-              .followRedirects(HttpClient.Redirect.NEVER)
-              .version(HttpClient.Version.HTTP_2)
-              .build()
+            HttpClientZioBackend.usingClient(
+              HttpClient
+                .newBuilder()
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .version(HttpClient.Version.HTTP_2)
+                .build()
+            )
           )
-        )
-        .map(HttpClientZioBackend.usingClient(_))
+        )(_.close().ignore)
     )
 }
 
