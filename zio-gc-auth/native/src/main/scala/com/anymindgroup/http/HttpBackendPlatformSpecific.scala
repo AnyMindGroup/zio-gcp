@@ -10,7 +10,7 @@ import zio.{Cause, Task, ZIO, ZLayer}
 trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, Backend[Task]] =
     ZLayer.scoped(
-      ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(c => ZIO.attempt(c.close()).ignore)
+      ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(_.close().ignore)
     )
 }
 
