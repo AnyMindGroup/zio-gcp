@@ -5,13 +5,14 @@ import scala.annotation.tailrec
 import sttp.client4.Backend
 import sttp.client4.impl.zio.CurlZioBackend
 
-import zio.{Cause, Task, ZIO, ZLayer}
+import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
 trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, Backend[Task]] =
-    ZLayer.scoped(
-      ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(_.close().ignore)
-    )
+    ZLayer.scoped(httpBackendScoped())
+
+  def httpBackendScoped(): ZIO[Scope, Throwable, Backend[Task]] =
+    ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(_.close().ignore)
 }
 
 class UnresolvedAddressException(underlying: Throwable) extends Throwable(underlying)

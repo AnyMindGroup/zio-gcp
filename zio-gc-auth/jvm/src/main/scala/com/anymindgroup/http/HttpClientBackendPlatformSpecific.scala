@@ -8,24 +8,24 @@ import sttp.capabilities.zio.ZioStreams
 import sttp.client4.*
 import sttp.client4.httpclient.zio.HttpClientZioBackend
 
-import zio.{Cause, Task, ZIO, ZLayer}
+import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
 trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, StreamBackend[Task, ZioStreams]] =
-    ZLayer.scoped(
-      ZIO
-        .acquireRelease(
-          ZIO.attempt(
-            HttpClientZioBackend.usingClient(
-              HttpClient
-                .newBuilder()
-                .followRedirects(HttpClient.Redirect.NEVER)
-                .version(HttpClient.Version.HTTP_2)
-                .build()
-            )
-          )
-        )(_.close().ignore)
-    )
+    ZLayer.scoped(httpBackendScoped())
+
+  def httpBackendScoped(): ZIO[Scope, Throwable, StreamBackend[Task, ZioStreams]] = ZIO
+    .acquireRelease(
+      ZIO.attempt(
+        HttpClientZioBackend.usingClient(
+          HttpClient
+            .newBuilder()
+            .followRedirects(HttpClient.Redirect.NEVER)
+            .version(HttpClient.Version.HTTP_2)
+            .build()
+        )
+      )
+    )(_.close().ignore)
 }
 
 class UnresolvedAddressException(underlying: Throwable) extends Throwable(underlying)
