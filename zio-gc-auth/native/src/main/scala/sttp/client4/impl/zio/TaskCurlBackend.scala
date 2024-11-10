@@ -35,7 +35,7 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
    * Same as [[performCurl]], but also checks and throws runtime exceptions on
    * bad [[CurlCode]]s.
    */
-  private final def perform(c: CurlHandle) = performCurl(c) // .flatMap(lift)
+  private final def perform(c: CurlHandle) = performCurl(c).flatMap(lift)
 
   type R = Any & Effect[Task]
 
