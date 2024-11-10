@@ -215,7 +215,7 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
       case b: BasicBodyPart =>
         val str = basicBodyToString(b)
         lift(curl.option(PostFields, toCString(str)))
-      case m: MultipartBody[_] =>
+      case m: MultipartBody[?] =>
         val mime = curl.mime
         m.parts.foreach { case p @ Part(name, partBody, _, headers) =>
           val part = mime.addPart()
