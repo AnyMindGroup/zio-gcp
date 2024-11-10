@@ -5,13 +5,13 @@ import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 import scala.scalanative.libc.stdio.{FILE, fclose, fopen}
 import scala.scalanative.libc.stdlib.*
-import scala.scalanative.libc.string.*
-import scala.scalanative.unsafe.{CSize, Ptr, *}
+import scala.scalanative.unsafe.{Ptr, *}
 import scala.scalanative.unsigned.*
 
 import _root_.zio.{Task, ZIO}
 import sttp.capabilities.Effect
 import sttp.client4.*
+import sttp.client4.curl.AbstractCurlBackend
 import sttp.client4.curl.internal.*
 import sttp.client4.curl.internal.CurlApi.*
 import sttp.client4.curl.internal.CurlCode.CurlCode
@@ -124,7 +124,7 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
     ctx: Context
   ) = {
     implicit val z = ctx.zone
-    curl.option(WriteFunction, TaskCurlBackend.wdFunc)
+    curl.option(WriteFunction, AbstractCurlBackend.wdFunc)
     curl.option(WriteData, spaces.bodyResp)
     curl.option(TimeoutMs, request.options.readTimeout.toMillis)
     curl.option(HeaderData, spaces.headersResp)
@@ -215,7 +215,7 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
       case b: BasicBodyPart =>
         val str = basicBodyToString(b)
         lift(curl.option(PostFields, toCString(str)))
-      case m: MultipartBody[R] =>
+      case m: MultipartBody[_] =>
         val mime = curl.mime
         m.parts.foreach { case p @ Part(name, partBody, _, headers) =>
           val part = mime.addPart()
@@ -275,55 +275,42 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
     }
   }
 
-  private lazy val bodyFromResponseAs = new BodyFromResponseAs[Task, String, Nothing, Nothing] {
-    override protected def withReplayableBody(
-      response: String,
-      replayableBody: Either[Array[Byte], SttpFile],
-    ): Task[String] = ZIO.succeed(response)
+  private lazy val bodyFromResponseAs: BodyFromResponseAs[Task, String, Nothing, Nothing] =
+    new BodyFromResponseAs[Task, String, Nothing, Nothing] {
+      override protected def withReplayableBody(
+        response: String,
+        replayableBody: Either[Array[Byte], SttpFile],
+      ): Task[String] = ZIO.succeed(response)
 
-    override protected def regularIgnore(response: String): Task[Unit] = ZIO.unit
+      override protected def regularIgnore(response: String): Task[Unit] = ZIO.unit
 
-    override protected def regularAsByteArray(response: String): Task[Array[Byte]] = toByteArray(response)
+      override protected def regularAsByteArray(response: String): Task[Array[Byte]] = ZIO.succeed(response.getBytes)
 
-    override protected def regularAsFile(response: String, file: SttpFile): Task[SttpFile] =
-      ZIO.succeed(file)
+      override protected def regularAsFile(response: String, file: SttpFile): Task[SttpFile] =
+        ZIO.succeed(file)
 
-    override protected def regularAsStream(response: String): Task[(Nothing, () => Task[Unit])] =
-      throw new IllegalStateException("CurlBackend does not support streaming responses")
+      override protected def regularAsStream(response: String): Task[(Nothing, () => Task[Unit])] =
+        throw new IllegalStateException("CurlBackend does not support streaming responses")
 
-    override protected def handleWS[T](
-      responseAs: GenericWebSocketResponseAs[T, ?],
-      meta: ResponseMetadata,
-      ws: Nothing,
-    ): Task[T] = ws
+      override protected def handleWS[T](
+        responseAs: GenericWebSocketResponseAs[T, ?],
+        meta: ResponseMetadata,
+        ws: Nothing,
+      ): Task[T] = ws
 
-    override protected def cleanupWhenNotAWebSocket(
-      response: String,
-      e: NotAWebSocketException,
-    ): Task[Unit] = ZIO.unit
+      override protected def cleanupWhenNotAWebSocket(
+        response: String,
+        e: NotAWebSocketException,
+      ): Task[Unit] = ZIO.unit
 
-    override protected def cleanupWhenGotWebSocket(response: Nothing, e: GotAWebSocketException): Task[Unit] = response
-  }
-
-  private def toByteArray(str: String): Task[Array[Byte]] = ZIO.succeed(str.getBytes)
+      override protected def cleanupWhenGotWebSocket(response: Nothing, e: GotAWebSocketException): Task[Unit] =
+        response
+    }
 
   private def lift(code: CurlCode): Task[CurlCode] =
     code match {
       case CurlCode.Ok => ZIO.succeed(code)
       case _           => ZIO.fail(new RuntimeException(s"Command failed with status $code"))
     }
-}
-
-object TaskCurlBackend {
-  val wdFunc: CFuncPtr4[Ptr[Byte], CSize, CSize, Ptr[CurlFetch], CSize] = {
-    (ptr: Ptr[CChar], size: CSize, nmemb: CSize, data: Ptr[CurlFetch]) =>
-      val index: CSize     = (!data)._2
-      val increment: CSize = size * nmemb
-      (!data)._2 = (!data)._2 + increment
-      (!data)._1 = realloc((!data)._1, (!data)._2 + 1.toUInt)
-      memcpy((!data)._1 + index, ptr, increment)
-      !(!data)._1.+((!data)._2) = 0.toByte
-      size * nmemb
-  }
 }
 // scalafix:on
