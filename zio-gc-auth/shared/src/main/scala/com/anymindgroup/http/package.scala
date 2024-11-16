@@ -2,7 +2,7 @@ package com.anymindgroup
 
 import sttp.model.{Uri, UriInterpolator}
 
-package object http {
+package object http extends HttpClientBackendPlatformSpecific {
   // to allow for easy switch between sttp client versions
   import sttp.client4 as sttp_client
   // import sttp.client3 as sttp_client
