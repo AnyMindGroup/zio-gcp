@@ -10,23 +10,24 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
   case s => s
 })
 
-lazy val _scala3 = "3.3.3"
+lazy val _scala3 = "3.3.4"
 
-lazy val _scala213 = "2.13.14"
+lazy val _scala213 = "2.13.15"
 
-lazy val sttpClient4Version = "4.0.0-M17"
+lazy val sttpClient4Version = "4.0.0-M19"
 
 lazy val zioJsonVersion = "0.7.3"
 
 inThisBuild(
   List(
     name               := "ZIO Google Cloud authentication",
-    zioVersion         := "2.1.9",
+    zioVersion         := "2.1.12",
     organization       := "com.anymindgroup",
     licenses           := Seq(License.Apache2),
     homepage           := Some(url("https://anymindgroup.com")),
     scala3             := _scala3,
     scala213           := _scala213,
+    scalaVersion       := _scala213,
     crossScalaVersions := Seq(_scala3, _scala213),
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
@@ -116,9 +117,10 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     )
   )
   .nativeSettings(
+    Compile / scalacOptions --= Seq("-Xfatal-warnings"),
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
-    )
+    ),
   )
 
 lazy val examples = (project in file("examples"))

@@ -3,20 +3,21 @@ package com.anymindgroup.gcp.auth
 import java.nio.file.Path
 
 import com.anymindgroup.http.*
+import sttp.client4.GenericBackend
 import sttp.model.*
 
 import zio.Config.Secret
 import zio.json.*
 import zio.json.ast.{Json, JsonCursor}
-import zio.{IO, ZIO}
+import zio.{IO, Task, ZIO}
 
-sealed trait CredentialsException
+sealed abstract class CredentialsException(cause: Throwable) extends Throwable(cause)
 object CredentialsException {
-  final case class InvalidCredentialsFile(message: String)               extends CredentialsException
-  final case class InvalidPathException(message: String)                 extends CredentialsException
-  final case class IOException(cause: java.io.IOException)               extends CredentialsException
-  final case class SecurityException(cause: java.lang.SecurityException) extends CredentialsException
-  final case class Unexpected(cause: Throwable)                          extends CredentialsException
+  final case class InvalidCredentialsFile(message: String)               extends CredentialsException(new Throwable(message))
+  final case class InvalidPathException(message: String)                 extends CredentialsException(new Throwable(message))
+  final case class IOException(cause: java.io.IOException)               extends CredentialsException(cause)
+  final case class SecurityException(cause: java.lang.SecurityException) extends CredentialsException(cause)
+  final case class Unexpected(cause: Throwable)                          extends CredentialsException(cause)
 }
 
 sealed trait Credentials
@@ -119,9 +120,10 @@ object Credentials {
              }
   } yield creds
 
-  def computeServiceAccount: ZIO[HttpBackend, CredentialsException, Option[Credentials.ComputeServiceAccount]] =
+  def computeServiceAccount
+    : ZIO[GenericBackend[Task, Any], CredentialsException, Option[Credentials.ComputeServiceAccount]] =
     ZIO
-      .serviceWithZIO[HttpBackend](backend =>
+      .serviceWithZIO[GenericBackend[Task, Any]](backend =>
         ZIO.log(s"Attempting to reach internal compute metadata service...") *>
           backend.send(ComputeServiceAccount.emailRequest.mapResponse(_.toOption)).map(_.body)
       )
@@ -132,7 +134,7 @@ object Credentials {
         CredentialsException.Unexpected(e)
       }
 
-  def auto: ZIO[HttpBackend, CredentialsException, Option[Credentials]] = applicationCredentials.flatMap {
+  def auto: ZIO[GenericBackend[Task, Any], CredentialsException, Option[Credentials]] = applicationCredentials.flatMap {
     case Some(c: Credentials.UserAccount) =>
       ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
     case Some(c: Credentials.ServiceAccountKey) =>

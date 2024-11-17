@@ -1,10 +1,17 @@
 package sttp.client4.impl.zio
 
-import sttp.monad.{Canceler, MonadAsyncError, MonadError}
+import sttp.monad.{Canceler, MonadAsyncError}
 
 import zio.{RIO, ZIO}
 
-class RIOMonadAsyncError[R] extends MonadAsyncError[RIO[R, *]] with RIOMonadError[R] {
+class RIOMonadAsyncError[R] extends MonadAsyncError[RIO[R, *]] {
+  override def unit[T](t: T): RIO[R, T] = ZIO.succeed(t)
+
+  override def map[T, T2](fa: RIO[R, T])(f: T => T2): RIO[R, T2] = fa.map(f)
+
+  override def flatMap[T, T2](fa: RIO[R, T])(f: T => RIO[R, T2]): RIO[R, T2] =
+    fa.flatMap(f)
+
   override def async[T](register: (Either[Throwable, T] => Unit) => Canceler): RIO[R, T] =
     ZIO.asyncInterrupt { cb =>
       val canceler = register {
@@ -14,15 +21,6 @@ class RIOMonadAsyncError[R] extends MonadAsyncError[RIO[R, *]] with RIOMonadErro
 
       Left(ZIO.succeed(canceler.cancel()))
     }
-}
-
-trait RIOMonadError[R] extends MonadError[RIO[R, *]] {
-  override def unit[T](t: T): RIO[R, T] = ZIO.succeed(t)
-
-  override def map[T, T2](fa: RIO[R, T])(f: T => T2): RIO[R, T2] = fa.map(f)
-
-  override def flatMap[T, T2](fa: RIO[R, T])(f: T => RIO[R, T2]): RIO[R, T2] =
-    fa.flatMap(f)
 
   override def error[T](t: Throwable): RIO[R, T] = ZIO.fail(t)
 

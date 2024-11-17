@@ -31,12 +31,12 @@ Scala versions support:
 ## Getting started
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
-libraryDependencies += "com.anymindgroup" %% "zio-gc-auth" % "<version>"
+libraryDependencies += "com.anymindgroup" %% "zio-gc-auth" % "0.0.3"
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "<version>"
+libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "0.0.3"
 ```
 
 ## Usage examples
@@ -46,7 +46,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gc-auth" % "<version>"
 ```scala
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object AccessTokenByUser extends ZIOAppDefault:
   def run =
     (for {
       // choose the required token provider
@@ -88,7 +88,7 @@ object AccessTokenByUser extends ZIOAppDefault with HttpClientBackendPlatformSpe
 ```scala
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object SimpleTokenRetrieval extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object SimpleTokenRetrieval extends ZIOAppDefault:
   def run = for {
     receipt <- ZIO.scoped(TokenProvider.defaultAccessTokenProvider().flatMap(_.token)).provide(httpBackendLayer())
     _       <- printLine(s"got access token: ${receipt.token.token.value.mkString} at ${receipt.receivedAt}")
@@ -100,7 +100,7 @@ object SimpleTokenRetrieval extends ZIOAppDefault with HttpClientBackendPlatform
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object LookupComputeMetadataFirst extends ZIOAppDefault:
   def run =
     Credentials.computeServiceAccount.flatMap {
       case Some(c) => ZIO.some(c)
@@ -116,7 +116,7 @@ object LookupComputeMetadataFirst extends ZIOAppDefault with HttpClientBackendPl
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object PassSpecificUserAccount extends ZIOAppDefault:
   def run =
     TokenProvider
       .accessTokenProvider(
@@ -137,14 +137,13 @@ Example of setting the token provider log level to debug:
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object SetLogLevelToDebug extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object SetLogLevelToDebug extends ZIOAppDefault:
   def run =
     ZIO
       .logLevel(LogLevel.Debug)(TokenProvider.defaultAccessTokenProvider())
       .provideSome[Scope](httpBackendLayer())
 ```
 
-See all examples under [examples.scala](./examples/src/main/scala/examples.scala).  
 Run examples with sbt:
 ```shell
 sbt +examples/run

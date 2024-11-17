@@ -6,13 +6,12 @@ import java.util.Base64
 
 import scala.util.Try
 
-import zio.Config.Secret
 import zio.Duration
 import zio.json.*
 import zio.json.ast.{Json, JsonCursor}
 
 sealed trait Token {
-  def token: Secret
+  def token: String
   def expiresIn: Duration
 
   def expiresInOfPercent(percentage: Double): Duration =
@@ -21,24 +20,24 @@ sealed trait Token {
 
 object Token {
   val noop = new Token {
-    override val token: Secret       = Secret("")
+    override val token: String       = ""
     override val expiresIn: Duration = Duration.Infinity
   }
 }
 
-final case class AccessToken(token: Secret, expiresIn: Duration) extends Token
+final case class AccessToken(token: String, expiresIn: Duration) extends Token
 object AccessToken {
   def fromJsonString(json: String): Either[String, AccessToken] =
     json.fromJson[Json.Obj].flatMap { m =>
       (for {
-        t <- m.get(JsonCursor.field("access_token").isString).map(j => Secret(j.value))
+        t <- m.get(JsonCursor.field("access_token").isString).map(_.value)
         e <- m.get(JsonCursor.field("expires_in").isNumber).map(bd => Duration.fromSeconds(bd.value.longValue()))
       } yield AccessToken(token = t, expiresIn = e))
     }
 }
 
 final case class IdToken(
-  token: Secret,
+  token: String,
   issuedAt: Instant,
   expiresAt: Instant,
   head: Json,
@@ -65,7 +64,7 @@ object IdToken {
           exp <-
             payload.get("exp").get.asNumber.map(n => Instant.ofEpochSecond(n.value.longValue())).toRight("Missing exp")
         } yield IdToken(
-          token = Secret(token),
+          token = token,
           head = head,
           payload = payload,
           signature = signature,

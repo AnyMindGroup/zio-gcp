@@ -1,8 +1,8 @@
 package com.anymindgroup.gcp.auth
 
+import zio.Duration
 import zio.test.*
 import zio.test.Assertion.*
-import zio.{Config, Duration}
 
 object TokenSpec extends ZIOSpecDefault {
   override def spec: Spec[Any, Any] = suite("TokenSpec")(
@@ -13,7 +13,7 @@ object TokenSpec extends ZIOSpecDefault {
       for {
         _    <- assert(fromJsonRes)(isRight)
         token = fromJsonRes.toOption.get
-        _    <- assertTrue(token.token == Config.Secret("abc123"))
+        _    <- assertTrue(token.token == "abc123")
         _    <- assertTrue(token.expiresIn == Duration.fromSeconds(3599))
       } yield assertCompletes
     },
@@ -32,13 +32,13 @@ object TokenSpec extends ZIOSpecDefault {
       for {
         _    <- assert(fromStrRes)(isRight)
         token = fromStrRes.toOption.get
-        _    <- assertTrue(token.token == Config.Secret(tokenStr))
+        _    <- assertTrue(token.token == tokenStr)
         _    <- assertTrue(token.expiresIn == Duration.fromSeconds(100))
         _    <- assertTrue(token.signature == "-fM8Z-u88K5GGomqJxRCilYkjXZusY_Py6kdyzh1EAg")
       } yield assertCompletes
     },
     test("calculate expiration by percentage") {
-      val token = AccessToken(Config.Secret(""), Duration.fromSeconds(100))
+      val token = AccessToken("", Duration.fromSeconds(100))
 
       assertTrue(token.expiresInOfPercent(0.85) == Duration.fromSeconds(85)) &&
         assertTrue(token.expiresInOfPercent(0.009) == Duration.fromSeconds(1)) &&
