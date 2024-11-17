@@ -144,7 +144,6 @@ object SetLogLevelToDebug extends ZIOAppDefault:
       .provideSome[Scope](httpBackendLayer())
 ```
 
-See all examples under [examples.scala](docs/../examples/src/main/scala/examples.scala).  
 Run examples with sbt:
 ```shell
 sbt +examples/run
