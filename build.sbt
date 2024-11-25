@@ -180,7 +180,7 @@ def codegenTask(
   Def.task {
     val logger        = streams.value.log
     val outDir        = (Compile / sourceManaged).value
-    val targetBasePkg = s"${organization.value}.$apiName.$apiVersion"
+    val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
     val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
 
     if (!codegenBin.exists()) {
