@@ -257,7 +257,6 @@ lazy val codegen = (project in file("codegen"))
       "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-24-febeb4ed-20241124-2006-SNAPSHOT"
     ),
   )
-  .settings(stdSettings(enableScalafix = false))
   .enablePlugins(ScalaNativePlugin)
 
 lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
