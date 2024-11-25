@@ -1,4 +1,6 @@
 import zio.sbt.githubactions.{Job, Step}
+import scala.annotation.tailrec
+
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
 def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
@@ -12,23 +14,26 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
 
 lazy val _scala3 = "3.3.4"
 
-lazy val _scala213 = "2.13.15"
+lazy val _zioVersion = "2.1.13"
 
 lazy val sttpClient4Version = "4.0.0-M19"
 
+lazy val sttpClient3Version = "3.10.1"
+
 lazy val zioJsonVersion = "0.7.3"
+
+lazy val jsoniterVersion = "2.31.3"
 
 inThisBuild(
   List(
-    name               := "ZIO Google Cloud authentication",
-    zioVersion         := "2.1.12",
+    name               := "ZIO Google Cloud clients",
+    zioVersion         := _zioVersion,
     organization       := "com.anymindgroup",
     licenses           := Seq(License.Apache2),
     homepage           := Some(url("https://anymindgroup.com")),
     scala3             := _scala3,
-    scala213           := _scala213,
-    scalaVersion       := _scala213,
-    crossScalaVersions := Seq(_scala3, _scala213),
+    scalaVersion       := _scala3,
+    crossScalaVersions := Seq(_scala3),
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
@@ -62,13 +67,15 @@ lazy val commonSettings = List(
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Xfatal-warnings"),
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
   credentials += {
     for {
       username <- sys.env.get("ARTIFACT_REGISTRY_USERNAME")
       apiKey   <- sys.env.get("ARTIFACT_REGISTRY_PASSWORD")
     } yield Credentials("https://asia-maven.pkg.dev", "asia-maven.pkg.dev", username, apiKey)
   }.getOrElse(Credentials(Path.userHome / ".ivy2" / ".credentials")),
-) ++ scalafixSettings
+)
 
 val releaseSettings = List(
   publishTo := Some("AnyChat Maven" at "https://asia-maven.pkg.dev/anychat-staging/maven")
@@ -81,12 +88,158 @@ val noPublishSettings = List(
   publish / skip  := true,
 )
 
+def dependencyByConfig(httpSource: String, jsonCodec: String, arrayType: String): List[ModuleID] =
+  (httpSource match {
+    case "Sttp3" => List("com.softwaremill.sttp.client3" %% "core" % sttpClient3Version)
+    case "Sttp4" => List("com.softwaremill.sttp.client4" %% "core" % sttpClient4Version)
+    case _       => Nil
+  }) ::: (jsonCodec match {
+    case "Jsoniter" =>
+      List(
+        "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core"   % jsoniterVersion,
+        "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
+      )
+    case "ZioJson" => List("dev.zio" %% "zio-json" % zioJsonVersion)
+  }) ::: (arrayType match {
+    case "ZioChunk" => List("dev.zio" %% "zio" % _zioVersion)
+    case _          => Nil
+  })
+
+lazy val gcpClientsProjects: Seq[ProjectReference] = gcpClients.componentProjects.map(p => LocalProject(p.id))
+lazy val gcpClients: CompositeProject = new CompositeProject {
+  override def componentProjects: Seq[Project] =
+    for {
+      (apiName, apiVersion) <- Seq("aiplatform" -> "v1", "iamcredentials" -> "v1", "pubsub" -> "v1", "storage" -> "v1")
+      httpSource            <- Seq("Sttp4")
+      jsonCodec             <- Seq("Jsoniter")
+      arrayType             <- Seq("ZioChunk")
+      name                   = s"zio-gcp-$apiName".toLowerCase()
+      id                     = s"$name-$apiVersion".toLowerCase()
+    } yield {
+      Project
+        .apply(id = id, base = file(name) / apiVersion)
+        .settings(commonSettings)
+        .settings(
+          Compile / scalacOptions --= Seq("-Xfatal-warnings"),
+          Compile / sourceGenerators += codegenTask(
+            apiName = apiName,
+            apiVersion = apiVersion,
+            httpSource = httpSource,
+            jsonCodec = jsonCodec,
+            arrayType = arrayType,
+          ),
+          libraryDependencies ++= dependencyByConfig(
+            httpSource = httpSource,
+            jsonCodec = jsonCodec,
+            arrayType = arrayType,
+          ),
+        )
+    }
+}
+
+def codegenTask(
+  apiName: String,
+  apiVersion: String,
+  httpSource: String,
+  jsonCodec: String,
+  arrayType: String,
+) = Def.taskDyn {
+  val codegenBin = {
+    val binTarget = new File("codegen/target/bin")
+
+    def normalise(s: String) = s.toLowerCase.replaceAll("[^a-z0-9]+", "")
+    val props                = sys.props.toMap
+    val os = normalise(props.getOrElse("os.name", "")) match {
+      case p if p.startsWith("linux")                         => "linux"
+      case p if p.startsWith("windows")                       => "windows"
+      case p if p.startsWith("osx") || p.startsWith("macosx") => "macosx"
+      case _                                                  => "unknown"
+    }
+
+    val arch = (
+      normalise(props.getOrElse("os.arch", "")),
+      props.getOrElse("sun.arch.data.model", "64"),
+    ) match {
+      case ("amd64" | "x64" | "x8664" | "x86", bits) => s"x86_${bits}"
+      case ("aarch64" | "arm64", bits)               => s"aarch$bits"
+      case _                                         => "unknown"
+    }
+
+    val name = s"gcp-codegen-$arch-$os"
+
+    val codegenBin = binTarget / "bin" / name
+
+    val built = (codegen / Compile / nativeLinkReleaseFast).value
+
+    IO.copyFile(built, codegenBin)
+    sLog.value.info(s"Built codegen binary in $codegenBin")
+
+    codegenBin
+  }
+
+  Def.task {
+    val logger        = streams.value.log
+    val outDir        = (Compile / sourceManaged).value
+    val targetBasePkg = s"${organization.value}.$apiName.$apiVersion"
+    val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
+
+    if (!codegenBin.exists()) {
+      logger.error(s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCliBinary' first.")
+      List.empty[File]
+    } else {
+      @tailrec
+      def listFilesRec(dir: List[File], res: List[File]): List[File] =
+        dir match {
+          case x :: xs =>
+            val (dirs, files) = IO.listFiles(x).toList.partition(_.isDirectory())
+            listFilesRec(dirs ::: xs, files ::: res)
+          case Nil => res
+        }
+
+      if (outPkgDir.exists()) {
+        logger.info(s"Skipping code generation. Google Pubsub client sources found in ${outPkgDir.getPath()}.")
+        listFilesRec(List(outPkgDir), Nil)
+      } else {
+        import sys.process.*
+
+        val dialect = if (scalaVersion.value.startsWith("2")) "Scala2" else "Scala3"
+
+        logger.info(s"Generating Google client sources")
+
+        List(
+          s"${codegenBin.getPath()}",
+          s"--out-dir=$outDir",
+          s"--specs=codegen/src/main/resources/${apiName}_${apiVersion}.json",
+          s"--resources-pkg=$targetBasePkg.resources",
+          s"--schemas-pkg=$targetBasePkg.schemas",
+          s"--http-source=$httpSource",
+          s"--json-codec=$jsonCodec",
+          s"--array-type=$arrayType",
+          s"--dialect=$dialect",
+        ).mkString(" ") ! ProcessLogger(_ => ()) // add logs when needed
+
+        val files = listFilesRec(List(outPkgDir), Nil)
+        files.foreach(f => logger.success(s"Generated ${f.getPath}"))
+
+        // formatting (may need to find another way...)
+        logger.info(s"Formatting sources in $outDir...")
+        s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
+        s"rm -rf $outDir/.scala-build".!!
+        logger.success("Formatting done")
+
+        files
+      }
+    }
+  }
+}
+
 lazy val root =
   (project in file("."))
     .aggregate(
       zioGcpAuth.jvm,
       zioGcpAuth.native,
     )
+    .aggregate(gcpClientsProjects*)
     .settings(commonSettings)
     .settings(noPublishSettings)
     .settings(
@@ -96,9 +249,20 @@ lazy val root =
       }
     )
 
+lazy val codegen = (project in file("codegen"))
+  .settings(
+    scalaVersion       := _scala3,
+    crossScalaVersions := Seq(_scala3),
+    libraryDependencies ++= Seq(
+      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-24-febeb4ed-20241124-2006-SNAPSHOT"
+    ),
+  )
+  .settings(stdSettings(enableScalafix = false))
+  .enablePlugins(ScalaNativePlugin)
+
 lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
-  .in(file("zio-gc-auth"))
-  .settings(moduleName := "zio-gc-auth")
+  .in(file("zio-gcp-auth"))
+  .settings(moduleName := "zio-gcp-auth")
   .settings(commonSettings)
   .settings(releaseSettings)
   .settings(
@@ -134,9 +298,9 @@ lazy val examples = (project in file("examples"))
   )
 
 lazy val docs = project
-  .in(file("zio-gc-auth-docs"))
+  .in(file("zio-gcp-docs"))
   .settings(
-    moduleName := "zio-gc-auth-docs",
+    moduleName := "zio-gcp-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
     projectName                                := "Google Cloud authentication over HTTP",
