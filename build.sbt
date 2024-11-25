@@ -119,6 +119,7 @@ lazy val gcpClients: CompositeProject = new CompositeProject {
       Project
         .apply(id = id, base = file(name) / apiVersion)
         .settings(commonSettings)
+        .settings(releaseSettings)
         .settings(
           Compile / scalacOptions --= Seq("-Xfatal-warnings"),
           Compile / sourceGenerators += codegenTask(
