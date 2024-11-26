@@ -255,7 +255,7 @@ lazy val codegen = (project in file("codegen"))
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     libraryDependencies ++= Seq(
-      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-24-febeb4ed-20241124-2006-SNAPSHOT"
+      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-26-547f490f-SNAPSHOT"
     ),
   )
   .enablePlugins(ScalaNativePlugin)

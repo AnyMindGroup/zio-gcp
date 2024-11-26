@@ -7,7 +7,7 @@ addSbtPlugin("dev.zio"        % "zio-sbt-ci"        % zioSbtVersion exclude ("or
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype"      % "3.12.2")
 addSbtPlugin("dev.zio"        % "zio-sbt-ecosystem" % zioSbtVersion)
 
-addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.5")
+addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.6")
 
 addSbtPlugin("org.typelevel" % "sbt-tpolecat" % "0.5.2")
 
