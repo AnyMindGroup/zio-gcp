@@ -1,3 +1,6 @@
+import scalanativecrossproject.NativePlatform
+import sbtcrossproject.JVMPlatform
+import sbtcrossproject.CrossProject
 import zio.sbt.githubactions.{Job, Step}
 import scala.annotation.tailrec
 
@@ -40,9 +43,6 @@ inThisBuild(
     ciTargetJavaVersions := Seq("17", "21"),
     scalafmt             := true,
     scalafmtSbtCheck     := true,
-    scalafixDependencies ++= List(
-      "com.github.vovapolu" %% "scaluzzi" % "0.1.23"
-    ),
   )
 )
 
@@ -108,7 +108,7 @@ def dependencyByConfig(httpSource: String, jsonCodec: String, arrayType: String)
 lazy val gcpClientsProjects: Seq[ProjectReference] = gcpClients.componentProjects.map(p => LocalProject(p.id))
 lazy val gcpClients: CompositeProject = new CompositeProject {
   override def componentProjects: Seq[Project] =
-    for {
+    (for {
       (apiName, apiVersion) <- Seq("aiplatform" -> "v1", "iamcredentials" -> "v1", "pubsub" -> "v1", "storage" -> "v1")
       httpSource            <- Seq("Sttp4")
       jsonCodec             <- Seq("Jsoniter")
@@ -116,8 +116,8 @@ lazy val gcpClients: CompositeProject = new CompositeProject {
       name                   = s"zio-gcp-$apiName".toLowerCase()
       id                     = s"$name-$apiVersion".toLowerCase()
     } yield {
-      Project
-        .apply(id = id, base = file(name) / apiVersion)
+      CrossProject
+        .apply(id = id, base = file(name) / apiVersion)(JVMPlatform, NativePlatform)
         .settings(commonSettings)
         .settings(releaseSettings)
         .settings(
@@ -135,7 +135,8 @@ lazy val gcpClients: CompositeProject = new CompositeProject {
             arrayType = arrayType,
           ),
         )
-    }
+        .componentProjects
+    }).flatten
 }
 
 def codegenTask(
@@ -255,7 +256,7 @@ lazy val codegen = (project in file("codegen"))
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     libraryDependencies ++= Seq(
-      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-26-547f490f-SNAPSHOT"
+      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-30-4d4c67fd-SNAPSHOT"
     ),
   )
   .enablePlugins(ScalaNativePlugin)
