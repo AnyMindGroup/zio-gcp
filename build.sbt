@@ -88,23 +88,6 @@ val noPublishSettings = List(
   publish / skip  := true,
 )
 
-def dependencyByConfig(httpSource: String, jsonCodec: String, arrayType: String): List[ModuleID] =
-  (httpSource match {
-    case "Sttp3" => List("com.softwaremill.sttp.client3" %% "core" % sttpClient3Version)
-    case "Sttp4" => List("com.softwaremill.sttp.client4" %% "core" % sttpClient4Version)
-    case _       => Nil
-  }) ::: (jsonCodec match {
-    case "Jsoniter" =>
-      List(
-        "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-core"   % jsoniterVersion,
-        "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
-      )
-    case "ZioJson" => List("dev.zio" %% "zio-json" % zioJsonVersion)
-  }) ::: (arrayType match {
-    case "ZioChunk" => List("dev.zio" %% "zio" % _zioVersion)
-    case _          => Nil
-  })
-
 lazy val gcpClientsProjects: Seq[ProjectReference] = gcpClients.componentProjects.map(p => LocalProject(p.id))
 lazy val gcpClients: CompositeProject = new CompositeProject {
   override def componentProjects: Seq[Project] =
@@ -129,14 +112,14 @@ lazy val gcpClients: CompositeProject = new CompositeProject {
             jsonCodec = jsonCodec,
             arrayType = arrayType,
           ),
-          libraryDependencies ++= dependencyByConfig(
-            httpSource = httpSource,
-            jsonCodec = jsonCodec,
-            arrayType = arrayType,
+          libraryDependencies ++= Seq(
+            "com.softwaremill.sttp.client4"         %%% "core"                  % sttpClient4Version,
+            "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-core"   % jsoniterVersion,
+            "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
+            "dev.zio"                               %%% "zio"                   % _zioVersion,
           ),
         )
-        .componentProjects
-    }).flatten
+    }).flatMap(_.componentProjects)
 }
 
 def codegenTask(
