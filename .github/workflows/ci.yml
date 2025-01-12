@@ -38,6 +38,8 @@ jobs:
         check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
+      with:
+        apps: sbt
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Check all code compiles
@@ -92,6 +94,8 @@ jobs:
         check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
+      with:
+        apps: sbt
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Git Checkout

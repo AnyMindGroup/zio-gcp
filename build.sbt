@@ -3,6 +3,7 @@ import sbtcrossproject.JVMPlatform
 import sbtcrossproject.CrossProject
 import zio.sbt.githubactions.{Job, Step, ActionRef}
 import scala.annotation.tailrec
+import _root_.io.circe.Json
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
@@ -22,6 +23,7 @@ def updatedBuildSetupStep(step: Step) = step match {
     Step.SingleStep(
       name = "Setup build tools",
       uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
+      parameters = Map("apps" -> Json.fromString("sbt")),
     )
   case s: Step.SingleStep if s.name == "Test" =>
     s.copy(run = Some("sbt buildCodegenBin +test"))
