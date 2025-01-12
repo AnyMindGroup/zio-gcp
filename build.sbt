@@ -38,7 +38,7 @@ inThisBuild(
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
-    ciTargetJavaVersions := Seq("21"),
+    ciTargetJavaVersions := Seq("17", "21"),
     scalafmt             := true,
     scalafmtSbtCheck     := true,
   )
@@ -205,10 +205,14 @@ def codegenTask(
         files.foreach(f => logger.success(s"Generated ${f.getPath}"))
 
         // formatting (may need to find another way...)
-        logger.info(s"Formatting sources in $outDir...")
-        s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
-        s"rm -rf $outDir/.scala-build".!!
-        logger.success("Formatting done")
+        if (sys.env.get("CI").isEmpty) { // skip formatting in CI
+          logger.info(s"Formatting sources in $outDir...")
+          s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
+          s"rm -rf $outDir/.scala-build".!!
+          logger.success("Formatting done")
+        } else {
+          logger.info("Skipped formatting generated code")
+        }
 
         files
       }
@@ -288,7 +292,7 @@ lazy val docs = project
     moduleName := "zio-gcp-docs",
     scalacOptions -= "-Yno-imports",
     scalacOptions -= "-Xfatal-warnings",
-    projectName                                := "Google Cloud authentication over HTTP",
+    projectName                                := "Google Cloud clients for ZIO",
     mainModuleName                             := (zioGcpAuth.jvm / moduleName).value,
     projectStage                               := ProjectStage.Development,
     ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioGcpAuth.jvm),
