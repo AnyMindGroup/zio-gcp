@@ -253,11 +253,8 @@ lazy val codegen = (project in file("codegen"))
   .settings(
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
-    resolvers ++= Seq(
-      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-    ),
     libraryDependencies ++= Seq(
-      "dev.rolang" %%% "gcp-codegen-cli" % "0.0.0-30-39c534dc-SNAPSHOT"
+      "dev.rolang" %%% "gcp-codegen-cli" % "0.0.1"
     ),
   )
   .enablePlugins(ScalaNativePlugin)
