@@ -1,4 +1,4 @@
-val zioSbtVersion = "0.4.0-alpha.28"
+val zioSbtVersion = "0.4.0-alpha.30"
 addSbtPlugin("dev.zio" % "zio-sbt-website" % zioSbtVersion)
 
 // need sbt-sonatype version which supports new Sonatype Central API added in v3.11.0 https://github.com/xerial/sbt-sonatype/releases/tag/v3.11.0

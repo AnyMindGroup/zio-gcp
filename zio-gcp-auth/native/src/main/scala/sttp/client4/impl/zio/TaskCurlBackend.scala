@@ -87,8 +87,8 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
           curl.option(Verbose, parameter = true)
         }
 
-        if (request.tags.nonEmpty) {
-          ZIO.fail(new UnsupportedOperationException("Tags are not supported"))
+        if (request.attributes.nonEmpty) {
+          ZIO.fail(new UnsupportedOperationException("Attributes are not supported"))
         } else {
           val reqHeaders = request.headers
           if (reqHeaders.nonEmpty) {

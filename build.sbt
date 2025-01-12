@@ -17,15 +17,15 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
 
 lazy val _scala3 = "3.3.4"
 
-lazy val _zioVersion = "2.1.13"
+lazy val _zioVersion = "2.1.14"
 
-lazy val sttpClient4Version = "4.0.0-M19"
+lazy val sttpClient4Version = "4.0.0-M22"
 
-lazy val sttpClient3Version = "3.10.1"
+lazy val sttpClient3Version = "3.10.2"
 
 lazy val zioJsonVersion = "0.7.3"
 
-lazy val jsoniterVersion = "2.31.3"
+lazy val jsoniterVersion = "2.33.0"
 
 inThisBuild(
   List(
@@ -40,7 +40,7 @@ inThisBuild(
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
-    ciTargetJavaVersions := Seq("17", "21"),
+    ciTargetJavaVersions := Seq("21"),
     scalafmt             := true,
     scalafmtSbtCheck     := true,
   )
@@ -239,7 +239,7 @@ lazy val codegen = (project in file("codegen"))
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     libraryDependencies ++= Seq(
-      "com.anymindgroup" %%% "gcp-codegen-cli" % "0.0.0-30-4d4c67fd-SNAPSHOT"
+      "dev.rolang" %%% "gcp-codegen-cli" % "0.0.0-30-39c534dc-SNAPSHOT"
     ),
   )
   .enablePlugins(ScalaNativePlugin)
