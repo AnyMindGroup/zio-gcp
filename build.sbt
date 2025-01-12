@@ -75,6 +75,9 @@ lazy val commonSettings = List(
       apiKey   <- sys.env.get("ARTIFACT_REGISTRY_PASSWORD")
     } yield Credentials("https://asia-maven.pkg.dev", "asia-maven.pkg.dev", username, apiKey)
   }.getOrElse(Credentials(Path.userHome / ".ivy2" / ".credentials")),
+  resolvers ++= Seq(
+    "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+  ),
 )
 
 val releaseSettings = List(
