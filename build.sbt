@@ -75,9 +75,6 @@ lazy val commonSettings = List(
       apiKey   <- sys.env.get("ARTIFACT_REGISTRY_PASSWORD")
     } yield Credentials("https://asia-maven.pkg.dev", "asia-maven.pkg.dev", username, apiKey)
   }.getOrElse(Credentials(Path.userHome / ".ivy2" / ".credentials")),
-  resolvers ++= Seq(
-    "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-  ),
 )
 
 val releaseSettings = List(
@@ -241,6 +238,9 @@ lazy val codegen = (project in file("codegen"))
   .settings(
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
+    resolvers ++= Seq(
+      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+    ),
     libraryDependencies ++= Seq(
       "dev.rolang" %%% "gcp-codegen-cli" % "0.0.0-30-39c534dc-SNAPSHOT"
     ),
