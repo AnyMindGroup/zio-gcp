@@ -36,12 +36,12 @@ jobs:
         distribution: corretto
         java-version: '17'
         check-latest: true
-    - name: Setup SBT
-      uses: sbt/setup-sbt@v1
+    - name: Setup build tools
+      uses: VirtusLab/scala-cli-setup@main
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Check all code compiles
-      run: sbt +Test/compile
+      run: sbt buildCodegenBin +Test/compile
     - name: Check artifacts build process
       run: sbt +publishLocal
     - name: Check website build process
@@ -90,8 +90,8 @@ jobs:
         distribution: corretto
         java-version: ${{ matrix.java }}
         check-latest: true
-    - name: Setup SBT
-      uses: sbt/setup-sbt@v1
+    - name: Setup build tools
+      uses: VirtusLab/scala-cli-setup@main
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Git Checkout
@@ -99,7 +99,7 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Test
-      run: sbt +test
+      run: sbt buildCodegenBin +test
   update-readme:
     name: Update README
     runs-on: ubuntu-latest

@@ -1,7 +1,7 @@
 import scalanativecrossproject.NativePlatform
 import sbtcrossproject.JVMPlatform
 import sbtcrossproject.CrossProject
-import zio.sbt.githubactions.{Job, Step}
+import zio.sbt.githubactions.{Job, Step, ActionRef}
 import scala.annotation.tailrec
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
@@ -12,8 +12,23 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
       name = "Install libuv",
       run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev"),
     )
-  case s => s
+  case s => updatedBuildSetupStep(s)
 })
+
+def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.map(updatedBuildSetupStep))
+
+def updatedBuildSetupStep(step: Step) = step match {
+  case s: Step.SingleStep if s.name.contains("Setup SBT") =>
+    Step.SingleStep(
+      name = "Setup build tools",
+      uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
+    )
+  case s: Step.SingleStep if s.name == "Test" =>
+    s.copy(run = Some("sbt buildCodegenBin +test"))
+  case s: Step.SingleStep if s.name == "Check all code compiles" =>
+    s.copy(run = Some("sbt buildCodegenBin +Test/compile"))
+  case s => s
+}
 
 lazy val _scala3 = "3.3.4"
 
@@ -37,6 +52,7 @@ inThisBuild(
     crossScalaVersions := Seq(_scala3),
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
+    ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
     ciTargetJavaVersions := Seq("17", "21"),
     scalafmt             := true,
@@ -120,102 +136,97 @@ lazy val gcpClients: CompositeProject = new CompositeProject {
     }).flatMap(_.componentProjects)
 }
 
+lazy val cliBinFile: File = {
+  val binTarget = new File("codegen/target/bin")
+
+  def normalise(s: String) = s.toLowerCase.replaceAll("[^a-z0-9]+", "")
+  val props                = sys.props.toMap
+  val os = normalise(props.getOrElse("os.name", "")) match {
+    case p if p.startsWith("linux")                         => "linux"
+    case p if p.startsWith("windows")                       => "windows"
+    case p if p.startsWith("osx") || p.startsWith("macosx") => "macosx"
+    case _                                                  => "unknown"
+  }
+
+  val arch = (
+    normalise(props.getOrElse("os.arch", "")),
+    props.getOrElse("sun.arch.data.model", "64"),
+  ) match {
+    case ("amd64" | "x64" | "x8664" | "x86", bits) => s"x86_${bits}"
+    case ("aarch64" | "arm64", bits)               => s"aarch$bits"
+    case _                                         => "unknown"
+  }
+
+  binTarget / "bin" / s"gcp-codegen-$arch-$os"
+}
+
+lazy val buildCodegenBin = taskKey[File]("")
+buildCodegenBin := {
+  val built   = (codegen / Compile / nativeLinkReleaseFast).value
+  val destZip = new File(s"${cliBinFile.getPath()}.zip")
+
+  IO.copyFile(built, cliBinFile)
+  cliBinFile
+}
+
 def codegenTask(
   apiName: String,
   apiVersion: String,
   httpSource: String,
   jsonCodec: String,
   arrayType: String,
-) = Def.taskDyn {
-  val codegenBin = {
-    val binTarget = new File("codegen/target/bin")
+) = Def.task {
+  val logger        = streams.value.log
+  val codegenBin    = cliBinFile
+  val outDir        = (Compile / sourceManaged).value
+  val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
+  val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
 
-    def normalise(s: String) = s.toLowerCase.replaceAll("[^a-z0-9]+", "")
-    val props                = sys.props.toMap
-    val os = normalise(props.getOrElse("os.name", "")) match {
-      case p if p.startsWith("linux")                         => "linux"
-      case p if p.startsWith("windows")                       => "windows"
-      case p if p.startsWith("osx") || p.startsWith("macosx") => "macosx"
-      case _                                                  => "unknown"
-    }
-
-    val arch = (
-      normalise(props.getOrElse("os.arch", "")),
-      props.getOrElse("sun.arch.data.model", "64"),
-    ) match {
-      case ("amd64" | "x64" | "x8664" | "x86", bits) => s"x86_${bits}"
-      case ("aarch64" | "arm64", bits)               => s"aarch$bits"
-      case _                                         => "unknown"
-    }
-
-    val name = s"gcp-codegen-$arch-$os"
-
-    val codegenBin = binTarget / "bin" / name
-
-    val built = (codegen / Compile / nativeLinkReleaseFast).value
-
-    IO.copyFile(built, codegenBin)
-    sLog.value.info(s"Built codegen binary in $codegenBin")
-
-    codegenBin
-  }
-
-  Def.task {
-    val logger        = streams.value.log
-    val outDir        = (Compile / sourceManaged).value
-    val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
-    val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
-
-    if (!codegenBin.exists()) {
-      logger.error(s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCliBinary' first.")
-      List.empty[File]
-    } else {
-      @tailrec
-      def listFilesRec(dir: List[File], res: List[File]): List[File] =
-        dir match {
-          case x :: xs =>
-            val (dirs, files) = IO.listFiles(x).toList.partition(_.isDirectory())
-            listFilesRec(dirs ::: xs, files ::: res)
-          case Nil => res
-        }
-
-      if (outPkgDir.exists()) {
-        logger.info(s"Skipping code generation. Google Pubsub client sources found in ${outPkgDir.getPath()}.")
-        listFilesRec(List(outPkgDir), Nil)
-      } else {
-        import sys.process.*
-
-        val dialect = if (scalaVersion.value.startsWith("2")) "Scala2" else "Scala3"
-
-        logger.info(s"Generating Google client sources")
-
-        List(
-          s"${codegenBin.getPath()}",
-          s"--out-dir=$outDir",
-          s"--specs=codegen/src/main/resources/${apiName}_${apiVersion}.json",
-          s"--resources-pkg=$targetBasePkg.resources",
-          s"--schemas-pkg=$targetBasePkg.schemas",
-          s"--http-source=$httpSource",
-          s"--json-codec=$jsonCodec",
-          s"--array-type=$arrayType",
-          s"--dialect=$dialect",
-        ).mkString(" ") ! ProcessLogger(_ => ()) // add logs when needed
-
-        val files = listFilesRec(List(outPkgDir), Nil)
-        files.foreach(f => logger.success(s"Generated ${f.getPath}"))
-
-        // formatting (may need to find another way...)
-        if (sys.env.get("CI").isEmpty) { // skip formatting in CI
-          logger.info(s"Formatting sources in $outDir...")
-          s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
-          s"rm -rf $outDir/.scala-build".!!
-          logger.success("Formatting done")
-        } else {
-          logger.info("Skipped formatting generated code")
-        }
-
-        files
+  if (!codegenBin.exists()) {
+    logger.error(s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCodegenBin' first.")
+    List.empty[File]
+  } else {
+    @tailrec
+    def listFilesRec(dir: List[File], res: List[File]): List[File] =
+      dir match {
+        case x :: xs =>
+          val (dirs, files) = IO.listFiles(x).toList.partition(_.isDirectory())
+          listFilesRec(dirs ::: xs, files ::: res)
+        case Nil => res
       }
+
+    if (outPkgDir.exists()) {
+      logger.info(s"Skipping code generation. Google Pubsub client sources found in ${outPkgDir.getPath()}.")
+      listFilesRec(List(outPkgDir), Nil)
+    } else {
+      import sys.process.*
+
+      val dialect = if (scalaVersion.value.startsWith("2")) "Scala2" else "Scala3"
+
+      logger.info(s"Generating Google client sources")
+
+      List(
+        s"${codegenBin.getPath()}",
+        s"--out-dir=$outDir",
+        s"--specs=codegen/src/main/resources/${apiName}_${apiVersion}.json",
+        s"--resources-pkg=$targetBasePkg.resources",
+        s"--schemas-pkg=$targetBasePkg.schemas",
+        s"--http-source=$httpSource",
+        s"--json-codec=$jsonCodec",
+        s"--array-type=$arrayType",
+        s"--dialect=$dialect",
+      ).mkString(" ") ! ProcessLogger(_ => ()) // add logs when needed
+
+      val files = listFilesRec(List(outPkgDir), Nil)
+      files.foreach(f => logger.success(s"Generated ${f.getPath}"))
+
+      // formatting (may need to find another way...)
+      logger.info(s"Formatting sources in $outDir...")
+      s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
+      s"rm -rf $outDir/.scala-build".!!
+      logger.success("Formatting done")
+
+      files
     }
   }
 }
