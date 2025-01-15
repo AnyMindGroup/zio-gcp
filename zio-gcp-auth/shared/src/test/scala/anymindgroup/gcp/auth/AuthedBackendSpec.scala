@@ -11,7 +11,7 @@ import zio.test.{TestEnvironment, ZIOSpecDefault, *}
 import zio.{Duration, Scope, Task, UIO, ULayer, ZIO, ZLayer}
 
 object AuthedBackendSpec extends ZIOSpecDefault with HttpClientBackendPlatformSpecific {
-  override def spec: Spec[TestEnvironment with Scope, Any] = suite("AuthedBackendSpec") {
+  override def spec: Spec[TestEnvironment & Scope, Any] = suite("AuthedBackendSpec") {
     test("add token to request") {
       for {
         res <- ZIO.serviceWithZIO[GenericBackend[Task, Any]](_.send(basicRequest.get(uri"http://example.com")))

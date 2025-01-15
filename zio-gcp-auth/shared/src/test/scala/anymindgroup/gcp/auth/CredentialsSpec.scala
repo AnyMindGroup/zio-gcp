@@ -30,7 +30,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
     }.provideLayer(metadataStubLayer),
     test("read credentials from default directory") {
       for {
-        _     <- TestSystem.putProperty("user.home", homeDir.toString())
+        _     <- TestSystem.putProperty("user.home", resourcesDir.toString())
         creds <- Credentials.auto
         _ <- assertTrue(creds match {
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
@@ -41,8 +41,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
     test("read credentials from path set by GOOGLE_APPLICATION_CREDENTIALS") {
       val userCredsPath =
         Path
-          .of("zio-gc-auth/shared/src/test/resources/application_default_credentials.json")
-          .toAbsolutePath()
+          .of(resourcesDir.toString(), "application_default_credentials.json")
 
       for {
         _         <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", userCredsPath.toString())
@@ -51,7 +50,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
                case _                                                                                   => false
              })
-        serviceCredsPath = Path.of("zio-gc-auth/shared/src/test/resources/service_account.json").toAbsolutePath()
+        serviceCredsPath = Path.of(resourcesDir.toString(), "service_account.json").toAbsolutePath()
         _               <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", serviceCredsPath.toString())
         serviceCreds    <- Credentials.auto
         _ <- assertTrue(serviceCreds match {
@@ -62,7 +61,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
     }.provideLayer(defaultTestLayer),
   )
 
-  val homeDir: Path = Path.of("zio-gc-auth/shared/src/test/resources/").toAbsolutePath()
+  val resourcesDir: Path = Path.of("zio-gcp-auth", "shared", "src", "test", "resources").toAbsolutePath()
 
   val metadataStubBackend: GenericBackend[Task, Any] =
     BackendStub[Task](new RIOMonadAsyncError[Any])
