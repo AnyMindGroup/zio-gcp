@@ -7,8 +7,6 @@ import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
 import sttp.model.*
 
-import zio.json.*
-import zio.json.ast.Json
 import zio.test.*
 import zio.test.Assertion.*
 import zio.{Config, Ref, Schedule, Scope, Task, ULayer, ZIO, ZLayer, ZLogger}
@@ -140,11 +138,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
         r.method == Method.POST && r.uri.toString() == "https://oauth2.googleapis.com/token" &&
         (r.body match {
           case StringBody(s, _, _) if !s.contains(failUserAccount.clientId) =>
-            s.fromJson[Json.Obj] match {
-              case Left(_) => false
-              case Right(obj) =>
-                Set("grant_type", "refresh_token", "client_id", "client_secret").exists(obj.keys.contains(_))
-            }
+            Set("grant_type", "refresh_token", "client_id", "client_secret").exists(s.contains(_))
           case _ => false
         })
       }

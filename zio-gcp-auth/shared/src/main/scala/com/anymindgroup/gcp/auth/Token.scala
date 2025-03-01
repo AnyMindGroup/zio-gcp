@@ -4,11 +4,10 @@ import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.Base64
 
-import scala.util.Try
+import com.github.plokhotnyuk.jsoniter_scala.core.*
+import com.github.plokhotnyuk.jsoniter_scala.macros.*
 
 import zio.Duration
-import zio.json.*
-import zio.json.ast.{Json, JsonCursor}
 
 sealed trait Token {
   def token: String
@@ -19,7 +18,7 @@ sealed trait Token {
 }
 
 object Token {
-  val noop = new Token {
+  val noop: Token = new Token {
     override val token: String       = ""
     override val expiresIn: Duration = Duration.Infinity
   }
@@ -27,50 +26,54 @@ object Token {
 
 final case class AccessToken(token: String, expiresIn: Duration) extends Token
 object AccessToken {
+  private given JsonValueCodec[Duration] = new JsonValueCodec[Duration] {
+    def decodeValue(in: JsonReader, default: Duration): Duration = Duration.fromSeconds(in.readLong())
+    def encodeValue(x: Duration, out: JsonWriter): Unit          = out.writeVal(x.getSeconds())
+    // scalafix:off DisableSyntax.null
+    val nullValue: Duration = null.asInstanceOf[Duration]
+    // scalafix:on DisableSyntax.null
+  }
+
+  private given jsonCodec(using JsonValueCodec[Duration]): JsonValueCodec[AccessToken] =
+    JsonCodecMaker.make(CodecMakerConfig.withFieldNameMapper {
+      case "token"     => "access_token"
+      case "expiresIn" => "expires_in"
+    })
+
   def fromJsonString(json: String): Either[String, AccessToken] =
-    json.fromJson[Json.Obj].flatMap { m =>
-      (for {
-        t <- m.get(JsonCursor.field("access_token").isString).map(_.value)
-        e <- m.get(JsonCursor.field("expires_in").isNumber).map(bd => Duration.fromSeconds(bd.value.longValue()))
-      } yield AccessToken(token = t, expiresIn = e))
-    }
+    try Right(readFromString[AccessToken](json))
+    catch case e: Throwable => Left(e.getMessage())
 }
 
+// could potentially include more data if needed like structured head and payload
 final case class IdToken(
   token: String,
   issuedAt: Instant,
   expiresAt: Instant,
-  head: Json,
-  payload: Json,
   signature: String,
 ) extends Token {
   def expiresIn: Duration = Duration.fromSeconds(expiresAt.getEpochSecond - issuedAt.getEpochSecond)
 }
 
 object IdToken {
-  private def base64ToJson(v: String): Either[String, Json.Obj] =
-    Try(new String(Base64.getDecoder.decode(v), StandardCharsets.UTF_8)).toEither.left
-      .map(_.getMessage())
-      .flatMap(_.fromJson[Json.Obj])
+  private case class Payload(iat: Long, exp: Long)
+  private object Payload:
+    given jsonCodec: JsonValueCodec[Payload] = JsonCodecMaker.make[Payload]
+
+  private def base64ToPayload(v: String): Either[String, Payload] =
+    try Right(readFromString[Payload](String(Base64.getDecoder.decode(v), StandardCharsets.UTF_8)))
+    catch case e: Throwable => Left(e.getMessage())
 
   def fromString(token: String): Either[String, IdToken] =
     token.split('.') match {
-      case Array(h, p, signature, _*) =>
-        for {
-          head    <- base64ToJson(h)
-          payload <- base64ToJson(p)
-          iat <-
-            payload.get("iat").get.asNumber.map(n => Instant.ofEpochSecond(n.value.longValue())).toRight("Missing iat")
-          exp <-
-            payload.get("exp").get.asNumber.map(n => Instant.ofEpochSecond(n.value.longValue())).toRight("Missing exp")
-        } yield IdToken(
-          token = token,
-          head = head,
-          payload = payload,
-          signature = signature,
-          issuedAt = iat,
-          expiresAt = exp,
-        )
+      case Array(_, p, signature, _*) =>
+        base64ToPayload(p).map: payload =>
+          IdToken(
+            token = token,
+            signature = signature,
+            issuedAt = Instant.ofEpochSecond(payload.iat),
+            expiresAt = Instant.ofEpochSecond(payload.exp),
+          )
       case _ => Left(s"Ivalid identity token: $token")
     }
 }

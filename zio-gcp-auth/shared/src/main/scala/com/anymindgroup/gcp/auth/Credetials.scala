@@ -3,12 +3,12 @@ package com.anymindgroup.gcp.auth
 import java.nio.file.Path
 
 import com.anymindgroup.http.*
+import com.github.plokhotnyuk.jsoniter_scala.core.*
+import com.github.plokhotnyuk.jsoniter_scala.macros.*
 import sttp.client4.GenericBackend
 import sttp.model.*
 
 import zio.Config.Secret
-import zio.json.*
-import zio.json.ast.{Json, JsonCursor}
 import zio.{IO, Task, ZIO}
 
 sealed abstract class CredentialsException(cause: Throwable) extends Throwable(cause)
@@ -47,6 +47,14 @@ object Credentials {
       baseReq.get(identity.addParam("audience", audience)).mapResponse(_.flatMap(IdToken.fromString))
   }
 
+  private enum ApplicationCredentials:
+    case authorized_user(refresh_token: String, client_id: String, client_secret: String)
+    case service_account(client_email: String, private_key: String)
+  private object ApplicationCredentials:
+    given JsonValueCodec[ApplicationCredentials] =
+      JsonCodecMaker.make:
+        CodecMakerConfig.withRequireDiscriminatorFirst(false).withDiscriminatorFieldName(Some("type"))
+
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =
     ZIO.systemWith { system =>
       system
@@ -68,7 +76,7 @@ object Credentials {
       case e: Throwable                          => CredentialsException.Unexpected(e)
     }
 
-  private def findApplicationCredentialsJson(p: Path): IO[CredentialsException, Option[Json.Obj]] =
+  private def findApplicationCredentials(p: Path): IO[CredentialsException, Option[ApplicationCredentials]] =
     ZIO
       .readFile(p)
       .map(Some(_))
@@ -79,45 +87,32 @@ object Credentials {
       .flatMap {
         case Some(c) =>
           ZIO
-            .fromEither(c.fromJson[Json.Obj])
-            .mapError(err => CredentialsException.InvalidCredentialsFile(err))
+            .attempt(readFromString[ApplicationCredentials](c))
+            .mapError(err => CredentialsException.InvalidCredentialsFile(err.getMessage()))
             .map(Some(_))
         case _ => ZIO.none
       }
-
-  private def credentialsFromJson(json: Json.Obj): Either[String, CredentialsKey] =
-    json.get(JsonCursor.field("type").isString).map(_.value) match {
-      case Right("authorized_user") =>
-        for {
-          refreshToken <- json.get(JsonCursor.field("refresh_token").isString).map(_.value)
-          clientId     <- json.get(JsonCursor.field("client_id").isString).map(_.value)
-          clientSecret <- json.get(JsonCursor.field("client_secret").isString).map(j => Secret(j.value))
-        } yield Credentials.UserAccount(refreshToken = refreshToken, clientId = clientId, clientSecret = clientSecret)
-      case Right("service_account") =>
-        for {
-          email      <- json.get(JsonCursor.field("client_email").isString).map(_.value)
-          privateKey <- json.get(JsonCursor.field("private_key").isString).map(j => Secret(j.value))
-        } yield Credentials.ServiceAccountKey(email = email, privateKey = privateKey)
-      case Right(value) => Left(s"Unknown credentials key type: $value")
-      case Left(err)    => Left(s"Missing type in credentials file: $err")
-    }
 
   def applicationCredentials: IO[CredentialsException, Option[CredentialsKey]] = for {
     path <- applicationCredentialsPath.tapSome { case Some(p) =>
               ZIO.log(s"Attempting to read application credentials from $p")
             }
-    json <- path match {
-              case Some(p) => findApplicationCredentialsJson(p)
-              case None    => ZIO.none
-            }
-    creds <- json match {
-               case Some(j) =>
-                 ZIO
-                   .fromEither(credentialsFromJson(j))
-                   .map(Some(_))
-                   .mapError(e => CredentialsException.InvalidCredentialsFile(e))
+    creds <- path match
+               case Some(p) =>
+                 findApplicationCredentials(p).map:
+                   _.map:
+                     case ApplicationCredentials.authorized_user(refreshToken, clientId, secret) =>
+                       Credentials.UserAccount(
+                         refreshToken = refreshToken,
+                         clientId = clientId,
+                         clientSecret = Secret(secret),
+                       )
+                     case ApplicationCredentials.service_account(email, key) =>
+                       Credentials.ServiceAccountKey(
+                         email = email,
+                         privateKey = Secret(key),
+                       )
                case None => ZIO.none
-             }
   } yield creds
 
   def computeServiceAccount(
