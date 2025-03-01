@@ -1,8 +1,11 @@
+//> using scala 3.6.3
+//> using dep com.anymindgroup::zio-gcp-auth::0.0.4
+
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object AccessTokenByUser extends ZIOAppDefault:
   def run =
-    (for {
+    for
       // choose the required token provider
       //
       // use TokenProvider[AccessToken] if the application doesn't require identity information
@@ -12,33 +15,33 @@ object AccessTokenByUser extends ZIOAppDefault:
       // see https://cloud.google.com/docs/authentication/token-types#id for more information
       //
       // use TokenProvider[Token] if it doesn't matter whether the provided token is an Access or ID token
-      tokenProvider <- ZIO.service[TokenProvider[AccessToken]]
-      tokenReceipt  <- tokenProvider.token
-      token          = tokenReceipt.token
-      _             <- printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
-      _             <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
-      _             <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
-    } yield ()).provide(
-      // Default token provider looks up credentials in the following order
-      // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
-      // 2. Default applications credentials
-      //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-      //    Windows: %APPDATA%\gcloud\application_default_credentials.json
-      // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
-      TokenProvider.defaultAccessTokenProviderLayer(
-        // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
-        // Default: false
-        lookupComputeMetadataFirst = false,
-        // Optional parameter: retry Schedule on token retrieval failures.
-        // Dafault: Schedule.recurs(5)
-        refreshRetrySchedule = Schedule.recurs(5),
-        // Optional parameter: at what stage of expiration in percent to request a new token.
-        // Default: 0.9 (90%)
-        // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
-        refreshAtExpirationPercent = 0.9,
-      ),
-      httpBackendLayer(),
-    )
+      tokenProvider: TokenProvider[Token] <-
+        httpBackendScoped().flatMap: backend =>
+          // Default token provider looks up credentials in the following order
+          // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
+          // 2. Default applications credentials
+          //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
+          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
+          // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
+          TokenProvider.defaultAccessTokenProvider(
+            backend = backend,
+            // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
+            // Default: false
+            lookupComputeMetadataFirst = false,
+            // Optional parameter: retry Schedule on token retrieval failures.
+            // Dafault: Schedule.recurs(5)
+            refreshRetrySchedule = Schedule.recurs(5),
+            // Optional parameter: at what stage of expiration in percent to request a new token.
+            // Default: 0.9 (90%)
+            // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
+            refreshAtExpirationPercent = 0.9,
+          )
+      tokenReceipt <- tokenProvider.token
+      token         = tokenReceipt.token
+      _            <- printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
+      _            <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
+      _            <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
+    yield ()
 
 // access token retrieval without caching and auto refreshing
 object SimpleTokenRetrieval extends ZIOAppDefault:

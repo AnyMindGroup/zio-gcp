@@ -5,7 +5,7 @@
 import zio.*, Console.{printLine, printError}
 import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 import com.anymindgroup.gcp.storage.v1.resources.Objects
-import sttp.client4.Response, sttp.model.{Header, MediaType}
+import sttp.model.{Header, MediaType}
 import java.nio.charset.StandardCharsets
 
 object storage_bucket_upload extends ZIOAppDefault:
@@ -20,16 +20,21 @@ object storage_bucket_upload extends ZIOAppDefault:
              .send(
                Objects
                  .insert(bucket = bucket, name = Some(objName))
-                 .headers(Header.contentType(MediaType.TextPlain), Header.contentLength(objContent.length))
+                 .headers(
+                   Header.contentType(MediaType.TextPlain),
+                   Header.contentLength(objContent.length),
+                 )
                  .body(objContent)
              )
+             .map(_.body)
              .flatMap:
-               case Response(Right(body), _, _, _, _, _) => printLine(s"Upload ok: ${body.id.getOrElse("")}")
-               case Response(Left(err), _, _, _, _, _)   => ZIO.dieMessage(s"Failure on upload: $err")
+               case Right(body) => printLine(s"Upload ok: $body")
+               case Left(err)   => ZIO.dieMessage(s"Failure on upload: $err")
       // delete file
       _ <- backend
              .send(Objects.delete(`object` = objName, bucket = bucket))
+             .map(_.body)
              .flatMap:
-               case Response(Right(body), _, _, _, _, _) => printLine(s"Object deleted.")
-               case Response(Left(err), _, _, _, _, _)   => printError(s"Failure on deleting object: $err")
+               case Right(body) => printLine(s"Object deleted.")
+               case Left(err)   => printError(s"Failure on deleting object: $err")
     yield ()

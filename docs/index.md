@@ -55,24 +55,27 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "@VERSION@"
 //> using dep com.anymindgroup::zio-gcp-auth::@VERSION@
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::@VERSION@
 
-import zio.*
+import zio.*, Console.{printLine, printError}
 import com.anymindgroup.gcp.*, auth.*
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
-import sttp.client4.Response
 
 object vertex_ai_generate_content extends ZIOAppDefault:
   def run = for
     authedBackend <- defaultAccessTokenBackend()
     endpoint       = Endpoint.`asia-northeast1`
     request = projects.locations.publishers.Models.generateContent(
-                projectsId = "anychat-staging",
+                projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",
                 modelsId = "gemini-1.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(
-                      parts = Chunk(GoogleCloudAiplatformV1Part(text = Some("hello how are doing?"))),
+                      parts = Chunk(
+                        GoogleCloudAiplatformV1Part(
+                          text = Some("hello how are you doing?")
+                        )
+                      ),
                       role = Some("user"),
                     )
                   )
@@ -81,9 +84,10 @@ object vertex_ai_generate_content extends ZIOAppDefault:
               )
     _ <- authedBackend
            .send(request)
+           .map(_.body)
            .flatMap:
-             case Response(Right(body), _, _, _, _, _) => Console.printLine(s"Response ok: $body")
-             case Response(Left(err), _, _, _, _, _)   => Console.printError(s"Failure: $err")
+             case Right(body) => printLine(s"Response ok: $body")
+             case Left(err)   => printError(s"Failure: $err")
   yield ()
 ```
 
@@ -96,7 +100,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 import zio.*, Console.{printLine, printError}
 import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 import com.anymindgroup.gcp.storage.v1.resources.Objects
-import sttp.client4.Response, sttp.model.{Header, MediaType}
+import sttp.model.{Header, MediaType}
 import java.nio.charset.StandardCharsets
 
 object storage_bucket_upload extends ZIOAppDefault:
@@ -111,18 +115,23 @@ object storage_bucket_upload extends ZIOAppDefault:
              .send(
                Objects
                  .insert(bucket = bucket, name = Some(objName))
-                 .headers(Header.contentType(MediaType.TextPlain), Header.contentLength(objContent.length))
+                 .headers(
+                   Header.contentType(MediaType.TextPlain),
+                   Header.contentLength(objContent.length),
+                 )
                  .body(objContent)
              )
+             .map(_.body)
              .flatMap:
-               case Response(Right(body), _, _, _, _, _) => printLine(s"Upload ok: ${body.id.getOrElse("")}")
-               case Response(Left(err), _, _, _, _, _)   => ZIO.dieMessage(s"Failure on upload: $err")
+               case Right(body) => printLine(s"Upload ok: $body")
+               case Left(err)   => ZIO.dieMessage(s"Failure on upload: $err")
       // delete file
       _ <- backend
              .send(Objects.delete(`object` = objName, bucket = bucket))
+             .map(_.body)
              .flatMap:
-               case Response(Right(body), _, _, _, _, _) => printLine(s"Object deleted.")
-               case Response(Left(err), _, _, _, _, _)   => printError(s"Failure on deleting object: $err")
+               case Right(body) => printLine(s"Object deleted.")
+               case Left(err)   => printError(s"Failure on deleting object: $err")
     yield ()
 ```
 
@@ -139,7 +148,7 @@ Currently supported credentials and tokens:
 | [User credentials](https://cloud.google.com/docs/authentication/application-default-credentials#personal) | ✅ | ❌ |
 | Service account (via private key) | ❌ | ❌ |
 
-## Authentication usage examples
+## Authentication / token provider usage examples
 
 ### Using default token provider (the token is cached and automatically refreshed)
 
@@ -148,7 +157,7 @@ import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.
 
 object AccessTokenByUser extends ZIOAppDefault:
   def run =
-    (for {
+    for
       // choose the required token provider
       //
       // use TokenProvider[AccessToken] if the application doesn't require identity information
@@ -158,33 +167,33 @@ object AccessTokenByUser extends ZIOAppDefault:
       // see https://cloud.google.com/docs/authentication/token-types#id for more information
       //
       // use TokenProvider[Token] if it doesn't matter whether the provided token is an Access or ID token
-      tokenProvider <- ZIO.service[TokenProvider[AccessToken]]
-      tokenReceipt  <- tokenProvider.token
-      token          = tokenReceipt.token
-      _             <- printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
-      _             <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
-      _             <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
-    } yield ()).provide(
-      // Default token provider looks up credentials in the following order
-      // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
-      // 2. Default applications credentials
-      //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-      //    Windows: %APPDATA%\gcloud\application_default_credentials.json
-      // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
-      TokenProvider.defaultAccessTokenProviderLayer(
-        // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
-        // Default: false
-        lookupComputeMetadataFirst = false,
-        // Optional parameter: retry Schedule on token retrieval failures.
-        // Dafault: Schedule.recurs(5)
-        refreshRetrySchedule = Schedule.recurs(5),
-        // Optional parameter: at what stage of expiration in percent to request a new token.
-        // Default: 0.9 (90%)
-        // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
-        refreshAtExpirationPercent = 0.9,
-      ),
-      httpBackendLayer(),
-    )
+      tokenProvider: TokenProvider[Token] <-
+        httpBackendScoped().flatMap: backend =>
+          // Default token provider looks up credentials in the following order
+          // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
+          // 2. Default applications credentials
+          //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
+          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
+          // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
+          TokenProvider.defaultAccessTokenProvider(
+            backend = backend,
+            // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
+            // Default: false
+            lookupComputeMetadataFirst = false,
+            // Optional parameter: retry Schedule on token retrieval failures.
+            // Dafault: Schedule.recurs(5)
+            refreshRetrySchedule = Schedule.recurs(5),
+            // Optional parameter: at what stage of expiration in percent to request a new token.
+            // Default: 0.9 (90%)
+            // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
+            refreshAtExpirationPercent = 0.9,
+          )
+      tokenReceipt <- tokenProvider.token
+      token         = tokenReceipt.token
+      _            <- printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
+      _            <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
+      _            <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
+    yield ()
 ```
 
 ### Simple access token retrieval without caching and auto refreshing
@@ -192,26 +201,9 @@ object AccessTokenByUser extends ZIOAppDefault:
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object SimpleTokenRetrieval extends ZIOAppDefault:
-  def run = for {
-    receipt <- ZIO.scoped(TokenProvider.defaultAccessTokenProvider().flatMap(_.token)).provide(httpBackendLayer())
-    _       <- printLine(s"got access token: ${receipt.token.token.value.mkString} at ${receipt.receivedAt}")
-  } yield ()
-```
-
-### Change credentials lookup order
-
-```scala
-import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object LookupComputeMetadataFirst extends ZIOAppDefault:
-  def run =
-    Credentials.computeServiceAccount.flatMap {
-      case Some(c) => ZIO.some(c)
-      case None    => Credentials.applicationCredentials
-    }.flatMap {
-      case None              => ZIO.dieMessage("No credentials found")
-      case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials))
-    }.provide(httpBackendLayer())
+  def run = httpBackendScoped()
+    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
+    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
 ```
 
 ### Use specific credentials
@@ -219,17 +211,18 @@ object LookupComputeMetadataFirst extends ZIOAppDefault:
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object PassSpecificUserAccount extends ZIOAppDefault:
+object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
   def run =
-    TokenProvider
-      .accessTokenProvider(
-        Credentials.UserAccount(
-          refreshToken = "refresh_token",
-          clientId = "123.apps.googleusercontent.com",
-          clientSecret = Config.Secret("user_secret"),
+    httpBackendScoped().flatMap: backend =>
+      TokenProvider
+        .accessTokenProvider(
+          Credentials.UserAccount(
+            refreshToken = "refresh_token",
+            clientId = "123.apps.googleusercontent.com",
+            clientSecret = Config.Secret("user_secret"),
+          ),
+          backend,
         )
-      )
-      .provideSome[Scope](httpBackendLayer())
 ```
 
 ### Change log level
@@ -241,10 +234,7 @@ Example of setting the token provider log level to debug:
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
 object SetLogLevelToDebug extends ZIOAppDefault:
-  def run =
-    ZIO
-      .logLevel(LogLevel.Debug)(TokenProvider.defaultAccessTokenProvider())
-      .provideSome[Scope](httpBackendLayer())
+  def run = ZIO.logLevel(LogLevel.Debug)(httpBackendScoped().flatMap(TokenProvider.defaultAccessTokenProvider(_)))
 ```
 
 Run examples with sbt:
