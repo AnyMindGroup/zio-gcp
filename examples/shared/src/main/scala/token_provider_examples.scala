@@ -26,6 +26,9 @@ object AccessTokenByUser extends ZIOAppDefault:
       //    Windows: %APPDATA%\gcloud\application_default_credentials.json
       // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
       TokenProvider.defaultAccessTokenProviderLayer(
+        // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
+        // Default: false
+        lookupComputeMetadataFirst = false,
         // Optional parameter: retry Schedule on token retrieval failures.
         // Dafault: Schedule.recurs(5)
         refreshRetrySchedule = Schedule.recurs(5),
@@ -42,20 +45,6 @@ object SimpleTokenRetrieval extends ZIOAppDefault:
   def run = httpBackendScoped()
     .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
     .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
-
-object LookupComputeMetadataFirst extends ZIOAppDefault:
-  def run =
-    httpBackendScoped().flatMap: backend =>
-      Credentials
-        .computeServiceAccount(backend)
-        .flatMap {
-          case None              => Credentials.applicationCredentials
-          case Some(credentials) => ZIO.some(credentials)
-        }
-        .flatMap {
-          case None              => ZIO.dieMessage("No credentials found")
-          case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials, backend))
-        }
 
 object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
   def run =

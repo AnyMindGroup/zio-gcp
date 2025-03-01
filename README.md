@@ -18,42 +18,112 @@ Supported platforms:
 
 ## Included modules / clients
 
-- `zio-gcp-auth` Core module providing authentication methods and http backends.
+- `zio-gcp-auth` Module providing authentication methods and http backends.  
+More details about authentication under [Authentication](#authentication) section.
+
+### clients
 - `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertext AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
 - `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
 
-### Client usage example (Vertext AI API)
+## Getting started
+To get started with sbt, add the dependency to your project in `build.sbt`
+```scala
+libraryDependencies ++= Seq(
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.0.3",
+  // add clients based on needs
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.0.3",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.0.3",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.0.3",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.0.3",
+)
+```
+
+In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
+```scala
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.0.3"
+// etc.
+```
+
+### Client usage examples
+
+#### Generate content via Vertext AI API:
+
 ```scala
 //> using scala 3.6.3
-//> using dep com.anymindgroup::zio-gcp-auth::0.0.4
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.0.4
+//> using dep com.anymindgroup::zio-gcp-auth::0.0.3
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.0.3
 
-import zio.*, com.anymindgroup.gcp.auth.*
-import com.anymindgroup.gcp.aiplatform.v1.*, resources.*, schemas.*
+import zio.*
+import com.anymindgroup.gcp.*, auth.*
+import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
+import sttp.client4.Response
 
-object generateContent extends ZIOAppDefault:
-  def run =
-    defaultAccessTokenBackend().flatMap:
-      _.send {
-        val endpoint = Endpoint.`asia-northeast1`
-        projects.locations.publishers.Models.generateContent(
-          projectsId = "my-gcp-project",
-          locationsId = endpoint.location,
-          publishersId = "google",
-          modelsId = "gemini-1.5-flash",
-          request = GoogleCloudAiplatformV1GenerateContentRequest(
-            contents = Chunk(
-              GoogleCloudAiplatformV1Content(
-                parts = Chunk(GoogleCloudAiplatformV1Part(text = Some("hello how are doing?"))),
-                role = Some("user"),
+object vertex_ai_generate_content extends ZIOAppDefault:
+  def run = for
+    authedBackend <- defaultAccessTokenBackend()
+    endpoint       = Endpoint.`asia-northeast1`
+    request = projects.locations.publishers.Models.generateContent(
+                projectsId = "anychat-staging",
+                locationsId = endpoint.location,
+                publishersId = "google",
+                modelsId = "gemini-1.5-flash",
+                request = GoogleCloudAiplatformV1GenerateContentRequest(
+                  contents = Chunk(
+                    GoogleCloudAiplatformV1Content(
+                      parts = Chunk(GoogleCloudAiplatformV1Part(text = Some("hello how are doing?"))),
+                      role = Some("user"),
+                    )
+                  )
+                ),
+                endpointUrl = endpoint.url,
               )
-            )
-          ),
-          endpointUrl = endpoint.url,
-        )
-      }.debug
+    _ <- authedBackend
+           .send(request)
+           .flatMap:
+             case Response(Right(body), _, _, _, _, _) => Console.printLine(s"Response ok: $body")
+             case Response(Left(err), _, _, _, _, _)   => Console.printError(s"Failure: $err")
+  yield ()
+```
+
+#### Upload file to storage bucket
+```scala
+//> using scala 3.6.3
+//> using dep com.anymindgroup::zio-gcp-auth::0.0.3
+//> using dep com.anymindgroup::zio-gcp-storage-v1::0.0.3
+
+import zio.*, Console.{printLine, printError}
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
+import com.anymindgroup.gcp.storage.v1.resources.Objects
+import sttp.client4.Response, sttp.model.{Header, MediaType}
+import java.nio.charset.StandardCharsets
+
+object storage_bucket_upload extends ZIOAppDefault:
+  def run =
+    for
+      backend   <- defaultAccessTokenBackend()
+      bucket     = "my-bucket"
+      objName    = "folder/my_file.txt"
+      objContent = "my file content".getBytes(StandardCharsets.UTF_8)
+      // insert file
+      _ <- backend
+             .send(
+               Objects
+                 .insert(bucket = bucket, name = Some(objName))
+                 .headers(Header.contentType(MediaType.TextPlain), Header.contentLength(objContent.length))
+                 .body(objContent)
+             )
+             .flatMap:
+               case Response(Right(body), _, _, _, _, _) => printLine(s"Upload ok: ${body.id.getOrElse("")}")
+               case Response(Left(err), _, _, _, _, _)   => ZIO.dieMessage(s"Failure on upload: $err")
+      // delete file
+      _ <- backend
+             .send(Objects.delete(`object` = objName, bucket = bucket))
+             .flatMap:
+               case Response(Right(body), _, _, _, _, _) => printLine(s"Object deleted.")
+               case Response(Left(err), _, _, _, _, _)   => printError(s"Failure on deleting object: $err")
+    yield ()
 ```
 
 ## Authentication
@@ -68,17 +138,6 @@ Currently supported credentials and tokens:
 | [Service account](https://cloud.google.com/docs/authentication#service-accounts) (via [compute metadata](https://cloud.google.com/compute/docs/metadata/overview)) | ✅ | ✅ |
 | [User credentials](https://cloud.google.com/docs/authentication/application-default-credentials#personal) | ✅ | ❌ |
 | Service account (via private key) | ❌ | ❌ |
-
-## Getting started with authentication
-To get started with sbt, add the dependency to your project in `build.sbt`
-```scala
-libraryDependencies += "com.anymindgroup" %% "zio-gcp-auth" % "0.0.3"
-```
-
-In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use:
-```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.0.3"
-```
 
 ## Authentication usage examples
 
@@ -113,6 +172,9 @@ object AccessTokenByUser extends ZIOAppDefault:
       //    Windows: %APPDATA%\gcloud\application_default_credentials.json
       // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
       TokenProvider.defaultAccessTokenProviderLayer(
+        // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
+        // Default: false
+        lookupComputeMetadataFirst = false,
         // Optional parameter: retry Schedule on token retrieval failures.
         // Dafault: Schedule.recurs(5)
         refreshRetrySchedule = Schedule.recurs(5),
