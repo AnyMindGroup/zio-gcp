@@ -42,6 +42,8 @@ lazy val zioJsonVersion = "0.7.21"
 
 lazy val jsoniterVersion = "2.33.2"
 
+lazy val codegenVersion = "0.0.2"
+
 inThisBuild(
   List(
     name               := "ZIO Google Cloud clients",
@@ -244,7 +246,7 @@ lazy val codegen = (project in file("codegen"))
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     libraryDependencies ++= Seq(
-      "dev.rolang" %%% "gcp-codegen-cli" % "0.0.1-7-a0070c76-SNAPSHOT"
+      "dev.rolang" %%% "gcp-codegen-cli" % codegenVersion
     ),
   )
   .enablePlugins(ScalaNativePlugin)
