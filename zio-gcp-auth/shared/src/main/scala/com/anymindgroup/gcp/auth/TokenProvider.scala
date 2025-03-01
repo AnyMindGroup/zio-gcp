@@ -84,42 +84,51 @@ object TokenProvider {
   }
 
   def defaultAccessTokenProvider(
+    backend: GenericBackend[Task, Any],
+    lookupComputeMetadataFirst: Boolean = false,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[Scope & GenericBackend[Task, Any], TokenProviderException, TokenProvider[AccessToken]] =
-    Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
-      case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
-      case Some(credentials) =>
-        accessTokenProvider(credentials, refreshRetrySchedule, refreshAtExpirationPercent)
-    }
+  ): ZIO[Scope, TokenProviderException, TokenProvider[AccessToken]] =
+    Credentials
+      .auto(backend, lookupComputeMetadataFirst)
+      .mapError(e => TokenProviderException.CredentialsFailure(e))
+      .flatMap {
+        case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+        case Some(credentials) =>
+          accessTokenProvider(credentials, backend, refreshRetrySchedule, refreshAtExpirationPercent)
+      }
 
   def defaultIdTokenProvider(
     audience: String,
+    backend: GenericBackend[Task, Any],
+    lookupComputeMetadataFirst: Boolean = false,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[Scope & GenericBackend[Task, Any], TokenProviderException, TokenProvider[IdToken]] =
-    Credentials.auto.mapError(e => TokenProviderException.CredentialsFailure(e)).flatMap {
-      case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
-      case Some(credentials) =>
-        idTokenProvider(audience, credentials, refreshRetrySchedule, refreshAtExpirationPercent)
-    }
+  ): ZIO[Scope, TokenProviderException, TokenProvider[IdToken]] =
+    Credentials
+      .auto(backend, lookupComputeMetadataFirst)
+      .mapError(e => TokenProviderException.CredentialsFailure(e))
+      .flatMap {
+        case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+        case Some(credentials) =>
+          idTokenProvider(audience, credentials, backend, refreshRetrySchedule, refreshAtExpirationPercent)
+      }
 
   def idTokenProvider(
     audience: String,
     credentials: Credentials,
+    backend: GenericBackend[Task, Any],
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[Scope & GenericBackend[Task, Any], TokenProviderException, TokenProvider[IdToken]] =
+  ): ZIO[Scope, TokenProviderException, TokenProvider[IdToken]] =
     credentials match {
       case ComputeServiceAccount(_) =>
-        ZIO.serviceWithZIO[GenericBackend[Task, Any]] { backend =>
-          autoRefreshTokenProviderByRequest(
-            backend,
-            ComputeServiceAccount.idTokenRequest(audience),
-            refreshRetrySchedule,
-            refreshAtExpirationPercent,
-          )
-        }
+        autoRefreshTokenProviderByRequest(
+          backend,
+          ComputeServiceAccount.idTokenRequest(audience),
+          refreshRetrySchedule,
+          refreshAtExpirationPercent,
+        )
       case _: UserAccount =>
         ZIO.fail(
           TokenProviderException.CredentialsFailure(
@@ -141,28 +150,25 @@ object TokenProvider {
 
   def accessTokenProvider(
     credentials: Credentials,
+    backend: GenericBackend[Task, Any],
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-  ): ZIO[Scope & GenericBackend[Task, Any], TokenProviderException, TokenProvider[AccessToken]] =
+  ): ZIO[Scope, TokenProviderException, TokenProvider[AccessToken]] =
     credentials match {
       case ComputeServiceAccount(_) =>
-        ZIO.serviceWithZIO[GenericBackend[Task, Any]] { backend =>
-          autoRefreshTokenProviderByRequest(
-            backend,
-            ComputeServiceAccount.accessTokenRequest,
-            refreshRetrySchedule,
-            refreshAtExpirationPercent,
-          )
-        }
+        autoRefreshTokenProviderByRequest(
+          backend,
+          ComputeServiceAccount.accessTokenRequest,
+          refreshRetrySchedule,
+          refreshAtExpirationPercent,
+        )
       case user: UserAccount =>
-        ZIO.serviceWithZIO[GenericBackend[Task, Any]] { backend =>
-          autoRefreshTokenProviderByRequest(
-            backend,
-            userAccountTokenReq(user),
-            refreshRetrySchedule,
-            refreshAtExpirationPercent,
-          )
-        }
+        autoRefreshTokenProviderByRequest(
+          backend,
+          userAccountTokenReq(user),
+          refreshRetrySchedule,
+          refreshAtExpirationPercent,
+        )
       // Service account key credentials might be supported later
       case ServiceAccountKey(email, _) =>
         ZIO.fail(
@@ -179,15 +185,36 @@ object TokenProvider {
   }
 
   def defaultAccessTokenProviderLayer(
+    lookupComputeMetadataFirst: Boolean = false,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
   ): ZLayer[GenericBackend[Task, Any], TokenProviderException, TokenProvider[AccessToken]] =
-    ZLayer.scoped(defaultAccessTokenProvider(refreshRetrySchedule, refreshAtExpirationPercent))
+    ZLayer.scoped(
+      ZIO.serviceWithZIO[GenericBackend[Task, Any]](backend =>
+        defaultAccessTokenProvider(
+          backend = backend,
+          lookupComputeMetadataFirst = lookupComputeMetadataFirst,
+          refreshRetrySchedule = refreshRetrySchedule,
+          refreshAtExpirationPercent = refreshAtExpirationPercent,
+        )
+      )
+    )
 
   def defaultIdTokenProviderLayer(
     audience: String,
+    lookupComputeMetadataFirst: Boolean = false,
     refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
     refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
   ): ZLayer[GenericBackend[Task, Any], TokenProviderException, TokenProvider[IdToken]] =
-    ZLayer.scoped(defaultIdTokenProvider(audience, refreshRetrySchedule, refreshAtExpirationPercent))
+    ZLayer.scoped(
+      ZIO.serviceWithZIO[GenericBackend[Task, Any]](backend =>
+        defaultIdTokenProvider(
+          audience = audience,
+          backend = backend,
+          lookupComputeMetadataFirst = lookupComputeMetadataFirst,
+          refreshRetrySchedule = refreshRetrySchedule,
+          refreshAtExpirationPercent = refreshAtExpirationPercent,
+        )
+      )
+    )
 }

@@ -11,7 +11,7 @@ import zio.json.*
 import zio.json.ast.Json
 import zio.test.*
 import zio.test.Assertion.*
-import zio.{Config, Ref, Schedule, Scope, Task, ULayer, ZLayer, ZLogger}
+import zio.{Config, Ref, Schedule, Scope, Task, ULayer, ZIO, ZLayer, ZLogger}
 
 object TokenProviderSpec extends ZIOSpecDefault {
 
@@ -31,18 +31,20 @@ object TokenProviderSpec extends ZIOSpecDefault {
     },
     test("request access token for user account") {
       for {
-        tp    <- TokenProvider.accessTokenProvider(okUserAccount)
-        token <- tp.token
-        _     <- assertTrue(token.token.token == "user")
+        backend <- ZIO.service[Backend[Task]]
+        tp      <- TokenProvider.accessTokenProvider(okUserAccount, backend)
+        token   <- tp.token
+        _       <- assertTrue(token.token.token == "user")
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on service account as it's not supported (yet)") {
       val svcAcc = Credentials.ServiceAccountKey("email", Config.Secret("123"))
       for {
-        _ <- assertZIO(TokenProvider.accessTokenProvider(svcAcc).exit)(
+        backend <- ZIO.service[Backend[Task]]
+        _ <- assertZIO(TokenProvider.accessTokenProvider(svcAcc, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
-        _ <- assertZIO(TokenProvider.idTokenProvider("", svcAcc).exit)(
+        _ <- assertZIO(TokenProvider.idTokenProvider("", svcAcc, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
       } yield assertCompletes
@@ -50,32 +52,36 @@ object TokenProviderSpec extends ZIOSpecDefault {
     test("fail on getting id token for a user account as it's not supported (yet)") {
       val user = Credentials.UserAccount("", "", Config.Secret(""))
       for {
-        _ <- assertZIO(TokenProvider.idTokenProvider("", user).exit)(
+        backend <- ZIO.service[Backend[Task]]
+        _ <- assertZIO(TokenProvider.idTokenProvider("", user, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request access token from compute metadata server") {
       for {
-        tp    <- TokenProvider.accessTokenProvider(Credentials.ComputeServiceAccount(""))
-        token <- tp.token
-        _     <- assertTrue(token.token.token == "compute")
+        backend <- ZIO.service[Backend[Task]]
+        tp      <- TokenProvider.accessTokenProvider(Credentials.ComputeServiceAccount(""), backend)
+        token   <- tp.token
+        _       <- assertTrue(token.token.token == "compute")
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request id token from compute metadata server") {
       val audience = "http://test.com"
       (for {
-        tp <-
-          TokenProvider.idTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""))
-        token <- tp.token
-        _     <- assertTrue(token.token.token == testIdToken)
+        backend <- ZIO.service[Backend[Task]]
+        tp      <- TokenProvider.idTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""), backend)
+        token   <- tp.token
+        _       <- assertTrue(token.token.token == testIdToken)
       } yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
     },
     test("token is refreshed automatically at given expiry stage") {
       checkN(10)(Gen.double(0.1, 0.9)) { expiryPercent =>
         for {
+          backend <- ZIO.service[Backend[Task]]
           tp <- TokenProvider.accessTokenProvider(
                   credentials = Credentials.ComputeServiceAccount(""),
+                  backend = backend,
                   refreshAtExpirationPercent = expiryPercent,
                 )
           tokenA   <- tp.token
@@ -90,10 +96,14 @@ object TokenProviderSpec extends ZIOSpecDefault {
       for {
         retries   <- Ref.make(0)
         maxRetries = 5
-        tp <- TokenProvider
-                .accessTokenProvider(
-                  credentials = failUserAccount,
-                  refreshRetrySchedule = Schedule.recurs(maxRetries),
+        tp <- ZIO
+                .serviceWithZIO[Backend[Task]](backend =>
+                  TokenProvider
+                    .accessTokenProvider(
+                      credentials = failUserAccount,
+                      backend = backend,
+                      refreshRetrySchedule = Schedule.recurs(maxRetries),
+                    )
                 )
                 .provideSome[Scope](googleStubBackendLayerWithFailureCount(retries))
                 .exit
@@ -117,15 +127,15 @@ object TokenProviderSpec extends ZIOSpecDefault {
       .whenRequestMatches(
         _.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email")
       )
-      .thenRespond("test@gcp-project.iam.gserviceaccount.com")
+      .thenRespondAdjust("test@gcp-project.iam.gserviceaccount.com")
       .whenRequestMatches(_.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/token"))
-      .thenRespond(s"""{"access_token":"compute","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}""")
+      .thenRespondAdjust(s"""{"access_token":"compute","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}""")
       .whenRequestMatches(
         _.uri.toString.endsWith(
           s"computeMetadata/v1/instance/service-accounts/default/identity?audience=$idTokenAudience"
         )
       )
-      .thenRespond(testIdToken)
+      .thenRespondAdjust(testIdToken)
       .whenRequestMatches { r =>
         r.method == Method.POST && r.uri.toString() == "https://oauth2.googleapis.com/token" &&
         (r.body match {
@@ -138,7 +148,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
           case _ => false
         })
       }
-      .thenRespond(
+      .thenRespondAdjust(
         s"""{"access_token":"user","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}"""
       )
       .whenRequestMatches { r =>
@@ -147,9 +157,9 @@ object TokenProviderSpec extends ZIOSpecDefault {
           case _                   => false
         })
       }
-      .thenRespondF(
+      .thenRespondF(_ =>
         failures
           .getAndUpdate(_ + 1)
-          .as(ResponseStub("", StatusCode.Forbidden))
+          .as(ResponseStub.adjust("", StatusCode.Forbidden))
       )
 }

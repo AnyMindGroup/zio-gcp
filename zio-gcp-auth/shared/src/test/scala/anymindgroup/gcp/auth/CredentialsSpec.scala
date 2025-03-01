@@ -9,35 +9,45 @@ import sttp.model.*
 
 import zio.test.*
 import zio.test.Assertion.*
-import zio.{Task, ZLayer, ZLogger}
+import zio.{Task, ZIO, ZLayer, ZLogger}
 
 object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpClientBackendPlatformSpecific {
   override def spec: Spec[TestEnvironment, Any] = suite("CredentialsSpec")(
     test("return none if no credentials were found") {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
-        creds <- Credentials.auto.exit
+        creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_)).exit
         _     <- assert(creds)(succeeds(isNone))
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
-    test("readcredentials from internal google meta server") {
+    test("read credentials from internal google meta server") {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
-        creds <- Credentials.auto
+        creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _ <-
           assert(creds)(isSome(equalTo(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com"))))
       } yield assertCompletes
     }.provideLayer(metadataStubLayer),
-    test("read credentials from default directory") {
+    test("read credentials from default directory or internal google meta server based on config") {
       for {
-        _     <- TestSystem.putProperty("user.home", resourcesDir.toString())
-        creds <- Credentials.auto
-        _ <- assertTrue(creds match {
-               case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
-               case _                                                                                   => false
-             })
+        backend <- ZIO.service[Backend[Task]]
+        _       <- TestSystem.putProperty("user.home", resourcesDir.toString())
+        _ <- Credentials
+               .auto(backend, lookupComputeMetadataFirst = false)
+               .flatMap: credentials =>
+                 assertTrue(credentials match {
+                   case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
+                   case _                                                                                   => false
+                 })
+        _ <- Credentials
+               .auto(backend, lookupComputeMetadataFirst = true)
+               .flatMap: credentials =>
+                 assertTrue(credentials match {
+                   case Some(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com")) => true
+                   case _                                                                                   => false
+                 })
       } yield assertCompletes
-    }.provideLayer(defaultTestLayer),
+    }.provideLayer(metadataStubLayer),
     test("read credentials from path set by GOOGLE_APPLICATION_CREDENTIALS") {
       val userCredsPath =
         Path
@@ -45,14 +55,14 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
 
       for {
         _         <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", userCredsPath.toString())
-        userCreds <- Credentials.auto
+        userCreds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _ <- assertTrue(userCreds match {
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
                case _                                                                                   => false
              })
         serviceCredsPath = Path.of(resourcesDir.toString(), "service_account.json").toAbsolutePath()
         _               <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", serviceCredsPath.toString())
-        serviceCreds    <- Credentials.auto
+        serviceCreds    <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _ <- assertTrue(serviceCreds match {
                case Some(Credentials.ServiceAccountKey("test@gcp-project.iam.gserviceaccount.com", _)) => true
                case _                                                                                  => false
@@ -63,7 +73,7 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
 
   val resourcesDir: Path = Path.of("zio-gcp-auth", "shared", "src", "test", "resources").toAbsolutePath()
 
-  val metadataStubBackend: GenericBackend[Task, Any] =
+  val metadataStubBackend: Backend[Task] =
     BackendStub[Task](new RIOMonadAsyncError[Any])
       .whenRequestMatches(r =>
         r.method != Method.GET ||
@@ -74,13 +84,13 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
       .whenRequestMatches(
         _.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email")
       )
-      .thenRespond("test@gcp-project.iam.gserviceaccount.com")
+      .thenRespondAdjust("test@gcp-project.iam.gserviceaccount.com")
       .whenRequestMatches(_.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email"))
-      .thenRespond("""{"access_token":"abc123","expires_in":3599,"token_type":"Bearer"}""")
+      .thenRespondAdjust("""{"access_token":"abc123","expires_in":3599,"token_type":"Bearer"}""")
 
-  val defaultTestLayer: ZLayer[Any, Throwable, GenericBackend[Task, Any]] =
+  val defaultTestLayer: ZLayer[Any, Throwable, Backend[Task]] =
     (zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none)) >>> httpBackendLayer()
 
-  val metadataStubLayer: ZLayer[Any, Nothing, GenericBackend[Task, Any]] =
+  val metadataStubLayer: ZLayer[Any, Nothing, Backend[Task]] =
     (zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none)) >>> ZLayer.succeed(metadataStubBackend)
 }

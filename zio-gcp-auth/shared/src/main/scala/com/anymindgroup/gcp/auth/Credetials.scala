@@ -120,31 +120,48 @@ object Credentials {
              }
   } yield creds
 
-  def computeServiceAccount
-    : ZIO[GenericBackend[Task, Any], CredentialsException, Option[Credentials.ComputeServiceAccount]] =
-    ZIO
-      .serviceWithZIO[GenericBackend[Task, Any]](backend =>
-        ZIO.log(s"Attempting to reach internal compute metadata service...") *>
-          backend.send(ComputeServiceAccount.emailRequest.mapResponse(_.toOption)).map(_.body)
-      )
-      .catchSome { case UnresolvedAddressException(_) =>
-        ZIO.log(s"Unable to resolve address ${ComputeServiceAccount.baseUri.toString()}").as(None)
-      }
-      .mapError { case e =>
-        CredentialsException.Unexpected(e)
-      }
+  def computeServiceAccount(
+    backend: GenericBackend[Task, Any]
+  ): ZIO[Any, CredentialsException, Option[Credentials.ComputeServiceAccount]] =
+    (
+      ZIO.log(s"Attempting to reach internal compute metadata service...") *>
+        backend.send(ComputeServiceAccount.emailRequest.mapResponse(_.toOption)).map(_.body)
+    ).catchSome { case UnresolvedAddressException(_) =>
+      ZIO.log(s"Unable to resolve address ${ComputeServiceAccount.baseUri.toString()}").as(None)
+    }.mapError { case e =>
+      CredentialsException.Unexpected(e)
+    }
 
-  def auto: ZIO[GenericBackend[Task, Any], CredentialsException, Option[Credentials]] = applicationCredentials.flatMap {
-    case Some(c: Credentials.UserAccount) =>
-      ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
-    case Some(c: Credentials.ServiceAccountKey) =>
-      ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
-    case None =>
-      ZIO.log(s"No application credentials found.") *>
-        computeServiceAccount.tap {
-          case Some(Credentials.ComputeServiceAccount(email)) =>
-            ZIO.log(s"Found service account credentials for $email via compute metadata")
-          case _ => ZIO.log(s"No credentials were found")
-        }
-  }
+  def auto(
+    backend: GenericBackend[Task, Any],
+    lookupComputeMetadataFirst: Boolean = false,
+  ): ZIO[Any, CredentialsException, Option[Credentials]] =
+    if lookupComputeMetadataFirst then
+      computeServiceAccount(backend).flatMap {
+        case Some(c: Credentials.ComputeServiceAccount) =>
+          ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
+        case _ =>
+          applicationCredentials.flatMap {
+            case Some(c: Credentials.UserAccount) =>
+              ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
+            case Some(c: Credentials.ServiceAccountKey) =>
+              ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
+            case None =>
+              ZIO.log(s"No credentials were found.").as(None)
+          }
+      }
+    else
+      applicationCredentials.flatMap {
+        case Some(c: Credentials.UserAccount) =>
+          ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
+        case Some(c: Credentials.ServiceAccountKey) =>
+          ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
+        case None =>
+          ZIO.log(s"No application credentials found.") *>
+            computeServiceAccount(backend).tap {
+              case Some(Credentials.ComputeServiceAccount(email)) =>
+                ZIO.log(s"Found service account credentials for $email via compute metadata")
+              case _ => ZIO.log(s"No credentials were found")
+            }
+      }
 }
