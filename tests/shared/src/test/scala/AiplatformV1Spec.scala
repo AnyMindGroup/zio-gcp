@@ -2,20 +2,14 @@ package com.anymindgroup.gcp.aiplatform.v1
 
 import zio.test.*
 import zio.*
-import com.anymindgroup.gcp.auth.TokenProvider
-import com.anymindgroup.gcp.auth.AuthedBackend
-import com.anymindgroup.http.httpBackendLayer
-import sttp.client4.GenericBackend
-import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1GenerateContentRequest
-import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Content
-import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Part
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
+import com.anymindgroup.gcp.aiplatform.v1.schemas.*
 
 object AiplatformV1Spec extends ZIOSpecDefault:
   def spec = suite("AiplatformV1Spec")(
     test("generate content") {
-      (for {
-        tp         <- TokenProvider.defaultAccessTokenProvider()
-        ab         <- ZIO.serviceWith[GenericBackend[Task, Any]](AuthedBackend(tp, _))
+      for {
+        backend    <- defaultAccessTokenBackend()
         endpoint    = Endpoint.`asia-northeast1`
         gcpProject <- ZIO.systemWith(_.env("GCP_TEST_PROJECT")).someOrFail("GCP_TEST_PROJECT not set")
         endpoint <-
@@ -39,10 +33,10 @@ object AiplatformV1Spec extends ZIOSpecDefault:
                 ),
                 endpointUrl = endpoint.url,
               )
-        res <- ab.send(req)
+        res <- backend.send(req)
         _ <- res.body match
                case Left(err)   => ZIO.dieMessage(s"Failure $err")
                case Right(body) => Console.printLine(s"Response ok: $body")
-      } yield assertCompletes).provideSome[Scope](httpBackendLayer())
+      } yield assertCompletes
     }
   ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvNotSet("CI")

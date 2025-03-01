@@ -278,8 +278,10 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     ),
   )
 
-lazy val examples = (project in file("examples"))
-  .dependsOn(zioGcpAuth.jvm)
+lazy val examples = crossProject(JVMPlatform, NativePlatform)
+  .in(file("examples"))
+  .dependsOn(zioGcpAuth)
+  .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration))*)
   .settings(noPublishSettings)
   .settings(
     scalaVersion       := _scala3,

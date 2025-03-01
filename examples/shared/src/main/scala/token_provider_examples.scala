@@ -39,35 +39,36 @@ object AccessTokenByUser extends ZIOAppDefault:
 
 // access token retrieval without caching and auto refreshing
 object SimpleTokenRetrieval extends ZIOAppDefault:
-  def run = for {
-    receipt <- ZIO.scoped(TokenProvider.defaultAccessTokenProvider().flatMap(_.token)).provide(httpBackendLayer())
-    _       <- printLine(s"got access token: ${receipt.token.token} at ${receipt.receivedAt}")
-  } yield ()
+  def run = httpBackendScoped()
+    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
+    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
 
 object LookupComputeMetadataFirst extends ZIOAppDefault:
   def run =
-    Credentials.computeServiceAccount.flatMap {
-      case Some(c) => ZIO.some(c)
-      case None    => Credentials.applicationCredentials
-    }.flatMap {
-      case None              => ZIO.dieMessage("No credentials found")
-      case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials))
-    }.provide(httpBackendLayer())
+    httpBackendScoped().flatMap: backend =>
+      Credentials
+        .computeServiceAccount(backend)
+        .flatMap {
+          case None              => Credentials.applicationCredentials
+          case Some(credentials) => ZIO.some(credentials)
+        }
+        .flatMap {
+          case None              => ZIO.dieMessage("No credentials found")
+          case Some(credentials) => ZIO.scoped(TokenProvider.accessTokenProvider(credentials, backend))
+        }
 
 object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
   def run =
-    TokenProvider
-      .accessTokenProvider(
-        Credentials.UserAccount(
-          refreshToken = "refresh_token",
-          clientId = "123.apps.googleusercontent.com",
-          clientSecret = Config.Secret("user_secret"),
+    httpBackendScoped().flatMap: backend =>
+      TokenProvider
+        .accessTokenProvider(
+          Credentials.UserAccount(
+            refreshToken = "refresh_token",
+            clientId = "123.apps.googleusercontent.com",
+            clientSecret = Config.Secret("user_secret"),
+          ),
+          backend,
         )
-      )
-      .provideSome[Scope](httpBackendLayer())
 
 object SetLogLevelToDebug extends ZIOAppDefault:
-  def run =
-    ZIO
-      .logLevel(LogLevel.Debug)(TokenProvider.defaultAccessTokenProvider())
-      .provideSome[Scope](httpBackendLayer())
+  def run = ZIO.logLevel(LogLevel.Debug)(httpBackendScoped().flatMap(TokenProvider.defaultAccessTokenProvider(_)))

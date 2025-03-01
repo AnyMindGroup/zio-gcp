@@ -5,7 +5,7 @@ import java.time.Instant
 import com.anymindgroup.http.{HttpClientBackendPlatformSpecific, basicRequest}
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.BackendStub
-import sttp.client4.{GenericBackend, UriContext}
+import sttp.client4.{Backend, UriContext}
 
 import zio.test.{TestEnvironment, ZIOSpecDefault, *}
 import zio.{Duration, Scope, Task, UIO, ULayer, ZIO, ZLayer}
@@ -14,11 +14,11 @@ object AuthedBackendSpec extends ZIOSpecDefault with HttpClientBackendPlatformSp
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("AuthedBackendSpec") {
     test("add token to request") {
       for {
-        res <- ZIO.serviceWithZIO[GenericBackend[Task, Any]](_.send(basicRequest.get(uri"http://example.com")))
+        res <- ZIO.serviceWithZIO[Backend[Task]](_.send(basicRequest.get(uri"http://example.com")))
         _   <- assertTrue(res.is200)
       } yield assertCompletes
     }.provide(
-      (backendStub ++ dummyTokenProvider) >>> ZLayer.fromFunction(AuthedBackend[Any](_, _))
+      (backendStub ++ dummyTokenProvider) >>> ZLayer.fromFunction(toAuthedBackend(_, _))
     )
   }
 
@@ -29,7 +29,7 @@ object AuthedBackendSpec extends ZIOSpecDefault with HttpClientBackendPlatformSp
       ZIO.succeed(TokenReceipt(AccessToken(dummyToken, Duration.Infinity), Instant.now()))
   })
 
-  val backendStub: ULayer[GenericBackend[Task, Any]] = ZLayer.succeed(
+  val backendStub: ULayer[Backend[Task]] = ZLayer.succeed(
     BackendStub[Task](new RIOMonadAsyncError[Any])
       .whenRequestMatches(r =>
         r.headers.exists(h => h.name.equalsIgnoreCase("Authorization") && h.value == s"Bearer $dummyToken")
