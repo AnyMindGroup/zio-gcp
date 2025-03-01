@@ -28,16 +28,26 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
           assert(creds)(isSome(equalTo(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com"))))
       } yield assertCompletes
     }.provideLayer(metadataStubLayer),
-    test("read credentials from default directory") {
+    test("read credentials from default directory or internal google meta server based on config") {
       for {
-        _     <- TestSystem.putProperty("user.home", resourcesDir.toString())
-        creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
-        _ <- assertTrue(creds match {
-               case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
-               case _                                                                                   => false
-             })
+        backend <- ZIO.service[Backend[Task]]
+        _       <- TestSystem.putProperty("user.home", resourcesDir.toString())
+        _ <- Credentials
+               .auto(backend, lookupComputeMetadataFirst = false)
+               .flatMap: credentials =>
+                 assertTrue(credentials match {
+                   case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
+                   case _                                                                                   => false
+                 })
+        _ <- Credentials
+               .auto(backend, lookupComputeMetadataFirst = true)
+               .flatMap: credentials =>
+                 assertTrue(credentials match {
+                   case Some(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com")) => true
+                   case _                                                                                   => false
+                 })
       } yield assertCompletes
-    }.provideLayer(defaultTestLayer),
+    }.provideLayer(metadataStubLayer),
     test("read credentials from path set by GOOGLE_APPLICATION_CREDENTIALS") {
       val userCredsPath =
         Path
