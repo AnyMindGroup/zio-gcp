@@ -117,15 +117,15 @@ object TokenProviderSpec extends ZIOSpecDefault {
       .whenRequestMatches(
         _.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email")
       )
-      .thenRespond("test@gcp-project.iam.gserviceaccount.com")
+      .thenRespondExact("test@gcp-project.iam.gserviceaccount.com")
       .whenRequestMatches(_.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/token"))
-      .thenRespond(s"""{"access_token":"compute","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}""")
+      .thenRespondExact(s"""{"access_token":"compute","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}""")
       .whenRequestMatches(
         _.uri.toString.endsWith(
           s"computeMetadata/v1/instance/service-accounts/default/identity?audience=$idTokenAudience"
         )
       )
-      .thenRespond(testIdToken)
+      .thenRespondExact(testIdToken)
       .whenRequestMatches { r =>
         r.method == Method.POST && r.uri.toString() == "https://oauth2.googleapis.com/token" &&
         (r.body match {
@@ -138,7 +138,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
           case _ => false
         })
       }
-      .thenRespond(
+      .thenRespondExact(
         s"""{"access_token":"user","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}"""
       )
       .whenRequestMatches { r =>
@@ -147,9 +147,9 @@ object TokenProviderSpec extends ZIOSpecDefault {
           case _                   => false
         })
       }
-      .thenRespondF(
+      .thenRespondF(_ =>
         failures
           .getAndUpdate(_ + 1)
-          .as(ResponseStub("", StatusCode.Forbidden))
+          .as(ResponseStub.exact("", StatusCode.Forbidden))
       )
 }

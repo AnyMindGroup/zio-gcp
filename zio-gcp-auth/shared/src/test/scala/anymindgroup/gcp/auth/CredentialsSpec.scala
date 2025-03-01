@@ -74,9 +74,9 @@ object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpCli
       .whenRequestMatches(
         _.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email")
       )
-      .thenRespond("test@gcp-project.iam.gserviceaccount.com")
+      .thenRespondExact("test@gcp-project.iam.gserviceaccount.com")
       .whenRequestMatches(_.uri.toString.endsWith("computeMetadata/v1/instance/service-accounts/default/email"))
-      .thenRespond("""{"access_token":"abc123","expires_in":3599,"token_type":"Bearer"}""")
+      .thenRespondExact("""{"access_token":"abc123","expires_in":3599,"token_type":"Bearer"}""")
 
   val defaultTestLayer: ZLayer[Any, Throwable, GenericBackend[Task, Any]] =
     (zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none)) >>> httpBackendLayer()
