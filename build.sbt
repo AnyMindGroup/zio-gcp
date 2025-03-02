@@ -85,7 +85,7 @@ inThisBuild(
                 """|echo "$PGP_SECRET" | base64 -d -i - > /tmp/signing-key.gpg
                    |echo "$PGP_PASSPHRASE" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
                    |(echo "$PGP_PASSPHRASE"; echo; echo) | gpg --command-fd 0 --pinentry-mode loopback --change-passphrase $(gpg --list-secret-keys --with-colons 2> /dev/null | grep '^sec:' | cut --delimiter ':' --fields 5 | tail -n 1)
-                   |sbt 'publishSigned; sonatypeCentralRelease'""".stripMargin
+                   |sbt 'buildCodegenBin; publishSigned; sonatypeCentralRelease'""".stripMargin
               ),
               env = env,
             )
@@ -198,8 +198,9 @@ def codegenTask(
   val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
 
   if (!codegenBin.exists()) {
-    logger.error(s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCodegenBin' first.")
-    List.empty[File]
+    throw new InterruptedException(
+      s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCodegenBin' first."
+    )
   } else {
     @tailrec
     def listFilesRec(dir: List[File], res: List[File]): List[File] =
