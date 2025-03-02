@@ -56,9 +56,28 @@ inThisBuild(
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
-    ciTargetJavaVersions := Seq("17", "21"),
-    scalafmt             := true,
-    scalafmtSbtCheck     := true,
+    ciTargetJavaVersions   := Seq("17", "21"),
+    scalafmt               := true,
+    scalafmtSbtCheck       := true,
+    sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost,
+    ciReleaseJobs := ciReleaseJobs.value.map(j =>
+      j.copy(
+        steps = j.steps.map {
+          case Step.SingleStep(name @ "Release", _, _, _, _, _, env) =>
+            Step.SingleStep(
+              name = name,
+              run = Some(
+                """|echo "$PGP_SECRET" | base64 -d -i - > /tmp/signing-key.gpg
+                   |echo "$PGP_PASSPHRASE" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
+                   |(echo "$PGP_PASSPHRASE"; echo; echo) | gpg --command-fd 0 --pinentry-mode loopback --change-passphrase $(gpg --list-secret-keys --with-colons 2> /dev/null | grep '^sec:' | cut --delimiter ':' --fields 5 | tail -n 1)
+                   |sbt 'publishSigned; sonatypeCentralRelease'""".stripMargin
+              ),
+              env = env,
+            )
+          case s => s
+        }
+      )
+    ),
   )
 )
 
@@ -69,17 +88,7 @@ lazy val commonSettings = List(
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Xfatal-warnings"),
   semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
-  credentials += {
-    for {
-      username <- sys.env.get("ARTIFACT_REGISTRY_USERNAME")
-      apiKey   <- sys.env.get("ARTIFACT_REGISTRY_PASSWORD")
-    } yield Credentials("https://asia-maven.pkg.dev", "asia-maven.pkg.dev", username, apiKey)
-  }.getOrElse(Credentials(Path.userHome / ".ivy2" / ".credentials")),
-)
-
-val releaseSettings = List(
-  publishTo := Some("AnyChat Maven" at "https://asia-maven.pkg.dev/anychat-staging/maven")
+  semanticdbVersion := scalafixSemanticdb.revision,// use Scalafix compatible version
 )
 
 val noPublishSettings = List(
@@ -100,7 +109,6 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
   CrossProject
     .apply(id = id, base = file(name) / apiVersion)(JVMPlatform, NativePlatform)
     .settings(commonSettings)
-    .settings(releaseSettings)
     .settings(
       Compile / scalacOptions --= Seq("-Xfatal-warnings"),
       Compile / sourceGenerators += codegenTask(
@@ -253,7 +261,6 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
   .in(file("zio-gcp-auth"))
   .settings(moduleName := "zio-gcp-auth")
   .settings(commonSettings)
-  .settings(releaseSettings)
   .settings(
     scalacOptions --= List("-Wunused:nowarn"),
     libraryDependencies ++= Seq(
