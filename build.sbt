@@ -56,14 +56,14 @@ inThisBuild(
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
-    ciTargetJavaVersions := Seq("17", "21"),
+    ciTargetJavaVersions := Seq("21"),
     scalafmt             := true,
     scalafmtSbtCheck     := true,
   )
 )
 
 lazy val commonSettings = List(
-  javacOptions ++= Seq("-source", "17"),
+  javacOptions ++= Seq("-source", "21"),
   Compile / scalacOptions ++= Seq("-source:future", "-rewrite"),
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
