@@ -2,8 +2,7 @@
 //> using dep com.anymindgroup::zio-gcp-auth::0.0.4
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.0.4
 
-import zio.*, Console.{printLine, printError}
-import com.anymindgroup.gcp.*, auth.*
+import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
 
 object vertex_ai_generate_content extends ZIOAppDefault:
@@ -31,8 +30,8 @@ object vertex_ai_generate_content extends ZIOAppDefault:
               )
     _ <- authedBackend
            .send(request)
-           .map(_.body)
            .flatMap:
-             case Right(body) => printLine(s"Response ok: $body")
-             case Left(err)   => printError(s"Failure: $err")
+             _.body match
+               case Right(body) => ZIO.logInfo(s"Response ok: $body")
+               case Left(err)   => ZIO.logError(s"Failure: $err")
   yield ()
