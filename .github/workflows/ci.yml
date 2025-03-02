@@ -81,7 +81,6 @@ jobs:
       fail-fast: false
       matrix:
         java:
-        - '17'
         - '21'
     steps:
     - name: Install libuv

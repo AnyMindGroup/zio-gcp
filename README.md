@@ -12,7 +12,7 @@ based on [ZIO](https://zio.dev), [Sttp (v4)](https://sttp.softwaremill.com/en/la
 Released for Scala 3 with cross-platform support.  
 Supported platforms: 
  - ✅ JVM 
-   - tested java versions: 17, 21
+   - tested java versions: 21
  - ✅ Native with LLVM (via [scala-native](https://scala-native.org/))
    - backed by [libuv](https://libuv.org) and [libcurl](https://curl.se/libcurl)
    - http backend uses sync curl implementation, [async backend](https://github.com/softwaremill/sttp/issues/1424) might be added at some point...
