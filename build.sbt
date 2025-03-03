@@ -69,6 +69,7 @@ inThisBuild(
     scala3             := _scala3,
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
+    versionScheme      := Some("early-semver"),
     ciEnabledBranches  := Seq("main"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
