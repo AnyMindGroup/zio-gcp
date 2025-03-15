@@ -42,7 +42,7 @@ lazy val sttpClient4Version = "4.0.0-RC1"
 
 lazy val jsoniterVersion = "2.33.2"
 
-lazy val codegenVersion = "0.0.2"
+lazy val codegenVersion = "0.0.4"
 
 inThisBuild(
   List(
@@ -123,12 +123,22 @@ val noPublishSettings = List(
 )
 
 lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
-  (apiName, apiVersion) <- Seq("aiplatform" -> "v1", "iamcredentials" -> "v1", "pubsub" -> "v1", "storage" -> "v1")
-  httpSource            <- Seq("Sttp4")
-  jsonCodec             <- Seq("Jsoniter")
-  arrayType             <- Seq("ZioChunk")
-  name                   = s"zio-gcp-$apiName".toLowerCase()
-  id                     = s"$name-$apiVersion".toLowerCase()
+  (apiName, apiVersion) <- Seq(
+                             "aiplatform"     -> "v1",
+                             "iamcredentials" -> "v1",
+                             "pubsub"         -> "v1",
+                             "storage"        -> "v1",
+                             // new clients can be added here
+                             // 1. Place the specs into codegen/src/main/resources folder e.g.:
+                             // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
+                             // 2. add to configuration here according to the json file name "redis_v1.json" like:
+                             // "redis"          -> "v1",
+                           )
+  httpSource <- Seq("Sttp4")
+  jsonCodec  <- Seq("Jsoniter")
+  arrayType  <- Seq("ZioChunk")
+  name        = s"zio-gcp-$apiName".toLowerCase()
+  id          = s"$name-$apiVersion".toLowerCase()
 } yield {
   CrossProject
     .apply(id = id, base = file(name) / apiVersion)(JVMPlatform, NativePlatform)
