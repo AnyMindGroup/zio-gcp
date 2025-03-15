@@ -29,6 +29,8 @@ More details about authentication under [Authentication](#authentication) sectio
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
 - `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
 
+On how to add new API clients see section [Adding new clients](#adding-new-clients).
+
 ## Getting started
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
@@ -53,7 +55,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.1.1"
 #### Generate content via Vertext AI API:
 
 ```scala
-//> using scala 3.6.3
+//> using scala 3.6.4
 //> using dep com.anymindgroup::zio-gcp-auth::0.1.1
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.1.1
 
@@ -132,6 +134,34 @@ object storage_bucket_upload extends ZIOAppDefault:
                  case Left(err)   => ZIO.logError(s"Failure on deleting: $err")
     yield ()
 ```
+
+## Adding new clients
+Look up and place the [discovery document](https://developers.google.com/discovery/v1/using) specs into the `codegen/src/main/resources` folder.  
+E.g. like:
+```shell
+curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
+```
+
+In `build.sbt` find and extend the config for clients code to generate:
+```scala
+lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
+  (apiName, apiVersion) <- Seq(
+                             "aiplatform"     -> "v1",
+                             "iamcredentials" -> "v1",
+                             "pubsub"         -> "v1",
+                             "storage"        -> "v1",
+                             // new clients can be added here
+                             // 1. Place the specs into codegen/src/main/resources folder e.g.:
+                             // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
+                             // 2. add to configuration here according to the json file name "redis_v1.json" like:
+                             // "redis"          -> "v1",
+                           )
+  // ...
+}                         
+```
+_This step could be automated in the future._
+
+Done. The package will be available as `"com.anymindgroup::zio-gcp-redis-v1"` on publishing.
 
 ## Authentication
 
