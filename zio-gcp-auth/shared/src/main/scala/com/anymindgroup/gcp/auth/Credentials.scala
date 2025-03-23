@@ -2,10 +2,10 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
-import com.anymindgroup.http.*
+import com.anymindgroup.http.UnresolvedAddressException
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
-import sttp.client4.GenericBackend
+import sttp.client4.*
 import sttp.model.*
 
 import zio.Config.Secret

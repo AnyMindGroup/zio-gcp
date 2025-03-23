@@ -1,5 +1,5 @@
 //> using scala 3.6.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.1.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.1.2
 
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
@@ -49,7 +49,7 @@ object SimpleTokenRetrieval extends ZIOAppDefault:
     .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
     .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object PassSpecificUserAccount extends ZIOAppDefault:
   def run =
     httpBackendScoped().flatMap: backend =>
       TokenProvider

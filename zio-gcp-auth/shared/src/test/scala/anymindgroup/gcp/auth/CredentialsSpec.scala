@@ -2,6 +2,7 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
+import com.anymindgroup.http.httpBackendLayer
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
@@ -11,7 +12,7 @@ import zio.test.*
 import zio.test.Assertion.*
 import zio.{Task, ZIO, ZLayer, ZLogger}
 
-object CredentialsSpec extends ZIOSpecDefault with com.anymindgroup.http.HttpClientBackendPlatformSpecific {
+object CredentialsSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment, Any] = suite("CredentialsSpec")(
     test("return none if no credentials were found") {
       for {
