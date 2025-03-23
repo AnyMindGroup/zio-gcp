@@ -2,19 +2,18 @@ package com.anymindgroup.gcp.auth
 
 import java.time.Instant
 
-import com.anymindgroup.http.{HttpClientBackendPlatformSpecific, basicRequest}
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.BackendStub
-import sttp.client4.{Backend, UriContext}
+import sttp.client4.{Backend, UriContext, basicRequest}
 
 import zio.test.{TestEnvironment, ZIOSpecDefault, *}
 import zio.{Duration, Scope, Task, UIO, ULayer, ZIO, ZLayer}
 
-object AuthedBackendSpec extends ZIOSpecDefault with HttpClientBackendPlatformSpecific {
+object AuthedBackendSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("AuthedBackendSpec") {
     test("add token to request") {
       for {
-        res <- ZIO.serviceWithZIO[Backend[Task]](_.send(basicRequest.get(uri"http://example.com")))
+        res <- ZIO.serviceWithZIO[AuthedBackend](_.send(basicRequest.get(uri"http://example.com")))
         _   <- assertTrue(res.is200)
       } yield assertCompletes
     }.provide(

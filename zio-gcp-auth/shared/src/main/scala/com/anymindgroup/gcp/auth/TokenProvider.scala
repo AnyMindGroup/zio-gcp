@@ -1,8 +1,7 @@
 package com.anymindgroup.gcp.auth
 
 import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, ServiceAccountKey, UserAccount}
-import com.anymindgroup.http.*
-import sttp.client4.GenericBackend
+import sttp.client4.*
 import sttp.model.*
 
 import zio.*

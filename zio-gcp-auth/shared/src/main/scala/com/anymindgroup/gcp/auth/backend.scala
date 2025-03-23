@@ -7,8 +7,10 @@ import sttp.monad.MonadError
 
 import zio.*
 
-def toAuthedBackend(tp: TokenProvider[Token], backend: Backend[Task]): Backend[Task] =
-  new Backend[Task]:
+trait AuthedBackend extends Backend[Task]
+
+def toAuthedBackend(tp: TokenProvider[Token], backend: Backend[Task]): AuthedBackend =
+  new AuthedBackend:
     override def send[T](request: GenericRequest[T, Effect[Task]]): Task[Response[T]] =
       tp.token.flatMap(t => backend.send(request.auth.bearer(t.token.token)))
     override def close(): Task[Unit]     = backend.close()
@@ -18,7 +20,7 @@ def defaultAccessTokenBackend(
   lookupComputeMetadataFirst: Boolean = false,
   refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
   refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-): ZIO[Scope, Throwable, Backend[Task]] =
+): ZIO[Scope, Throwable, AuthedBackend] =
   httpBackendScoped().flatMap: backend =>
     TokenProvider
       .defaultAccessTokenProvider(
@@ -34,7 +36,7 @@ def defaultIdTokenBackend(
   lookupComputeMetadataFirst: Boolean = false,
   refreshRetrySchedule: Schedule[Any, Any, Any] = TokenProvider.defaults.refreshRetrySchedule,
   refreshAtExpirationPercent: Double = TokenProvider.defaults.refreshAtExpirationPercent,
-): ZIO[Scope, Throwable, Backend[Task]] =
+): ZIO[Scope, Throwable, AuthedBackend] =
   httpBackendScoped().flatMap: backend =>
     TokenProvider
       .defaultIdTokenProvider(

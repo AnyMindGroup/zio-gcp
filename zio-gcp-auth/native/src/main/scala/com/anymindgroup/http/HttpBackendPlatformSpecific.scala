@@ -7,7 +7,7 @@ import sttp.client4.impl.zio.CurlZioBackend
 
 import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
-trait HttpClientBackendPlatformSpecific {
+private[http] trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, Backend[Task]] =
     ZLayer.scoped(httpBackendScoped())
 

@@ -5,7 +5,7 @@ import java.nio.file.Path
 import com.anymindgroup.http.*
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
-import sttp.client4.GenericBackend
+import sttp.client4.*
 import sttp.model.*
 
 import zio.Config.Secret
