@@ -239,7 +239,7 @@ object SimpleTokenRetrieval extends ZIOAppDefault:
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object PassSpecificUserAccount extends ZIOAppDefault:
   def run =
     httpBackendScoped().flatMap: backend =>
       TokenProvider

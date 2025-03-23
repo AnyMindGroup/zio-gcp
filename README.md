@@ -35,18 +35,18 @@ On how to add new API clients see section [Adding new clients](#adding-new-clien
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
 libraryDependencies ++= Seq(
-  "com.anymindgroup" %% "zio-gcp-auth" % "0.1.1",
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.1.2",
   // add clients based on needs
-  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.1.1",
-  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.1.1",
-  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.1.1",
-  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.1.1",
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.1.2",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.1.2",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.1.2",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.1.2",
 )
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.1.1"
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.1.2"
 // etc.
 ```
 
@@ -56,8 +56,8 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.1.1"
 
 ```scala
 //> using scala 3.6.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.1.1
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.1.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.1.2
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.1.2
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
@@ -97,8 +97,8 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 #### Upload file to storage bucket
 ```scala
 //> using scala 3.6.3
-//> using dep com.anymindgroup::zio-gcp-auth::0.1.1
-//> using dep com.anymindgroup::zio-gcp-storage-v1::0.1.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.1.2
+//> using dep com.anymindgroup::zio-gcp-storage-v1::0.1.2
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import storage.v1.resources.Objects, sttp.model.{Header, MediaType}
@@ -239,7 +239,7 @@ object SimpleTokenRetrieval extends ZIOAppDefault:
 ```scala
 import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
-object PassSpecificUserAccount extends ZIOAppDefault with HttpClientBackendPlatformSpecific:
+object PassSpecificUserAccount extends ZIOAppDefault:
   def run =
     httpBackendScoped().flatMap: backend =>
       TokenProvider
