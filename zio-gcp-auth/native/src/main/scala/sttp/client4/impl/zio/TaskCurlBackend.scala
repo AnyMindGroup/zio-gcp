@@ -29,7 +29,8 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
   override implicit val monad: MonadError[Task] = new RIOMonadAsyncError[Any]
 
   /** Given a [[CurlHandle]], perform the request and return a [[CurlCode]]. */
-  protected def performCurl(c: CurlHandle): Task[CurlCode] = ZIO.attemptBlocking(c.perform)
+  protected def performCurl(c: CurlHandle): Task[CurlCode] =
+    ZIO.attemptBlockingCancelable(c.perform)(ZIO.succeed(c.cleanup()))
 
   /**
    * Same as [[performCurl]], but also checks and throws runtime exceptions on
