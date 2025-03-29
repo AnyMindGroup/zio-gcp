@@ -38,11 +38,11 @@ lazy val _scala3 = "3.3.5"
 
 lazy val _zioVersion = "2.1.16"
 
-lazy val sttpClient4Version = "4.0.0-RC1"
+lazy val sttpClient4Version = "4.0.0-RC2"
 
-lazy val jsoniterVersion = "2.33.2"
+lazy val jsoniterVersion = "2.33.3"
 
-lazy val codegenVersion = "0.0.4"
+lazy val codegenVersion = "0.0.5"
 
 inThisBuild(
   List(
@@ -70,7 +70,7 @@ inThisBuild(
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     versionScheme      := Some("early-semver"),
-    ciEnabledBranches  := Seq("main"),
+    ciEnabledBranches  := Seq("master"),
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
