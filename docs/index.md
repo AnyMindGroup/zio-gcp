@@ -24,7 +24,7 @@ Supported platforms:
 More details about authentication under [Authentication](#authentication) section.
 
 ### clients
-- `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertext AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
+- `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
 - `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
@@ -52,7 +52,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "@VERSION@"
 
 ### Client usage examples
 
-#### Generate content via Vertext AI API:
+#### Generate content via Vertex AI API:
 
 ```scala
 //> using scala 3.6.4
