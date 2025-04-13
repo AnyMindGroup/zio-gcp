@@ -36,9 +36,9 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 lazy val _scala3 = "3.3.5"
 
-lazy val _zioVersion = "2.1.16"
+lazy val _zioVersion = "2.1.17"
 
-lazy val sttpClient4Version = "4.0.0-RC2"
+lazy val sttpClient4Version = "4.0.2"
 
 lazy val jsoniterVersion = "2.33.3"
 
