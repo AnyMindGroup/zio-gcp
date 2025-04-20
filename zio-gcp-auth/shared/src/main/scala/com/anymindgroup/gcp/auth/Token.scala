@@ -40,9 +40,9 @@ object AccessToken {
       case "expiresIn" => "expires_in"
     })
 
-  def fromJsonString(json: String): Either[String, AccessToken] =
+  def fromJsonString(json: String): Either[Throwable, AccessToken] =
     try Right(readFromString[AccessToken](json))
-    catch case e: Throwable => Left(e.getMessage())
+    catch case e: Throwable => Left(e)
 }
 
 // could potentially include more data if needed like structured head and payload
@@ -60,11 +60,11 @@ object IdToken {
   private object Payload:
     given jsonCodec: JsonValueCodec[Payload] = JsonCodecMaker.make[Payload]
 
-  private def base64ToPayload(v: String): Either[String, Payload] =
+  private def base64ToPayload(v: String): Either[Throwable, Payload] =
     try Right(readFromString[Payload](String(Base64.getDecoder.decode(v), StandardCharsets.UTF_8)))
-    catch case e: Throwable => Left(e.getMessage())
+    catch case e: Throwable => Left(e)
 
-  def fromString(token: String): Either[String, IdToken] =
+  def fromString(token: String): Either[Throwable, IdToken] =
     token.split('.') match {
       case Array(_, p, signature, _*) =>
         base64ToPayload(p).map: payload =>
@@ -74,7 +74,7 @@ object IdToken {
             issuedAt = Instant.ofEpochSecond(payload.iat),
             expiresAt = Instant.ofEpochSecond(payload.exp),
           )
-      case _ => Left(s"Ivalid identity token: $token")
+      case _ => Left(Throwable(s"Ivalid identity token: $token"))
     }
 }
 
