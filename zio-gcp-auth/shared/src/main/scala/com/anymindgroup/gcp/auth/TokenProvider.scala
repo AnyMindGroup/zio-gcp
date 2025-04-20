@@ -1,5 +1,6 @@
 package com.anymindgroup.gcp.auth
 
+import com.anymindgroup.gcp.ComputeMetadata
 import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, ServiceAccountKey, UserAccount}
 import sttp.client4.*
 import sttp.model.*
@@ -28,7 +29,7 @@ object TokenProvider {
   }
 
   private[auth] def responseToToken[T <: Token](
-    res: Response[Either[String, T]]
+    res: Response[Either[Throwable, T]]
   ): IO[TokenProviderException, T] =
     res.body match {
       case Right(token) => ZIO.succeed(token)
@@ -47,11 +48,12 @@ object TokenProvider {
             |}""".stripMargin
       )
       .header(Header.contentType(MediaType.ApplicationJson), onDuplicate = DuplicateHeaderBehavior.Replace)
-      .mapResponse(_.flatMap(AccessToken.fromJsonString))
+      .response(asStringAlways)
+      .mapResponse(AccessToken.fromJsonString(_))
 
   private[auth] def autoRefreshTokenProviderByRequest[T <: Token](
     backend: GenericBackend[Task, Any],
-    req: Request[Either[String, T]],
+    req: Request[Either[Throwable, T]],
     refreshRetrySchedule: Schedule[Any, Any, Any],
     refreshAtExpirationPercent: Double,
   ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
@@ -124,7 +126,7 @@ object TokenProvider {
       case ComputeServiceAccount(_) =>
         autoRefreshTokenProviderByRequest(
           backend,
-          ComputeServiceAccount.idTokenRequest(audience),
+          ComputeMetadata.serviceAccountIdTokenReq(audience),
           refreshRetrySchedule,
           refreshAtExpirationPercent,
         )
@@ -157,7 +159,7 @@ object TokenProvider {
       case ComputeServiceAccount(_) =>
         autoRefreshTokenProviderByRequest(
           backend,
-          ComputeServiceAccount.accessTokenRequest,
+          ComputeMetadata.serviceAccountEmailAccessTokenReq,
           refreshRetrySchedule,
           refreshAtExpirationPercent,
         )

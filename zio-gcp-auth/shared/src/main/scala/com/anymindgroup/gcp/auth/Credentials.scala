@@ -2,11 +2,11 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
+import com.anymindgroup.gcp.ComputeMetadata
 import com.anymindgroup.http.UnresolvedAddressException
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
 import sttp.client4.*
-import sttp.model.*
 
 import zio.Config.Secret
 import zio.{IO, Task, ZIO}
@@ -29,23 +29,6 @@ object Credentials {
   // https://cloud.google.com/compute/docs/metadata/overview
   // https://cloud.google.com/compute/docs/metadata/predefined-metadata-keys#instance-metadata
   final case class ComputeServiceAccount(email: String) extends Credentials
-  object ComputeServiceAccount {
-    private[auth] val baseUri            = uri"http://metadata.google.internal"
-    private[auth] val computeMetadataUri = uri"$baseUri/computeMetadata/v1/instance/service-accounts/default"
-    private[auth] val email              = uri"$computeMetadataUri/email"
-    private[auth] val token              = uri"$computeMetadataUri/token"
-    private[auth] val identity           = uri"$computeMetadataUri/identity"
-    private[auth] val baseReq            = basicRequest.header(Header("Metadata-Flavor", "Google"))
-
-    val emailRequest: Request[Either[String, ComputeServiceAccount]] =
-      baseReq.get(email).mapResponseRight(email => Credentials.ComputeServiceAccount(email))
-
-    val accessTokenRequest: Request[Either[String, AccessToken]] =
-      baseReq.get(token).mapResponse(_.flatMap(AccessToken.fromJsonString))
-
-    def idTokenRequest(audience: String): Request[Either[String, IdToken]] =
-      baseReq.get(identity.addParam("audience", audience)).mapResponse(_.flatMap(IdToken.fromString))
-  }
 
   private enum ApplicationCredentials:
     case authorized_user(refresh_token: String, client_id: String, client_secret: String)
@@ -120,9 +103,9 @@ object Credentials {
   ): ZIO[Any, CredentialsException, Option[Credentials.ComputeServiceAccount]] =
     (
       ZIO.log(s"Attempting to reach internal compute metadata service...") *>
-        backend.send(ComputeServiceAccount.emailRequest.mapResponse(_.toOption)).map(_.body)
+        backend.send(ComputeMetadata.serviceAccountEmailReq).map(r => Some(r.body))
     ).catchSome { case UnresolvedAddressException(_) =>
-      ZIO.log(s"Unable to resolve address ${ComputeServiceAccount.baseUri.toString()}").as(None)
+      ZIO.log(s"Unable to resolve address ${ComputeMetadata.serviceAccountEmailReq.uri.toString()}").as(None)
     }.mapError { case e =>
       CredentialsException.Unexpected(e)
     }
