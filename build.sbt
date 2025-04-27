@@ -272,7 +272,7 @@ lazy val root =
       zioGcpAuth.jvm,
       zioGcpAuth.native,
       zioGcpStorage.jvm,
-      zioGcpStorage.native
+      zioGcpStorage.native,
     )
     .aggregate(gcpClientsProjects*)
     .settings(commonSettings)
