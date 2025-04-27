@@ -141,7 +141,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
   id          = s"$name-$apiVersion".toLowerCase()
 } yield {
   CrossProject
-    .apply(id = id, base = file(name) / apiVersion)(JVMPlatform, NativePlatform)
+    .apply(id = id, base = file(id))(JVMPlatform, NativePlatform)
     .settings(commonSettings)
     .settings(
       Compile / scalacOptions --= Seq("-Xfatal-warnings"),
@@ -271,6 +271,8 @@ lazy val root =
     .aggregate(
       zioGcpAuth.jvm,
       zioGcpAuth.native,
+      zioGcpStorage.jvm,
+      zioGcpStorage.native
     )
     .aggregate(gcpClientsProjects*)
     .settings(commonSettings)
@@ -319,6 +321,19 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     ),
   )
 
+lazy val zioGcpStorage = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-gcp-storage"))
+  .settings(moduleName := "zio-gcp-storage")
+  .settings(commonSettings)
+  .dependsOn(zioGcpAuth)
+  .dependsOn(
+    gcpClientsCrossProjects
+      .filter(_.projects.exists { case (_, p) =>
+        Set("zio-gcp-storage-v1", "zio-gcp-iamcredentials-v1").exists(p.id.startsWith(_))
+      })
+      .map(p => new CrossClasspathDependency(p, p.configuration))*
+  )
+
 lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .in(file("examples"))
   .dependsOn(zioGcpAuth)
@@ -333,7 +348,7 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
 
 lazy val tests = crossProject(JVMPlatform, NativePlatform)
   .in(file("tests"))
-  .dependsOn(zioGcpAuth)
+  .dependsOn(zioGcpAuth, zioGcpStorage)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration))*)
   .settings(commonSettings)
   .settings(noPublishSettings)

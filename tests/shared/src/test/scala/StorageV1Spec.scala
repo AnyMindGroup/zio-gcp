@@ -2,7 +2,6 @@ package com.anymindgroup.gcp.storage.v1
 
 import zio.test.*, zio.*, zio.Console.{printLine, printError}
 import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
-import sttp.client4.GenericBackend
 import sttp.model.Header
 import sttp.model.MediaType
 import java.nio.charset.StandardCharsets
