@@ -2,9 +2,7 @@ package com.anymindgroup.gcp.iamcredentials.v1
 
 import zio.test.*
 import zio.*
-import com.anymindgroup.gcp.auth.TokenProvider
-import com.anymindgroup.http.httpBackendLayer
-import sttp.client4.{GenericBackend, Response}
+import sttp.client4.Response
 import java.nio.charset.StandardCharsets
 
 import java.util.Base64
