@@ -25,7 +25,7 @@ More details about authentication under [Authentication](#authentication) sectio
 - `zio-gcp-storage` Google Cloud Storage package based on `zio-gcp-storage-v1` and `zio-gcp-iamcredentials-v1` client code 
 with support for creating [Signed URLs](https://cloud.google.com/storage/docs/access-control/signed-urls).
 
-### clients
+### generated clients
 - `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
