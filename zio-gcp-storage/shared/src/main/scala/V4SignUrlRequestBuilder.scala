@@ -8,7 +8,6 @@ import java.util.Base64.Encoder
 import com.anymindgroup.gcp.iamcredentials.v1.resources.projects.ServiceAccounts
 import com.anymindgroup.gcp.iamcredentials.v1.schemas.SignBlobRequest
 import sttp.client4.Request
-import sttp.model.Uri.RelativePath
 import sttp.model.{MediaType, Method, QueryParams, Uri}
 
 import zio.{Clock, Task, ZIO}
@@ -19,7 +18,7 @@ class V4SignUrlRequestBuilder private (
 ) {
   def signUrlRequest(
     bucket: String,
-    resourcePath: RelativePath,
+    resourcePath: Seq[String],
     contentType: Option[MediaType],
     method: Method,
     serviceAccountEmail: String,
@@ -27,14 +26,13 @@ class V4SignUrlRequestBuilder private (
     expiresInSeconds: V4SignatureExpiration,
   ): Task[Request[Either[Throwable, Uri]]] =
     for {
-      now            <- Clock.instant
-      resourcePathStr = resourcePath.toString
+      now <- Clock.instant
       canonicalReq <- ZIO.fromEither(
                         canonicalRequestBuilder
                           .toCanonicalRequest(
                             method = method,
                             timestamp = now,
-                            resourcePath = resourcePathStr,
+                            resourcePath = resourcePath,
                             contentType = contentType,
                             bucket = bucket,
                             serviceAccountEmail = serviceAccountEmail,
@@ -56,7 +54,7 @@ class V4SignUrlRequestBuilder private (
                     signatureResponse = signatureRes.signedBlob.getOrElse(""),
                     canonicalQueryParams = canonicalReq.canonicalQueryParams,
                     bucket = bucket,
-                    resourcePath = resourcePathStr,
+                    resourcePath = resourcePath,
                   )
               }
     } yield req
@@ -72,7 +70,7 @@ object V4SignUrlRequestBuilder {
     signatureResponse: String,
     canonicalQueryParams: QueryParams,
     bucket: String,
-    resourcePath: String,
+    resourcePath: Seq[String],
   ): Either[Throwable, Uri] =
     (try {
       val decoded = Base64.getDecoder().decode(signatureResponse)
@@ -81,7 +79,7 @@ object V4SignUrlRequestBuilder {
       case e: Throwable => Left(e)
     }).map: signature =>
       storage.v1.rootUrl
-        .addPath(bucket, resourcePath.split("/")*)
+        .addPath(bucket, resourcePath*)
         .addParams(canonicalQueryParams.param("X-Goog-Signature", signature))
 
 }

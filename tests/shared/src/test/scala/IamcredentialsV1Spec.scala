@@ -1,12 +1,13 @@
 package com.anymindgroup.gcp.iamcredentials.v1
 
-import zio.test.*
-import zio.*
-import sttp.client4.Response
 import java.nio.charset.StandardCharsets
-
 import java.util.Base64
+
 import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
+import sttp.client4.Response
+
+import zio.*
+import zio.test.*
 
 object IamcredentialsV1Spec extends ZIOSpecDefault:
   def spec = suite("IamcredentialsV1Spec")(

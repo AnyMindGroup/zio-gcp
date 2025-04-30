@@ -23,7 +23,7 @@ private[storage] class V4CanonicalRequestBuilder(
   def toCanonicalRequest(
     method: Method,
     timestamp: Instant,
-    resourcePath: String,
+    resourcePath: Seq[String],
     contentType: Option[MediaType],
     bucket: String,
     serviceAccountEmail: String,
@@ -50,7 +50,7 @@ private[storage] class V4CanonicalRequestBuilder(
           "X-Goog-Algorithm"     -> signAlgorithm.toString(),
           "X-Goog-Credential"    -> s"$serviceAccountEmail/$credential",
           "X-Goog-Date"          -> dateTime,
-          "X-Goog-Expires"       -> expiresInSeconds.toString(),
+          "X-Goog-Expires"       -> expiresInSeconds.toSeconds.toString(),
           "X-Goog-SignedHeaders" -> signedHeadersString,
         )
       )
@@ -76,7 +76,7 @@ private[storage] class V4CanonicalRequestBuilder(
     // SIGNED_HEADERS
     // PAYLOAD
     val payload = s"""|${method.method}
-                      |/$bucket/${resourcePath.stripPrefix("/")}
+                      |/$bucket/${resourcePath.mkString("/")}
                       |$canonicalQueryStr
                       |$canonicalHeadersString
                       |

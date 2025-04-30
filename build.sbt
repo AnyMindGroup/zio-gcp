@@ -273,6 +273,8 @@ lazy val root =
       zioGcpAuth.native,
       zioGcpStorage.jvm,
       zioGcpStorage.native,
+      tests.jvm,
+      tests.native,
     )
     .aggregate(gcpClientsProjects*)
     .settings(commonSettings)
@@ -336,7 +338,7 @@ lazy val zioGcpStorage = crossProject(JVMPlatform, NativePlatform)
 
 lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .in(file("examples"))
-  .dependsOn(zioGcpAuth)
+  .dependsOn(zioGcpAuth, zioGcpStorage)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration))*)
   .settings(noPublishSettings)
   .settings(
