@@ -34,15 +34,15 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => s
 }
 
-lazy val _scala3 = "3.3.5"
+lazy val _scala3 = "3.3.6"
 
-lazy val _zioVersion = "2.1.17"
+lazy val _zioVersion = "2.1.19"
 
-lazy val sttpClient4Version = "4.0.3"
+lazy val sttpClient4Version = "4.0.8"
 
-lazy val jsoniterVersion = "2.33.3"
+lazy val jsoniterVersion = "2.36.3"
 
-lazy val codegenVersion = "0.0.5"
+lazy val codegenVersion = "0.0.6"
 
 inThisBuild(
   List(
@@ -75,10 +75,9 @@ inThisBuild(
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
-    ciTargetJavaVersions   := Seq("21"),
-    scalafmt               := true,
-    scalafmtSbtCheck       := true,
-    sonatypeCredentialHost := xerial.sbt.Sonatype.sonatypeCentralHost,
+    ciTargetJavaVersions := Seq("21"),
+    scalafmt             := true,
+    scalafmtSbtCheck     := true,
     ciReleaseJobs := ciReleaseJobs.value
       .map(withBuildSetupUpdate)
       .map(j =>
