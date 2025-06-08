@@ -1,4 +1,4 @@
-package sttp.client4.impl.zio
+package sttp.client4.curl
 
 import scala.collection.immutable.Seq
 import scala.collection.mutable.ArrayBuffer
@@ -11,12 +11,12 @@ import scala.scalanative.unsigned.*
 import _root_.zio.{Task, ZIO}
 import sttp.capabilities.Effect
 import sttp.client4.*
-import sttp.client4.curl.AbstractCurlBackend
 import sttp.client4.curl.internal.*
 import sttp.client4.curl.internal.CurlApi.*
 import sttp.client4.curl.internal.CurlCode.CurlCode
 import sttp.client4.curl.internal.CurlInfo.*
 import sttp.client4.curl.internal.CurlOption.{Header as _, *}
+import sttp.client4.impl.zio.*
 import sttp.client4.internal.*
 import sttp.client4.ws.{GotAWebSocketException, NotAWebSocketException}
 import sttp.model.*
@@ -40,7 +40,7 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
 
   type R = Any & Effect[Task]
 
-  override def close(): Task[Unit] = ZIO.succeed(())
+  override def close(): Task[Unit] = ZIO.unit
 
   /** A request-specific context, with allocated zones and headers. */
   private class Context() extends AutoCloseable {
@@ -91,18 +91,31 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
         if (request.attributes.nonEmpty) {
           ZIO.fail(new UnsupportedOperationException("Attributes are not supported"))
         } else {
-          val reqHeaders = request.headers
+          val reqHeaders = collection.mutable.ListBuffer[Header](request.headers*)
+
+          request.body match {
+            case _: MultipartBody[?] =>
+              reqHeaders += Header.contentType(MediaType.MultipartFormData)
+            case _ =>
+          }
+
+          val userAgent =
+            reqHeaders.find(_.is(HeaderNames.UserAgent)) match {
+              case Some(h) => h.value
+              case None    => curlUserAgent
+            }
+
+          curl.option(
+            UserAgent,
+            userAgent,
+          )
+
           if (reqHeaders.nonEmpty) {
             reqHeaders.find(_.name == "Accept-Encoding").foreach(h => curl.option(AcceptEncoding, h.value))
-            val headers = request.body match {
-              case _: MultipartBody[?] =>
-                ctx.transformHeaders(
-                  reqHeaders :+ Header.contentType(MediaType.MultipartFormData)
-                )
-              case _ =>
-                ctx.transformHeaders(reqHeaders)
-            }
-            curl.option(HttpHeader, headers.ptr)
+
+            val curlHeaders = ctx.transformHeaders(reqHeaders)
+
+            curl.option(HttpHeader, curlHeaders.ptr)
           }
 
           val spaces = responseSpace
@@ -144,10 +157,12 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
       free(spaces.httpCode.asInstanceOf[Ptr[CSignedChar]])
       curl.cleanup()
 
-      val (statusText, responseHeaders) =
-        if (responseHeaders_.nonEmpty) (responseHeaders_.head.name.split(" ").last, responseHeaders_.tail)
-        else ("", Seq.empty)
+      val statusText       = responseHeaders_.head.name.split(" ").last
+      val responseHeaders  = responseHeaders_.tail
       val responseMetadata = ResponseMetadata(httpCode, statusText, responseHeaders)
+
+      // the response is read into memory
+      request.options.onBodyReceived(responseMetadata)
 
       bodyFromResponseAs(request.response, responseMetadata, Left(responseBody)).map { b =>
         Response[T](
@@ -276,37 +291,38 @@ abstract class TaskCurlBackend(verbose: Boolean) extends GenericBackend[Task, An
     }
   }
 
-  private lazy val bodyFromResponseAs: BodyFromResponseAs[Task, String, Nothing, Nothing] =
-    new BodyFromResponseAs[Task, String, Nothing, Nothing] {
-      override protected def withReplayableBody(
-        response: String,
-        replayableBody: Either[Array[Byte], SttpFile],
-      ): Task[String] = ZIO.succeed(response)
+  private lazy val curlUserAgent = "sttp-curl/" + fromCString(CCurl.getVersion())
 
-      override protected def regularIgnore(response: String): Task[Unit] = ZIO.unit
+  private lazy val bodyFromResponseAs = new BodyFromResponseAs[Task, String, Nothing, Nothing] {
+    override protected def withReplayableBody(
+      response: String,
+      replayableBody: Either[Array[Byte], SttpFile],
+    ): Task[String] = ZIO.succeed(response)
 
-      override protected def regularAsByteArray(response: String): Task[Array[Byte]] = ZIO.succeed(response.getBytes)
+    override protected def regularIgnore(response: String): Task[Unit] = ZIO.unit
 
-      override protected def regularAsFile(response: String, file: SttpFile): Task[SttpFile] =
-        ZIO.succeed(file)
+    override protected def regularAsByteArray(response: String): Task[Array[Byte]] = ZIO.succeed(response.getBytes)
 
-      override protected def regularAsStream(response: String): Task[(Nothing, () => Task[Unit])] =
-        throw new IllegalStateException("CurlBackend does not support streaming responses")
+    override protected def regularAsFile(response: String, file: SttpFile): Task[SttpFile] =
+      ZIO.succeed(file)
 
-      override protected def handleWS[T](
-        responseAs: GenericWebSocketResponseAs[T, ?],
-        meta: ResponseMetadata,
-        ws: Nothing,
-      ): Task[T] = ws
+    override protected def regularAsStream(response: String): Task[(Nothing, () => Task[Unit])] =
+      throw new IllegalStateException("CurlBackend does not support streaming responses")
 
-      override protected def cleanupWhenNotAWebSocket(
-        response: String,
-        e: NotAWebSocketException,
-      ): Task[Unit] = ZIO.unit
+    override protected def handleWS[T](
+      responseAs: GenericWebSocketResponseAs[T, ?],
+      meta: ResponseMetadata,
+      ws: Nothing,
+    ): Task[T] = ws
 
-      override protected def cleanupWhenGotWebSocket(response: Nothing, e: GotAWebSocketException): Task[Unit] =
-        response
-    }
+    override protected def cleanupWhenNotAWebSocket(
+      response: String,
+      e: NotAWebSocketException,
+    ): Task[Unit] = ZIO.unit
+
+    override protected def cleanupWhenGotWebSocket(response: Nothing, e: GotAWebSocketException): Task[Unit] =
+      response
+  }
 
   private def lift(code: CurlCode): Task[CurlCode] =
     code match {
