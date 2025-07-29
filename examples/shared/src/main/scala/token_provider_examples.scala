@@ -1,4 +1,4 @@
-//> using scala 3.6.4
+//> using scala 3.7.1
 //> using dep com.anymindgroup::zio-gcp-auth::0.1.2
 
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
