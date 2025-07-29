@@ -1,6 +1,6 @@
 //> using scala 3.6.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.1.2
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.1.2
+//> using dep com.anymindgroup::zio-gcp-auth::0.1.5
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.1.5
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
