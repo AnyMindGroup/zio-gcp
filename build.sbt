@@ -205,7 +205,7 @@ def codegenTask(
   arrayType: String,
 ) = Def.task {
   val logger        = streams.value.log
-  val codegenBin    = buildCodegenBin.value
+  val codegenBin    = cliBinFile
   val outDir        = (Compile / sourceManaged).value
   val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
   val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
