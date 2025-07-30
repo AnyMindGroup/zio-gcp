@@ -192,9 +192,7 @@ lazy val cliBinFile: File = {
 
 lazy val buildCodegenBin = taskKey[File]("")
 buildCodegenBin := {
-  val built   = (codegen / Compile / nativeLinkReleaseFast).value
-  val destZip = new File(s"${cliBinFile.getPath()}.zip")
-
+  val built = (codegen / Compile / nativeLinkReleaseFast).value
   IO.copyFile(built, cliBinFile)
   cliBinFile
 }
@@ -207,7 +205,7 @@ def codegenTask(
   arrayType: String,
 ) = Def.task {
   val logger        = streams.value.log
-  val codegenBin    = cliBinFile
+  val codegenBin    = buildCodegenBin.value
   val outDir        = (Compile / sourceManaged).value
   val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
   val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
