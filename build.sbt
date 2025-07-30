@@ -262,7 +262,7 @@ def codegenTask(
         e => fmtErrs += e,
       ) match {
         case 0 => ()
-        case c => throw new InterruptedException(s"Failure on code formatting: ${errs.mkString("\n")}")
+        case c => throw new InterruptedException(s"Failure on code formatting: ${fmtErrs.mkString("\n")}")
       }
 
       IO.delete(outDir / ".scala-build")
