@@ -11,7 +11,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.5")
 
 addSbtPlugin("com.github.sbt" % "sbt-dynver" % "5.1.1")
 
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.13.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.3")
 
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.2.2")
 
