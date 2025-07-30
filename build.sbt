@@ -42,7 +42,7 @@ lazy val sttpClient4Version = "4.0.8"
 
 lazy val jsoniterVersion = "2.36.3"
 
-lazy val codegenVersion = "0.0.6"
+lazy val codegenVersion = "0.0.7"
 
 inThisBuild(
   List(
@@ -253,10 +253,20 @@ def codegenTask(
       files.foreach(f => logger.success(s"Generated ${f.getPath}"))
 
       // formatting (may need to find another way...)
-      logger.info(s"Formatting sources in $outDir...")
-      s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf $outDir" ! ProcessLogger(_ => ()) // add logs when needed
-      s"rm -rf $outDir/.scala-build".!!
-      logger.success("Formatting done")
+      val fmtCmd =
+        s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf ${outDir.absolutePath}"
+      logger.info(s"Formatting with '$fmtCmd'")
+      val fmtErrs = scala.collection.mutable.ListBuffer.empty[String]
+      fmtCmd ! ProcessLogger(
+        _ => (),
+        e => fmtErrs += e,
+      ) match {
+        case 0 => ()
+        case c => throw new InterruptedException(s"Failure on code formatting: ${errs.mkString("\n")}")
+      }
+
+      IO.delete(outDir / ".scala-build")
+      logger.success(s"Formatting sources in ${outDir.getPath()} done")
 
       files
     }
@@ -285,8 +295,7 @@ lazy val root =
 
 lazy val codegen = (project in file("codegen"))
   .settings(
-    scalaVersion       := _scala3,
-    crossScalaVersions := Seq(_scala3),
+    scalaVersion := "3.7.1",
     libraryDependencies ++= Seq(
       "dev.rolang" %%% "gcp-codegen-cli" % codegenVersion
     ),

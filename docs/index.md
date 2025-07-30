@@ -59,7 +59,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "@VERSION@"
 #### Generate content via Vertex AI API:
 
 ```scala
-//> using scala 3.6.4
+//> using scala 3.7.1
 //> using dep com.anymindgroup::zio-gcp-auth::@VERSION@
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::@VERSION@
 
@@ -100,7 +100,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
-//> using scala 3.6.4
+//> using scala 3.7.1
 //> using dep com.anymindgroup::zio-gcp-auth::@VERSION@
 //> using dep com.anymindgroup::zio-gcp-storage::@VERSION@
 
