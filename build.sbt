@@ -77,6 +77,11 @@ inThisBuild(
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
     ciTargetJavaVersions := Seq("21"),
     ciReleaseJobs        := ciReleaseJobs.value.map(withBuildSetupUpdate),
+    publishTo := {
+      val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
+      if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
+      else localStaging.value
+    },
     ciReleaseJobs := ciReleaseJobs.value
       .map(withBuildSetupUpdate)
       .map(j =>
