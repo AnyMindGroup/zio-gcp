@@ -23,7 +23,7 @@ def updatedBuildSetupStep(step: Step) = step match {
     Step.SingleStep(
       name = "Setup build tools",
       uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
-      parameters = Map("apps" -> Json.fromString("sbt")),
+      parameters = Map("apps" -> Json.fromString("sbtn")),
     )
   case s: Step.SingleStep if s.name == "Test" =>
     s.copy(run = Some("sbt buildCodegenBin +test"))
@@ -259,22 +259,27 @@ def codegenTask(
       val files = listFilesRec(List(outPkgDir), Nil)
       logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
 
-      // formatting (may need to find another way...)
-      val fmtCmd =
-        s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf ${outDir.absolutePath}"
-      logger.info(s"Formatting with '$fmtCmd'")
-      val fmtErrs = scala.collection.mutable.ListBuffer.empty[String]
-      fmtCmd ! ProcessLogger(
-        _ => (),
-        e => fmtErrs += e,
-      ) match {
-        case 0 => ()
-        case c =>
-          throw new InterruptedException(s"Failure on code formatting with exit code $c: ${fmtErrs.mkString("\n")}")
-      }
+      // skip formatting in CI
+      if (sys.env.get("CI").isEmpty) {
+        // formatting (may need to find another way...)
+        val fmtCmd =
+          s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf ${outDir.absolutePath}"
+        logger.info(s"Formatting with '$fmtCmd'")
+        val fmtErrs = scala.collection.mutable.ListBuffer.empty[String]
+        fmtCmd ! ProcessLogger(
+          _ => (),
+          e => fmtErrs += e,
+        ) match {
+          case 0 => ()
+          case c =>
+            throw new InterruptedException(s"Failure on code formatting with exit code $c: ${fmtErrs.mkString("\n")}")
+        }
 
-      IO.delete(outDir / ".scala-build")
-      logger.success(s"Formatting sources in ${outDir.getPath()} done")
+        IO.delete(outDir / ".scala-build")
+        logger.success(s"Formatting sources in ${outDir.getPath()} done")
+      } else {
+        logger.info("Skipping generated code formatting")
+      }
 
       files
     }
