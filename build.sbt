@@ -7,31 +7,36 @@ import _root_.io.circe.Json
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
-def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.map {
+def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.flatMap {
   case s: Step.SingleStep if s.name.contains("Install libuv") =>
-    Step.SingleStep(
-      name = "Install libuv",
-      run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev"),
+    List(
+      Step.SingleStep(
+        name = "Install libuv",
+        run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev"),
+      )
     )
   case s => updatedBuildSetupStep(s)
 })
 
-def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.map(updatedBuildSetupStep))
+def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.flatMap(updatedBuildSetupStep))
 
 def updatedBuildSetupStep(step: Step) = step match {
+  case s: Step.SingleStep if s.name.contains("Setup Scala") => Nil
   case s: Step.SingleStep if s.name.contains("Setup SBT") =>
-    Step.SingleStep(
-      name = "Setup build tools",
-      uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
-      parameters = Map("apps" -> Json.fromString("sbt")),
+    List(
+      Step.SingleStep(
+        name = "Setup build tools",
+        uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
+        parameters = Map("apps" -> Json.fromString("sbt"), "jvm" -> Json.fromString("temurin:21")),
+      )
     )
   case s: Step.SingleStep if s.name == "Test" =>
-    s.copy(run = Some("sbt buildCodegenBin +test"))
+    List(s.copy(run = Some("sbt buildCodegenBin +test")))
   case s: Step.SingleStep if s.name == "Check all code compiles" =>
-    s.copy(run = Some("sbt buildCodegenBin +Test/compile"))
+    List(s.copy(run = Some("sbt buildCodegenBin +Test/compile")))
   case s: Step.SingleStep if s.name == "Lint" =>
-    s.copy(run = Some("sbt buildCodegenBin lint"))
-  case s => s
+    List(s.copy(run = Some("sbt buildCodegenBin lint")))
+  case s => List(s)
 }
 
 lazy val _scala3 = "3.3.6"

@@ -30,16 +30,11 @@ jobs:
         fetch-depth: '0'
     - name: Install libuv
       run: sudo apt-get update && sudo apt-get install -y libuv1-dev
-    - name: Setup Scala
-      uses: actions/setup-java@v4
-      with:
-        distribution: corretto
-        java-version: '21'
-        check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
       with:
         apps: sbt
+        jvm: temurin:21
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Check all code compiles
@@ -59,16 +54,11 @@ jobs:
         fetch-depth: '0'
     - name: Install libuv
       run: sudo apt-get update && sudo apt-get install -y libuv1-dev
-    - name: Setup Scala
-      uses: actions/setup-java@v4
-      with:
-        distribution: corretto
-        java-version: '21'
-        check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
       with:
         apps: sbt
+        jvm: temurin:21
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Check if the site workflow is up to date
@@ -87,16 +77,11 @@ jobs:
     steps:
     - name: Install libuv
       run: sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev
-    - name: Setup Scala
-      uses: actions/setup-java@v4
-      with:
-        distribution: corretto
-        java-version: ${{ matrix.java }}
-        check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
       with:
         apps: sbt
+        jvm: temurin:21
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Git Checkout
@@ -193,16 +178,11 @@ jobs:
         fetch-depth: '0'
     - name: Install libuv
       run: sudo apt-get update && sudo apt-get install -y libuv1-dev
-    - name: Setup Scala
-      uses: actions/setup-java@v4
-      with:
-        distribution: corretto
-        java-version: '21'
-        check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
       with:
         apps: sbt
+        jvm: temurin:21
     - name: Cache Dependencies
       uses: coursier/cache-action@v6
     - name: Release
