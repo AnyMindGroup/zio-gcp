@@ -77,6 +77,8 @@ inThisBuild(
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
     ciTargetJavaVersions := Seq("21"),
     ciReleaseJobs        := ciReleaseJobs.value.map(withBuildSetupUpdate),
+    pomIncludeRepository := { _ => false },
+    publishMavenStyle    := true,
     publishTo := {
       val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
       if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
@@ -254,7 +256,7 @@ def codegenTask(
       }
 
       val files = listFilesRec(List(outPkgDir), Nil)
-      files.foreach(f => logger.success(s"Generated ${f.getPath}"))
+      logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
 
       // formatting (may need to find another way...)
       val fmtCmd =
@@ -266,7 +268,8 @@ def codegenTask(
         e => fmtErrs += e,
       ) match {
         case 0 => ()
-        case c => throw new InterruptedException(s"Failure on code formatting: ${fmtErrs.mkString("\n")}")
+        case c =>
+          throw new InterruptedException(s"Failure on code formatting with exit code $c: ${fmtErrs.mkString("\n")}")
       }
 
       IO.delete(outDir / ".scala-build")
