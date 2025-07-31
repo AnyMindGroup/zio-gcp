@@ -23,7 +23,7 @@ def updatedBuildSetupStep(step: Step) = step match {
     Step.SingleStep(
       name = "Setup build tools",
       uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
-      parameters = Map("apps" -> Json.fromString("sbtn")),
+      parameters = Map("apps" -> Json.fromString("sbt")),
     )
   case s: Step.SingleStep if s.name == "Test" =>
     s.copy(run = Some("sbt buildCodegenBin +test"))
