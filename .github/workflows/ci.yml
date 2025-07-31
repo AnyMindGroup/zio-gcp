@@ -34,7 +34,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: corretto
-        java-version: '17'
+        java-version: '21'
         check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
@@ -63,7 +63,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: corretto
-        java-version: '17'
+        java-version: '21'
         check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
@@ -121,7 +121,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: corretto
-        java-version: '17'
+        java-version: '21'
         check-latest: true
     - name: Setup SBT
       uses: sbt/setup-sbt@v1
@@ -197,7 +197,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         distribution: corretto
-        java-version: '17'
+        java-version: '21'
         check-latest: true
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
