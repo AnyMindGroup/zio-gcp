@@ -58,7 +58,7 @@ object TokenProvider {
     refreshAtExpirationPercent: Double,
   ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
     def requestToken: IO[TokenProviderException, TokenReceipt[T]] = for {
-      _ <- ZIO.log("Requesting new access token...")
+      _     <- ZIO.log("Requesting new access token...")
       token <- backend
                  .send(req)
                  .mapError(e => TokenProviderException.Unexpected(e))
@@ -94,7 +94,7 @@ object TokenProvider {
       .auto(backend, lookupComputeMetadataFirst)
       .mapError(e => TokenProviderException.CredentialsFailure(e))
       .flatMap {
-        case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+        case None              => ZIO.fail(TokenProviderException.CredentialsNotFound)
         case Some(credentials) =>
           accessTokenProvider(credentials, backend, refreshRetrySchedule, refreshAtExpirationPercent)
       }
@@ -110,7 +110,7 @@ object TokenProvider {
       .auto(backend, lookupComputeMetadataFirst)
       .mapError(e => TokenProviderException.CredentialsFailure(e))
       .flatMap {
-        case None => ZIO.fail(TokenProviderException.CredentialsNotFound)
+        case None              => ZIO.fail(TokenProviderException.CredentialsNotFound)
         case Some(credentials) =>
           idTokenProvider(audience, credentials, backend, refreshRetrySchedule, refreshAtExpirationPercent)
       }

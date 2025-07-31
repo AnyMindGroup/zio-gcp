@@ -13,7 +13,7 @@ object AiplatformV1Spec extends ZIOSpecDefault:
         backend    <- defaultAccessTokenBackend()
         endpoint    = Endpoint.`asia-northeast1`
         gcpProject <- ZIO.systemWith(_.env("GCP_TEST_PROJECT")).someOrFail("GCP_TEST_PROJECT not set")
-        endpoint <-
+        endpoint   <-
           ZIO
             .systemWith(
               _.env("GCP_TEST_LOCATION").map(_.flatMap(l => Endpoint.values.find(_.location.equalsIgnoreCase(l))))
@@ -35,7 +35,7 @@ object AiplatformV1Spec extends ZIOSpecDefault:
                 endpointUrl = endpoint.url,
               )
         res <- backend.send(req)
-        _ <- res.body match
+        _   <- res.body match
                case Left(err)   => ZIO.dieMessage(s"Failure $err")
                case Right(body) => Console.printLine(s"Response ok: $body")
       } yield assertCompletes

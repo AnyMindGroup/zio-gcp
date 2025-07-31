@@ -55,11 +55,11 @@ private[storage] class V4CanonicalRequestBuilder(
         )
       )
 
-    val odt             = timestamp.atOffset(ZoneOffset.UTC)
-    val dateTime        = odt.format(dateTimeFormatter)
-    val date            = odt.toLocalDate.format(DateTimeFormatter.BASIC_ISO_DATE)
-    val credentialScope = s"$date/auto/storage/goog4_request"
-    val canonicalQueryP = canonicalQueryParams(credential = credentialScope, dateTime = dateTime)
+    val odt               = timestamp.atOffset(ZoneOffset.UTC)
+    val dateTime          = odt.format(dateTimeFormatter)
+    val date              = odt.toLocalDate.format(DateTimeFormatter.BASIC_ISO_DATE)
+    val credentialScope   = s"$date/auto/storage/goog4_request"
+    val canonicalQueryP   = canonicalQueryParams(credential = credentialScope, dateTime = dateTime)
     val canonicalQueryStr = canonicalQueryP.toString(
       keyEncoding = QuerySegmentEncoding.Standard,
       valueEncoding = QuerySegmentEncoding.All,

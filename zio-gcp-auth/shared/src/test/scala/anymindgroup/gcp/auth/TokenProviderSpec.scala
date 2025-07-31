@@ -17,7 +17,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
 
   val okUserAccount: Credentials.UserAccount   = Credentials.UserAccount("token", "user", Config.Secret("123"))
   val failUserAccount: Credentials.UserAccount = Credentials.UserAccount("token", "fail_user", Config.Secret("123"))
-  val testIdToken =
+  val testIdToken                              =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkxMjJ9.-fM8Z-u88K5GGomqJxRCilYkjXZusY_Py6kdyzh1EAg"
 
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("TokenProviderSpec")(
@@ -39,7 +39,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       val svcAcc = Credentials.ServiceAccountKey("email", Config.Secret("123"))
       for {
         backend <- ZIO.service[Backend[Task]]
-        _ <- assertZIO(TokenProvider.accessTokenProvider(svcAcc, backend).exit)(
+        _       <- assertZIO(TokenProvider.accessTokenProvider(svcAcc, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
         _ <- assertZIO(TokenProvider.idTokenProvider("", svcAcc, backend).exit)(
@@ -51,7 +51,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       val user = Credentials.UserAccount("", "", Config.Secret(""))
       for {
         backend <- ZIO.service[Backend[Task]]
-        _ <- assertZIO(TokenProvider.idTokenProvider("", user, backend).exit)(
+        _       <- assertZIO(TokenProvider.idTokenProvider("", user, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
       } yield assertCompletes
@@ -77,7 +77,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       checkN(10)(Gen.double(0.1, 0.9)) { expiryPercent =>
         for {
           backend <- ZIO.service[Backend[Task]]
-          tp <- TokenProvider.accessTokenProvider(
+          tp      <- TokenProvider.accessTokenProvider(
                   credentials = Credentials.ComputeServiceAccount(""),
                   backend = backend,
                   refreshAtExpirationPercent = expiryPercent,
@@ -94,7 +94,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
       for {
         retries   <- Ref.make(0)
         maxRetries = 5
-        tp <- ZIO
+        tp        <- ZIO
                 .serviceWithZIO[Backend[Task]](backend =>
                   TokenProvider
                     .accessTokenProvider(

@@ -22,7 +22,7 @@ def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.flatMap(updatedBuildSe
 
 def updatedBuildSetupStep(step: Step) = step match {
   case s: Step.SingleStep if s.name.contains("Setup Scala") => Nil
-  case s: Step.SingleStep if s.name.contains("Setup SBT") =>
+  case s: Step.SingleStep if s.name.contains("Setup SBT")   =>
     List(
       Step.SingleStep(
         name = "Setup build tools",
@@ -56,7 +56,7 @@ inThisBuild(
     organization := "com.anymindgroup",
     licenses     := Seq(License.Apache2),
     homepage     := Some(url("https://anymindgroup.com")),
-    developers := List(
+    developers   := List(
       Developer(id = "rolang", name = "Roman Langolf", email = "rolang@pm.me", url = url("https://github.com/rolang")),
       Developer(
         id = "dutch3883",
@@ -85,7 +85,7 @@ inThisBuild(
     ciReleaseJobs        := ciReleaseJobs.value.map(withBuildSetupUpdate),
     pomIncludeRepository := { _ => false },
     publishMavenStyle    := true,
-    publishTo := {
+    publishTo            := {
       val centralSnapshots = "https://central.sonatype.com/repository/maven-snapshots/"
       if (isSnapshot.value) Some("central-snapshots" at centralSnapshots)
       else localStaging.value
@@ -123,7 +123,7 @@ lazy val commonSettings = List(
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Xfatal-warnings"),
   semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision,// use Scalafix compatible version
+  semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
 )
 
 val noPublishSettings = List(
@@ -183,7 +183,7 @@ lazy val cliBinFile: File = {
 
   def normalise(s: String) = s.toLowerCase.replaceAll("[^a-z0-9]+", "")
   val props                = sys.props.toMap
-  val os = normalise(props.getOrElse("os.name", "")) match {
+  val os                   = normalise(props.getOrElse("os.name", "")) match {
     case p if p.startsWith("linux")                         => "linux"
     case p if p.startsWith("windows")                       => "windows"
     case p if p.startsWith("osx") || p.startsWith("macosx") => "macosx"
@@ -301,7 +301,7 @@ lazy val root =
       tests.jvm,
       tests.native,
     )
-    .aggregate(gcpClientsProjects*)
+    .aggregate(gcpClientsProjects *)
     .settings(commonSettings)
     .settings(noPublishSettings)
     .settings(
@@ -357,13 +357,13 @@ lazy val zioGcpStorage = crossProject(JVMPlatform, NativePlatform)
       .filter(_.projects.exists { case (_, p) =>
         Set("zio-gcp-storage-v1", "zio-gcp-iamcredentials-v1").exists(p.id.startsWith(_))
       })
-      .map(p => new CrossClasspathDependency(p, p.configuration))*
+      .map(p => new CrossClasspathDependency(p, p.configuration)) *
   )
 
 lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .in(file("examples"))
   .dependsOn(zioGcpAuth, zioGcpStorage)
-  .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration))*)
+  .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
     scalaVersion       := _scala3,
@@ -375,7 +375,7 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
 lazy val tests = crossProject(JVMPlatform, NativePlatform)
   .in(file("tests"))
   .dependsOn(zioGcpAuth, zioGcpStorage)
-  .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration))*)
+  .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(commonSettings)
   .settings(noPublishSettings)
   .settings(

@@ -16,7 +16,7 @@ object IamcredentialsV1Spec extends ZIOSpecDefault:
         ab         <- defaultAccessTokenBackend()
         body        = "payload to sign".getBytes(StandardCharsets.UTF_8)
         serviceAcc <- ZIO.systemWith(_.env("GCP_TEST_SERVICE_ACCOUNT")).someOrFail("GCP_TEST_SERVICE_ACCOUNT not set")
-        _ <- ab.send(
+        _          <- ab.send(
                resources.projects.ServiceAccounts
                  .signBlob(
                    projectsId = "-",

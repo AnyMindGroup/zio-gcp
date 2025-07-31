@@ -26,7 +26,7 @@ class V4SignUrlRequestBuilder private (
     expiresInSeconds: V4SignatureExpiration,
   ): Task[Request[Either[Throwable, Uri]]] =
     for {
-      now <- Clock.instant
+      now          <- Clock.instant
       canonicalReq <- ZIO.fromEither(
                         canonicalRequestBuilder
                           .toCanonicalRequest(
@@ -41,14 +41,14 @@ class V4SignUrlRequestBuilder private (
                           )
                       )
       signPayload = encoder.encodeToString(canonicalReq.stringToSign.getBytes(StandardCharsets.UTF_8))
-      req = ServiceAccounts
+      req         = ServiceAccounts
               .signBlob(
                 projectsId = "-",
                 serviceAccountsId = serviceAccountEmail,
                 request = SignBlobRequest(payload = signPayload),
               )
               .mapResponse {
-                case Left(err) => Left(err)
+                case Left(err)           => Left(err)
                 case Right(signatureRes) =>
                   V4SignUrlRequestBuilder.toSignedUrl(
                     signatureResponse = signatureRes.signedBlob.getOrElse(""),

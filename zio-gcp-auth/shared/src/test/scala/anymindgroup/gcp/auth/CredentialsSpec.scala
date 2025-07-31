@@ -25,7 +25,7 @@ object CredentialsSpec extends ZIOSpecDefault {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
         creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
-        _ <-
+        _     <-
           assert(creds)(isSome(equalTo(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com"))))
       } yield assertCompletes
     }.provideLayer(metadataStubLayer),
@@ -33,7 +33,7 @@ object CredentialsSpec extends ZIOSpecDefault {
       for {
         backend <- ZIO.service[Backend[Task]]
         _       <- TestSystem.putProperty("user.home", resourcesDir.toString())
-        _ <- Credentials
+        _       <- Credentials
                .auto(backend, lookupComputeMetadataFirst = false)
                .flatMap: credentials =>
                  assertTrue(credentials match {
@@ -57,14 +57,14 @@ object CredentialsSpec extends ZIOSpecDefault {
       for {
         _         <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", userCredsPath.toString())
         userCreds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
-        _ <- assertTrue(userCreds match {
+        _         <- assertTrue(userCreds match {
                case Some(Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _)) => true
                case _                                                                                   => false
              })
         serviceCredsPath = Path.of(resourcesDir.toString(), "service_account.json").toAbsolutePath()
         _               <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", serviceCredsPath.toString())
         serviceCreds    <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
-        _ <- assertTrue(serviceCreds match {
+        _               <- assertTrue(serviceCreds match {
                case Some(Credentials.ServiceAccountKey("test@gcp-project.iam.gserviceaccount.com", _)) => true
                case _                                                                                  => false
              })
