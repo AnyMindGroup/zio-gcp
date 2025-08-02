@@ -1,4 +1,4 @@
-//> using scala 3.7.1
+//> using scala 3.7.2
 //> using dep com.anymindgroup::zio-gcp-auth::0.2.1
 //> using dep com.anymindgroup::zio-gcp-storage::0.2.1
 
