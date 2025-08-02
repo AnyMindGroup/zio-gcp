@@ -47,7 +47,7 @@ lazy val sttpClient4Version = "4.0.9"
 
 lazy val jsoniterVersion = "2.37.0"
 
-lazy val codegenVersion = "0.0.7"
+lazy val codegenVersion = "0.0.8"
 
 inThisBuild(
   List(
@@ -263,29 +263,6 @@ def codegenTask(
 
       val files = listFilesRec(List(outPkgDir), Nil)
       logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
-
-      // skip formatting in CI
-      if (sys.env.get("CI").isEmpty) {
-        // formatting (may need to find another way...)
-        val fmtCmd =
-          s"scala-cli fmt --scalafmt-conf=./.scalafmt.conf ${outDir.absolutePath}"
-        logger.info(s"Formatting with '$fmtCmd'")
-        val fmtErrs = scala.collection.mutable.ListBuffer.empty[String]
-        fmtCmd ! ProcessLogger(
-          _ => (),
-          e => fmtErrs += e,
-        ) match {
-          case 0 => ()
-          case c =>
-            throw new InterruptedException(s"Failure on code formatting with exit code $c: ${fmtErrs.mkString("\n")}")
-        }
-
-        IO.delete(outDir / ".scala-build")
-        logger.success(s"Formatting sources in ${outDir.getPath()} done")
-      } else {
-        logger.info("Skipping generated code formatting")
-      }
-
       files
     }
   }
