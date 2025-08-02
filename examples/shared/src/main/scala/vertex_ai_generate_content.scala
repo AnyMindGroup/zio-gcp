@@ -9,7 +9,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
   def run = for
     authedBackend <- defaultAccessTokenBackend()
     endpoint       = Endpoint.`asia-northeast1`
-    request = projects.locations.publishers.Models.generateContent(
+    request        = projects.locations.publishers.Models.generateContent(
                 projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",

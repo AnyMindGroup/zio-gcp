@@ -15,7 +15,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
 
       for {
         builder <- ZIO.succeed(V4CanonicalRequestBuilder())
-        req <- ZIO.fromEither(
+        req     <- ZIO.fromEither(
                  builder.toCanonicalRequest(
                    method = Method.PUT,
                    timestamp = testTimestamp,
@@ -52,7 +52,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
 
       for {
         builder <- ZIO.succeed(V4CanonicalRequestBuilder())
-        req <- ZIO.fromEither(
+        req     <- ZIO.fromEither(
                  builder.toCanonicalRequest(
                    method = Method.GET,
                    timestamp = testTimestamp,
