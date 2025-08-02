@@ -79,7 +79,7 @@ inThisBuild(
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
-    ciJvmOptions ++= Seq("-Xms2G", "-Xmx2G", "-Xss4M", "-XX:+UseG1GC"),
+    ciJvmOptions ++= Seq("-Xms2G", "-Xmx3G", "-Xss4M", "-XX:+UseG1GC"),
     ciDefaultJavaVersion := "21",
     ciTargetJavaVersions := Seq("21"),
     ciReleaseJobs        := ciReleaseJobs.value.map(withBuildSetupUpdate),
