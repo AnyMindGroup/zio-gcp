@@ -1,6 +1,6 @@
 //> using scala 3.7.1
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.1
-//> using dep com.anymindgroup::zio-gcp-storage::0.2.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.2.2
+//> using dep com.anymindgroup::zio-gcp-storage::0.2.2
 
 import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
 import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
