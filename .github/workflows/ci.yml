@@ -3,7 +3,7 @@
 
 name: CI
 env:
-  JDK_JAVA_OPTIONS: -XX:+PrintCommandLineFlags -Xms2G -Xmx3G -Xss4M -XX:+UseG1GC
+  JDK_JAVA_OPTIONS: -XX:+PrintCommandLineFlags -Xms2G -Xmx4G -Xss4M -XX:+UseG1GC
 'on':
   workflow_dispatch: {}
   release:
