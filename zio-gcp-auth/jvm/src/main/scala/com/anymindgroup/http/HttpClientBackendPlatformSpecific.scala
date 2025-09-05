@@ -5,16 +5,16 @@ import java.net.http.HttpClient
 import scala.annotation.tailrec
 
 import sttp.capabilities.zio.ZioStreams
-import sttp.client4.*
+import sttp.client4.WebSocketStreamBackend
 import sttp.client4.httpclient.zio.HttpClientZioBackend
 
 import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
 private[http] trait HttpClientBackendPlatformSpecific {
-  def httpBackendLayer(): ZLayer[Any, Throwable, StreamBackend[Task, ZioStreams]] =
+  def httpBackendLayer(): ZLayer[Any, Throwable, WebSocketStreamBackend[Task, ZioStreams]] =
     ZLayer.scoped(httpBackendScoped())
 
-  def httpBackendScoped(): ZIO[Scope, Throwable, StreamBackend[Task, ZioStreams]] = ZIO
+  def httpBackendScoped(): ZIO[Scope, Throwable, WebSocketStreamBackend[Task, ZioStreams]] = ZIO
     .acquireRelease(
       ZIO.attempt(
         HttpClientZioBackend.usingClient(
