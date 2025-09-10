@@ -66,6 +66,11 @@ private[storage] class V4CanonicalRequestBuilder(
       includeBoundary = false,
     )
 
+    // PATH_TO_RESOURCE needs to be URL encoded
+    // https://cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
+    val pathToResource =
+      (bucket +: resourcePath).map(p => java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)).mkString("/")
+
     // https://cloud.google.com/storage/docs/authentication/canonical-requests#request-structure
     //
     // HTTP_VERB
@@ -76,7 +81,7 @@ private[storage] class V4CanonicalRequestBuilder(
     // SIGNED_HEADERS
     // PAYLOAD
     val payload = s"""|${method.method}
-                      |/$bucket/${resourcePath.mkString("/")}
+                      |/$pathToResource
                       |$canonicalQueryStr
                       |$canonicalHeadersString
                       |

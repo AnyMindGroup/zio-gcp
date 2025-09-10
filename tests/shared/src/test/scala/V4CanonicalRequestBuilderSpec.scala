@@ -84,4 +84,33 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
              )
       } yield assertCompletes
     },
+    test("toCanonicalRequest (resource path is URL encoded)") {
+      for {
+        builder <- ZIO.succeed(V4CanonicalRequestBuilder())
+        req     <- ZIO.fromEither(
+                 builder.toCanonicalRequest(
+                   method = Method.GET,
+                   timestamp = Instant.parse("2019-12-01T19:08:59Z"),
+                   resourcePath = List("test", "[a].png"),
+                   contentType = Some(MediaType.ImagePng),
+                   bucket = "test-bucket",
+                   serviceAccountEmail = "test@gcp.iam.gserviceaccount.com",
+                   signAlgorithm = V4SignAlgorithm.`GOOG4-RSA-SHA256`,
+                   expiresInSeconds = V4SignatureExpiration.inSeconds(900),
+                 )
+               )
+        _ <-
+          assertTrue(
+            req.payloadPlain ==
+              """|GET
+                 |/test-bucket/test/%5Ba%5D.png
+                 |X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=test%40gcp.iam.gserviceaccount.com%2F20191201%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20191201T190859Z&X-Goog-Expires=900&X-Goog-SignedHeaders=content-type%3Bhost
+                 |content-type:image/png
+                 |host:storage.googleapis.com
+                 |
+                 |content-type;host
+                 |UNSIGNED-PAYLOAD""".stripMargin
+          )
+      } yield assertCompletes
+    },
   )
