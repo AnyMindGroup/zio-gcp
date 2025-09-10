@@ -6,8 +6,8 @@ import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneOffset}
 
-import sttp.model.Uri.QuerySegmentEncoding
-import sttp.model.{MediaType, Method, QueryParams}
+import sttp.model.Uri.{PathSegment, QuerySegmentEncoding}
+import sttp.model.{MediaType, Method, QueryParams, Uri}
 
 // https://cloud.google.com/storage/docs/authentication/canonical-requests
 private[storage] case class V4CanonicalRequest(
@@ -66,10 +66,10 @@ private[storage] class V4CanonicalRequestBuilder(
       includeBoundary = false,
     )
 
-    // PATH_TO_RESOURCE needs to be URL encoded
+    // PATH_TO_RESOURCE needs to be URL path encoded
     // https://cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
     val pathToResource =
-      (bucket +: resourcePath).map(p => java.net.URLEncoder.encode(p, StandardCharsets.UTF_8)).mkString("/")
+      (bucket +: resourcePath).map(p => PathSegment(p).encoded).mkString("/")
 
     // https://cloud.google.com/storage/docs/authentication/canonical-requests#request-structure
     //
