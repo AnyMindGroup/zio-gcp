@@ -91,7 +91,8 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                  builder.toCanonicalRequest(
                    method = Method.GET,
                    timestamp = Instant.parse("2019-12-01T19:08:59Z"),
-                   resourcePath = List("test", "[a].png"),
+                   // all characters from the docs https://cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
+                   resourcePath = List("test", """?=!#$&'()*+,:;@[]".png"""),
                    contentType = Some(MediaType.ImagePng),
                    bucket = "test-bucket",
                    serviceAccountEmail = "test@gcp.iam.gserviceaccount.com",
@@ -101,15 +102,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                )
         _ <-
           assertTrue(
-            req.payloadPlain ==
-              """|GET
-                 |/test-bucket/test/%5Ba%5D.png
-                 |X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=test%40gcp.iam.gserviceaccount.com%2F20191201%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20191201T190859Z&X-Goog-Expires=900&X-Goog-SignedHeaders=content-type%3Bhost
-                 |content-type:image/png
-                 |host:storage.googleapis.com
-                 |
-                 |content-type;host
-                 |UNSIGNED-PAYLOAD""".stripMargin
+            req.payloadPlain.linesIterator.toVector(1) == """/test-bucket/test/%3F=!%23$&'()*+,:;@%5B%5D%22.png"""
           )
       } yield assertCompletes
     },
