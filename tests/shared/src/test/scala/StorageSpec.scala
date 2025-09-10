@@ -22,7 +22,7 @@ object StorageSpec extends ZIOSpecDefault:
                                 s <- sys.env.get("GCP_TEST_SERVICE_ACCOUNT").toRight("Missing GCP_TEST_SERVICE_ACCOUNT")
                               yield (b, s)
         backend <- defaultAccessTokenBackend()
-        objPath  = List("manual_test", "zio_gcp_test.txt")
+        objPath  = List("manual_test", """zio_gcp_test_?=!#$&'()*+,:;@[]".txt""")
         body     = "this is a test body".getBytes(StandardCharsets.UTF_8)
 
         // insert object
