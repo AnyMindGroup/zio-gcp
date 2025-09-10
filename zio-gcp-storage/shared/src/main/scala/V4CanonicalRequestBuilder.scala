@@ -6,7 +6,7 @@ import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneOffset}
 
-import sttp.model.Uri.{PathSegment, QuerySegmentEncoding}
+import sttp.model.Uri.{QuerySegmentEncoding, Segment}
 import sttp.model.{MediaType, Method, QueryParams, Uri}
 
 // https://cloud.google.com/storage/docs/authentication/canonical-requests
@@ -66,10 +66,9 @@ private[storage] class V4CanonicalRequestBuilder(
       includeBoundary = false,
     )
 
-    // PATH_TO_RESOURCE needs to be URL path encoded
+    // PATH_TO_RESOURCE needs to be URL encoded
     // https://cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
-    val pathToResource =
-      (bucket +: resourcePath).map(p => PathSegment(p).encoded).mkString("/")
+    val pathToResource = toResourcePathSegments(bucket +: resourcePath).map(_.encoded).mkString("/")
 
     // https://cloud.google.com/storage/docs/authentication/canonical-requests#request-structure
     //
@@ -109,6 +108,9 @@ private[storage] class V4CanonicalRequestBuilder(
     )
   }
 }
+
+private[storage] def toResourcePathSegments(resourcePath: Seq[String]) =
+  resourcePath.map(p => Segment(p, QuerySegmentEncoding.All))
 
 private[storage] object V4CanonicalRequestBuilder:
   def apply(): V4CanonicalRequestBuilder =
