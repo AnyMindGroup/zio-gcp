@@ -79,7 +79,7 @@ object V4SignUrlRequestBuilder {
       case e: Throwable => Left(e)
     }).map: signature =>
       storage.v1.rootUrl
-        .addPath(bucket, resourcePath*)
+        .addPathSegments(toResourcePathSegments(bucket +: resourcePath))
         .addParams(canonicalQueryParams.param("X-Goog-Signature", signature))
 
 }
