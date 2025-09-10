@@ -14,7 +14,7 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
   override def spec: Spec[Any, Any] = suite("V4SignUrlRequestBuilderSpec")(
     test("return signed url") {
       val testBucket        = "example-bucket"
-      val testResource      = List("cat.jpeg")
+      val testResource      = List("test", "cat[].jpeg")
       val signatureResponse =
         "PszqKoIc7Q3TU22ouo9YWxtMk9jtKZBWMdqEwKb57+XlritZsYnaBiNhRaE5YvARf421zqS/M2kKPuPbYJc9c2GyEk66Y/J8o2QFpo65tKaFIvADvkBUiNg6IXSs3YL4udg+roLeMPi6r5NJqjp3Rf+7FT6xN8xImtw33DGjbffkp6BhUuHSt9USOCzbDOSmjTAiTuuo5eNUSbL6f5xZroKq07wTj3ETDDICV/QkB6VlxGffi1TVKF14dgrBuE0jwATsWyVBFFVXJ7pB+uUc8UDgZQzAVTjahJUFWAevg9+QgA2HQlc5a0u3Cs+/tJZjWnsx3hm0S8NJqGIOa8mO0w=="
       val expectedSignature =
@@ -25,14 +25,16 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
                               reqBuilder.toCanonicalRequest(
                                 method = Method.PUT,
                                 timestamp = Instant.parse("2018-10-26T18:13:09Z"),
-                                resourcePath = List("test", "image.png"),
+                                resourcePath = testResource,
                                 contentType = None,
-                                bucket = "test-bucket",
+                                bucket = testBucket,
                                 serviceAccountEmail = "example@example-project.iam.gserviceaccount.com",
                                 signAlgorithm = V4SignAlgorithm.`GOOG4-RSA-SHA256`,
                                 expiresInSeconds = V4SignatureExpiration.inSeconds(900),
                               )
-        signedUrl <- ZIO.fromEither:
+        expectedPath = "/example-bucket/test/cat%5B%5D.jpeg"
+        _           <- assertTrue(canonicalRequest.payloadPlain.linesIterator.drop(1).next == expectedPath)
+        signedUrl   <- ZIO.fromEither:
                        V4SignUrlRequestBuilder
                          .toSignedUrl(
                            signatureResponse = signatureResponse,
@@ -42,7 +44,7 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
                          )
                          .map(_.toString())
         expectedUrl =
-          s"https://storage.googleapis.com/$testBucket/${testResource.mkString("/")}" +
+          s"https://storage.googleapis.com$expectedPath" +
             "?X-Goog-Algorithm=GOOG4-RSA-SHA256" +
             "&X-Goog-Credential=example@example-project.iam.gserviceaccount.com/20181026/auto/storage/goog4_request" +
             "&X-Goog-Date=20181026T181309Z" +

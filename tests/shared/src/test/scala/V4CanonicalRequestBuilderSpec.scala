@@ -102,7 +102,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                )
         _ <-
           assertTrue(
-            req.payloadPlain.linesIterator.toVector(1) == """/test-bucket/test/%3F=!%23$&'()*+,:;@%5B%5D%22.png"""
+            req.payloadPlain.linesIterator.drop(1).next == """/test-bucket/test/%3F=!%23$&'()*+,:;@%5B%5D%22.png"""
           )
       } yield assertCompletes
     },
