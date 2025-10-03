@@ -43,7 +43,7 @@ lazy val _scala3 = "3.3.6"
 
 lazy val _zioVersion = "2.1.21"
 
-lazy val sttpClient4Version = "4.0.11"
+lazy val sttpClient4Version = "4.0.12"
 
 lazy val jsoniterVersion = "2.38.2"
 
