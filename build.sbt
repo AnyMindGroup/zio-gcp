@@ -45,7 +45,7 @@ lazy val _zioVersion = "2.1.21"
 
 lazy val sttpClient4Version = "4.0.12"
 
-lazy val jsoniterVersion = "2.38.2"
+lazy val jsoniterVersion = "2.38.3"
 
 lazy val codegenVersion = "0.0.8"
 
