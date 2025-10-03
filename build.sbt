@@ -290,7 +290,7 @@ lazy val root =
 
 lazy val codegen = (project in file("codegen"))
   .settings(
-    scalaVersion := "3.7.2",
+    scalaVersion := "3.7.3",
     libraryDependencies ++= Seq(
       "dev.rolang" %%% "gcp-codegen-cli" % codegenVersion
     ),
