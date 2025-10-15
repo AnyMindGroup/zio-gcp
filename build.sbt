@@ -39,7 +39,7 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-lazy val _scala3 = "3.3.6"
+lazy val _scala3 = "3.3.7"
 
 lazy val _zioVersion = "2.1.21"
 
