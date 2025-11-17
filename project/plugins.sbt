@@ -13,6 +13,6 @@ addSbtPlugin("com.github.sbt" % "sbt-dynver" % "5.1.1")
 
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.4")
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.3.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.4.2")
 
 addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
