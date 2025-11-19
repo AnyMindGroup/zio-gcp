@@ -39,7 +39,7 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-lazy val _scala3 = "3.3.6"
+lazy val _scala3 = "3.3.7"
 
 lazy val _zioVersion = "2.1.22"
 
@@ -281,12 +281,6 @@ lazy val root =
     .aggregate(gcpClientsProjects *)
     .settings(commonSettings)
     .settings(noPublishSettings)
-    .settings(
-      coverageDataDir := {
-        val scalaVersionMajor = scalaVersion.value.head
-        target.value / s"scala-$scalaVersionMajor"
-      }
-    )
 
 lazy val codegen = (project in file("codegen"))
   .settings(
@@ -345,7 +339,6 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .settings(
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
-    coverageEnabled    := false,
     fork               := true,
   )
 
