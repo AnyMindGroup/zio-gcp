@@ -7,7 +7,6 @@ import sttp.client4.testing.*
 import sttp.model.*
 
 import zio.test.*
-import zio.test.Assertion.*
 import zio.{Task, ZIO, ZLayer, ZLogger}
 
 object ComputeMetadataSpec extends ZIOSpecDefault {

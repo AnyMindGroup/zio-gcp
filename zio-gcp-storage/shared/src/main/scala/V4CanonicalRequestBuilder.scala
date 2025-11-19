@@ -7,7 +7,7 @@ import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneOffset}
 
 import sttp.model.Uri.{QuerySegmentEncoding, Segment}
-import sttp.model.{MediaType, Method, QueryParams, Uri}
+import sttp.model.{MediaType, Method, QueryParams}
 
 // https://cloud.google.com/storage/docs/authentication/canonical-requests
 private[storage] case class V4CanonicalRequest(
