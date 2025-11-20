@@ -24,8 +24,113 @@
  ],
  "endpoints": [
   {
+   "endpointUrl": "https://storage.africa-south1.rep.googleapis.com/",
+   "location": "africa-south1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-east1.rep.googleapis.com/",
+   "location": "asia-east1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-east2.rep.googleapis.com/",
+   "location": "asia-east2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-northeast1.rep.googleapis.com/",
+   "location": "asia-northeast1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-northeast2.rep.googleapis.com/",
+   "location": "asia-northeast2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-northeast3.rep.googleapis.com/",
+   "location": "asia-northeast3",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-south1.rep.googleapis.com/",
+   "location": "asia-south1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-south2.rep.googleapis.com/",
+   "location": "asia-south2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-southeast1.rep.googleapis.com/",
+   "location": "asia-southeast1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.asia-southeast2.rep.googleapis.com/",
+   "location": "asia-southeast2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.australia-southeast1.rep.googleapis.com/",
+   "location": "australia-southeast1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.australia-southeast2.rep.googleapis.com/",
+   "location": "australia-southeast2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.eu.rep.googleapis.com/",
+   "location": "eu",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-central2.rep.googleapis.com/",
+   "location": "europe-central2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-north1.rep.googleapis.com/",
+   "location": "europe-north1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-southwest1.rep.googleapis.com/",
+   "location": "europe-southwest1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west1.rep.googleapis.com/",
+   "location": "europe-west1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west2.rep.googleapis.com/",
+   "location": "europe-west2",
+   "description": "Regional Endpoint"
+  },
+  {
    "endpointUrl": "https://storage.europe-west3.rep.googleapis.com/",
    "location": "europe-west3",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west4.rep.googleapis.com/",
+   "location": "europe-west4",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west6.rep.googleapis.com/",
+   "location": "europe-west6",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west8.rep.googleapis.com/",
+   "location": "europe-west8",
    "description": "Regional Endpoint"
   },
   {
@@ -34,8 +139,113 @@
    "description": "Regional Endpoint"
   },
   {
+   "endpointUrl": "https://storage.europe-west10.rep.googleapis.com/",
+   "location": "europe-west10",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-west12.rep.googleapis.com/",
+   "location": "europe-west12",
+   "description": "Regional Endpoint"
+  },
+  {
    "endpointUrl": "https://storage.me-central2.rep.googleapis.com/",
    "location": "me-central2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.me-west1.rep.googleapis.com/",
+   "location": "me-west1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us.rep.googleapis.com/",
+   "location": "us",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-central1.rep.googleapis.com/",
+   "location": "us-central1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-east1.rep.googleapis.com/",
+   "location": "us-east1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-east4.rep.googleapis.com/",
+   "location": "us-east4",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-east5.rep.googleapis.com/",
+   "location": "us-east5",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-south1.rep.googleapis.com/",
+   "location": "us-south1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-west1.rep.googleapis.com/",
+   "location": "us-west1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-west2.rep.googleapis.com/",
+   "location": "us-west2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-west3.rep.googleapis.com/",
+   "location": "us-west3",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-west4.rep.googleapis.com/",
+   "location": "us-west4",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.northamerica-northeast2.rep.googleapis.com/",
+   "location": "northamerica-northeast2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.southamerica-east1.rep.googleapis.com/",
+   "location": "southamerica-east1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.southamerica-west1.rep.googleapis.com/",
+   "location": "southamerica-west1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.me-central1.rep.googleapis.com/",
+   "location": "me-central1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.northamerica-northeast1.rep.googleapis.com/",
+   "location": "northamerica-northeast1",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.europe-north2.rep.googleapis.com/",
+   "location": "europe-north2",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.us-west8.rep.googleapis.com/",
+   "location": "us-west8",
+   "description": "Regional Endpoint"
+  },
+  {
+   "endpointUrl": "https://storage.northamerica-south1.rep.googleapis.com/",
+   "location": "northamerica-south1",
    "description": "Regional Endpoint"
   }
  ],
@@ -46,10 +256,12 @@
    "description": "Data format for the response.",
    "default": "json",
    "enum": [
-    "json"
+    "json",
+    "media"
    ],
    "enumDescriptions": [
-    "Responses with Content-Type of application/json"
+    "Responses with Content-Type of application/json",
+    "Responses containing object data"
    ],
    "location": "query"
   },
@@ -205,6 +417,75 @@
       "defaultKmsKeyName": {
        "type": "string",
        "description": "A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified."
+      },
+      "googleManagedEncryptionEnforcementConfig": {
+       "type": "object",
+       "description": "If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.",
+       "properties": {
+        "restrictionMode": {
+         "type": "string",
+         "description": "Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.",
+         "enum": [
+          "NotRestricted",
+          "FullyRestricted"
+         ],
+         "enumDescriptions": [
+          "Creation of new objects with Google Managed Encryption is not restricted.",
+          "Creation of new objects with Google Managed Encryption is fully restricted."
+         ]
+        },
+        "effectiveTime": {
+         "type": "string",
+         "description": "Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.",
+         "format": "date-time"
+        }
+       }
+      },
+      "customerManagedEncryptionEnforcementConfig": {
+       "type": "object",
+       "description": "If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.",
+       "properties": {
+        "restrictionMode": {
+         "type": "string",
+         "description": "Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.",
+         "enum": [
+          "NotRestricted",
+          "FullyRestricted"
+         ],
+         "enumDescriptions": [
+          "Creation of new objects with Customer-Managed Encryption is not restricted.",
+          "Creation of new objects with Customer-Managed Encryption is fully restricted."
+         ]
+        },
+        "effectiveTime": {
+         "type": "string",
+         "description": "Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.",
+         "format": "date-time"
+        }
+       }
+      },
+      "customerSuppliedEncryptionEnforcementConfig": {
+       "type": "object",
+       "description": "If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.",
+       "properties": {
+        "restrictionMode": {
+         "type": "string",
+         "description": "Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.",
+         "enum": [
+          "NotRestricted",
+          "FullyRestricted"
+         ],
+         "enumDescriptions": [
+          "Creation of new objects with Customer-Supplied Encryption is not restricted.",
+          "Creation of new objects with Customer-Supplied Encryption is fully restricted."
+         ]
+        },
+        "effectiveTime": {
+         "type": "string",
+         "description": "Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.",
+         "format": "date-time"
+        }
+       }
       }
      }
     },
@@ -306,6 +587,14 @@
          }
         }
        }
+      },
+      "allowCrossOrgVpcs": {
+       "type": "boolean",
+       "description": "Whether to allow cross-org VPCs in the bucket's IP filter configuration."
+      },
+      "allowAllServiceAgentAccess": {
+       "type": "boolean",
+       "description": "Whether to allow all service agents to access the bucket regardless of the IP filter configuration."
       }
      }
     },
@@ -617,6 +906,23 @@
     }
    }
   },
+  "AdvanceRelocateBucketOperationRequest": {
+   "id": "AdvanceRelocateBucketOperationRequest",
+   "type": "object",
+   "description": "An AdvanceRelocateBucketOperation request.",
+   "properties": {
+    "ttl": {
+     "type": "string",
+     "description": "Specifies the duration after which the relocation will revert to the sync stage if the relocation hasn't succeeded. Optional, if not supplied, a default value of 12h will be used.",
+     "format": "google-duration"
+    },
+    "expireTime": {
+     "type": "string",
+     "description": "Specifies the time when the relocation will revert to the sync stage if the relocation hasn't succeeded.",
+     "format": "date-time"
+    }
+   }
+  },
   "AnywhereCache": {
    "id": "AnywhereCache",
    "type": "object",
@@ -857,6 +1163,13 @@
     "nextPageToken": {
      "type": "string",
      "description": "The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results."
+    },
+    "unreachable": {
+     "type": "array",
+     "description": "The list of bucket resource names that could not be reached during the listing operation.",
+     "items": {
+      "type": "string"
+     }
     }
    }
   },
@@ -1511,6 +1824,24 @@
       "description": "An individual metadata entry."
      }
     },
+    "contexts": {
+     "type": "object",
+     "description": "User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata.",
+     "properties": {
+      "custom": {
+       "type": "object",
+       "description": "User-defined object contexts.",
+       "additionalProperties": {
+        "$ref": "ObjectCustomContextPayload",
+        "description": "A single user-defined object context."
+       }
+      }
+     }
+    },
+    "restoreToken": {
+     "type": "string",
+     "description": "Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets."
+    },
     "metageneration": {
      "type": "string",
      "description": "The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object.",
@@ -1579,6 +1910,11 @@
     "timeDeleted": {
      "type": "string",
      "description": "The time at which the object became noncurrent in RFC 3339 format. Will be returned if and only if this version of the object has been deleted.",
+     "format": "date-time"
+    },
+    "timeFinalized": {
+     "type": "string",
+     "description": "The time when the object was finalized.",
      "format": "date-time"
     },
     "softDeleteTime": {
@@ -1705,6 +2041,27 @@
     }
    }
   },
+  "ObjectCustomContextPayload": {
+   "id": "ObjectCustomContextPayload",
+   "type": "object",
+   "description": "The payload of a single user-defined object context.",
+   "properties": {
+    "value": {
+     "type": "string",
+     "description": "The value of the object context."
+    },
+    "createTime": {
+     "type": "string",
+     "description": "The time at which the object context was created in RFC 3339 format.",
+     "format": "date-time"
+    },
+    "updateTime": {
+     "type": "string",
+     "description": "The time at which the object context was last updated in RFC 3339 format.",
+     "format": "date-time"
+    }
+   }
+  },
   "Objects": {
    "id": "Objects",
    "type": "object",
@@ -1752,7 +2109,7 @@
        },
        "members": {
         "type": "array",
-        "description": "A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows:  \n- allUsers \u2014 A special identifier that represents anyone on the internet; with or without a Google account.  \n- allAuthenticatedUsers \u2014 A special identifier that represents anyone who is authenticated with a Google account or a service account.  \n- user:emailid \u2014 An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.  \n- serviceAccount:emailid \u2014 An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .  \n- group:emailid \u2014 An email address that represents a Google group. For example, group:admins@example.com.  \n- domain:domain \u2014 A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.  \n- projectOwner:projectid \u2014 Owners of the given project. For example, projectOwner:my-example-project  \n- projectEditor:projectid \u2014 Editors of the given project. For example, projectEditor:my-example-project  \n- projectViewer:projectid \u2014 Viewers of the given project. For example, projectViewer:my-example-project",
+        "description": "A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows:  \n- allUsers - A special identifier that represents anyone on the internet; with or without a Google account.  \n- allAuthenticatedUsers - A special identifier that represents anyone who is authenticated with a Google account or a service account.  \n- user:emailid - An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.  \n- serviceAccount:emailid - An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .  \n- group:emailid - An email address that represents a Google group. For example, group:admins@example.com.  \n- domain:domain - A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.  \n- projectOwner:projectid - Owners of the given project. For example, projectOwner:my-example-project  \n- projectEditor:projectid - Editors of the given project. For example, projectEditor:my-example-project  \n- projectViewer:projectid - Viewers of the given project. For example, projectViewer:my-example-project",
         "items": {
          "type": "string"
         },
@@ -1766,7 +2123,7 @@
        },
        "role": {
         "type": "string",
-        "description": "The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole.\nThe new IAM roles are:  \n- roles/storage.admin \u2014 Full control of Google Cloud Storage resources.  \n- roles/storage.objectViewer \u2014 Read-Only access to Google Cloud Storage objects.  \n- roles/storage.objectCreator \u2014 Access to create objects in Google Cloud Storage.  \n- roles/storage.objectAdmin \u2014 Full control of Google Cloud Storage objects.   The legacy IAM roles are:  \n- roles/storage.legacyObjectReader \u2014 Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.  \n- roles/storage.legacyObjectOwner \u2014 Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.  \n- roles/storage.legacyBucketReader \u2014 Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.  \n- roles/storage.legacyBucketWriter \u2014 Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.  \n- roles/storage.legacyBucketOwner \u2014 Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.",
+        "description": "The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole.\nThe new IAM roles are:  \n- roles/storage.admin - Full control of Google Cloud Storage resources.  \n- roles/storage.objectViewer - Read-Only access to Google Cloud Storage objects.  \n- roles/storage.objectCreator - Access to create objects in Google Cloud Storage.  \n- roles/storage.objectAdmin - Full control of Google Cloud Storage objects.   The legacy IAM roles are:  \n- roles/storage.legacyObjectReader - Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.  \n- roles/storage.legacyObjectOwner - Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.  \n- roles/storage.legacyBucketReader - Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.  \n- roles/storage.legacyBucketWriter - Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.  \n- roles/storage.legacyBucketOwner - Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.",
         "annotations": {
          "required": [
           "storage.buckets.setIamPolicy",
@@ -1803,6 +2160,34 @@
      "type": "integer",
      "description": "The IAM policy format version.",
      "format": "int32"
+    }
+   }
+  },
+  "RelocateBucketRequest": {
+   "id": "RelocateBucketRequest",
+   "type": "object",
+   "description": "A Relocate Bucket request.",
+   "properties": {
+    "destinationLocation": {
+     "type": "string",
+     "description": "The new location the bucket will be relocated to."
+    },
+    "destinationCustomPlacementConfig": {
+     "type": "object",
+     "description": "The bucket's new custom placement configuration if relocating to a Custom Dual Region.",
+     "properties": {
+      "dataLocations": {
+       "type": "array",
+       "description": "The list of regional locations in which data is placed.",
+       "items": {
+        "type": "string"
+       }
+      }
+     }
+    },
+    "validateOnly": {
+     "type": "boolean",
+     "description": "If true, validate the operation, but do not actually relocate the bucket."
     }
    }
   },
@@ -1868,7 +2253,7 @@
     },
     "permissions": {
      "type": "array",
-     "description": "The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows:  \n- storage.buckets.delete \u2014 Delete bucket.  \n- storage.buckets.get \u2014 Read bucket metadata.  \n- storage.buckets.getIamPolicy \u2014 Read bucket IAM policy.  \n- storage.buckets.create \u2014 Create bucket.  \n- storage.buckets.list \u2014 List buckets.  \n- storage.buckets.setIamPolicy \u2014 Update bucket IAM policy.  \n- storage.buckets.update \u2014 Update bucket metadata.  \n- storage.objects.delete \u2014 Delete object.  \n- storage.objects.get \u2014 Read object data and metadata.  \n- storage.objects.getIamPolicy \u2014 Read object IAM policy.  \n- storage.objects.create \u2014 Create object.  \n- storage.objects.list \u2014 List objects.  \n- storage.objects.setIamPolicy \u2014 Update object IAM policy.  \n- storage.objects.update \u2014 Update object metadata. \n- storage.managedFolders.delete \u2014 Delete managed folder.  \n- storage.managedFolders.get \u2014 Read managed folder metadata.  \n- storage.managedFolders.getIamPolicy \u2014 Read managed folder IAM policy.  \n- storage.managedFolders.create \u2014 Create managed folder.  \n- storage.managedFolders.list \u2014 List managed folders.  \n- storage.managedFolders.setIamPolicy \u2014 Update managed folder IAM policy.",
+     "description": "The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows:  \n- storage.buckets.delete - Delete bucket.  \n- storage.buckets.get - Read bucket metadata.  \n- storage.buckets.getIamPolicy - Read bucket IAM policy.  \n- storage.buckets.create - Create bucket.  \n- storage.buckets.list - List buckets.  \n- storage.buckets.setIamPolicy - Update bucket IAM policy.  \n- storage.buckets.update - Update bucket metadata.  \n- storage.objects.delete - Delete object.  \n- storage.objects.get - Read object data and metadata.  \n- storage.objects.getIamPolicy - Read object IAM policy.  \n- storage.objects.create - Create object.  \n- storage.objects.list - List objects.  \n- storage.objects.setIamPolicy - Update object IAM policy.  \n- storage.objects.update - Update object metadata. \n- storage.managedFolders.delete - Delete managed folder.  \n- storage.managedFolders.get - Read managed folder metadata.  \n- storage.managedFolders.getIamPolicy - Read managed folder IAM policy.  \n- storage.managedFolders.create - Create managed folder.  \n- storage.managedFolders.list - List managed folders.  \n- storage.managedFolders.setIamPolicy - Update managed folder IAM policy.",
      "items": {
       "type": "string"
      }
@@ -1904,6 +2289,16 @@
     "copySourceAcl": {
      "type": "boolean",
      "description": "If true, copies the source object's ACL; otherwise, uses the bucket's default object ACL. The default is false."
+    },
+    "createdAfterTime": {
+     "type": "string",
+     "description": "Restores only the objects that were created after this time.",
+     "format": "date-time"
+    },
+    "createdBeforeTime": {
+     "type": "string",
+     "description": "Restores only the objects that were created before this time.",
+     "format": "date-time"
     }
    }
   }
@@ -2417,6 +2812,19 @@
        "format": "int64",
        "location": "query"
       },
+      "projection": {
+       "type": "string",
+       "description": "Set of properties to return. Defaults to full.",
+       "enum": [
+        "full",
+        "noAcl"
+       ],
+       "enumDescriptions": [
+        "Include all properties.",
+        "Omit owner, acl and defaultObjectAcl properties."
+       ],
+       "location": "query"
+      },
       "userProject": {
        "type": "string",
        "description": "The project to be billed for this request. Required for Requester Pays buckets.",
@@ -2427,6 +2835,37 @@
       "bucket",
       "generation"
      ],
+     "response": {
+      "$ref": "Bucket"
+     },
+     "scopes": [
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/devstorage.full_control",
+      "https://www.googleapis.com/auth/devstorage.read_write"
+     ]
+    },
+    "relocate": {
+     "id": "storage.buckets.relocate",
+     "path": "b/{bucket}/relocate",
+     "httpMethod": "POST",
+     "description": "Initiates a long-running Relocate Bucket operation on the specified bucket.",
+     "parameters": {
+      "bucket": {
+       "type": "string",
+       "description": "Name of the bucket to be moved.",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "bucket"
+     ],
+     "request": {
+      "$ref": "RelocateBucketRequest"
+     },
+     "response": {
+      "$ref": "GoogleLongrunningOperation"
+     },
      "scopes": [
       "https://www.googleapis.com/auth/cloud-platform",
       "https://www.googleapis.com/auth/devstorage.full_control",
@@ -2712,6 +3151,11 @@
       "userProject": {
        "type": "string",
        "description": "The project to be billed for this request.",
+       "location": "query"
+      },
+      "returnPartialSuccess": {
+       "type": "boolean",
+       "description": "If true, return a list of bucket resource names for buckets that are in unreachable locations.",
        "location": "query"
       }
      },
@@ -3097,6 +3541,38 @@
       "https://www.googleapis.com/auth/cloud-platform.read-only",
       "https://www.googleapis.com/auth/devstorage.full_control",
       "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/devstorage.read_write"
+     ]
+    },
+    "advanceRelocateBucket": {
+     "id": "storage.buckets.operations.advanceRelocateBucket",
+     "path": "b/{bucket}/operations/{operationId}/advanceRelocateBucket",
+     "httpMethod": "POST",
+     "description": "Starts asynchronous advancement of the relocate bucket operation in the case of required write downtime, to allow it to lock the bucket at the source location, and proceed with the bucket location swap. The server makes a best effort to advance the relocate bucket operation, but success is not guaranteed.",
+     "parameters": {
+      "bucket": {
+       "type": "string",
+       "description": "Name of the bucket to advance the relocate for.",
+       "required": true,
+       "location": "path"
+      },
+      "operationId": {
+       "type": "string",
+       "description": "ID of the operation resource.",
+       "required": true,
+       "location": "path"
+      }
+     },
+     "parameterOrder": [
+      "bucket",
+      "operationId"
+     ],
+     "request": {
+      "$ref": "AdvanceRelocateBucketOperationRequest"
+     },
+     "scopes": [
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/devstorage.full_control",
       "https://www.googleapis.com/auth/devstorage.read_write"
      ]
     },
@@ -3494,7 +3970,7 @@
       },
       "recursive": {
        "type": "boolean",
-       "description": "If true, any parent folder which doesn\u2019t exist will be created automatically.",
+       "description": "If true, any parent folder which doesn't exist will be created automatically.",
        "location": "query"
       }
      },
@@ -4718,6 +5194,11 @@
        "type": "boolean",
        "description": "If true, only soft-deleted object versions will be listed. The default is false. For more information, see [Soft Delete](https://cloud.google.com/storage/docs/soft-delete).",
        "location": "query"
+      },
+      "restoreToken": {
+       "type": "string",
+       "description": "Restore token used to differentiate soft-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets and if softDeleted is set to true. This parameter is optional, and is only required in the rare case when there are multiple soft-deleted objects with the same name and generation.",
+       "location": "query"
       }
      },
      "parameterOrder": [
@@ -4980,6 +5461,11 @@
       "matchGlob": {
        "type": "string",
        "description": "Filter results to objects and prefixes that match this glob pattern.",
+       "location": "query"
+      },
+      "filter": {
+       "type": "string",
+       "description": "Filter the returned objects. Currently only supported for the contexts field. If delimiter is set, the returned prefixes are exempt from this filter.",
        "location": "query"
       },
       "softDeleted": {
@@ -5267,6 +5753,111 @@
      },
      "response": {
       "$ref": "RewriteResponse"
+     },
+     "scopes": [
+      "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/devstorage.full_control",
+      "https://www.googleapis.com/auth/devstorage.read_write"
+     ]
+    },
+    "move": {
+     "id": "storage.objects.move",
+     "path": "b/{bucket}/o/{sourceObject}/moveTo/o/{destinationObject}",
+     "httpMethod": "POST",
+     "description": "Moves the source object to the destination object in the same bucket.",
+     "parameters": {
+      "bucket": {
+       "type": "string",
+       "description": "Name of the bucket in which the object resides.",
+       "required": true,
+       "location": "path"
+      },
+      "sourceObject": {
+       "type": "string",
+       "description": "Name of the source object. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
+       "required": true,
+       "location": "path"
+      },
+      "destinationObject": {
+       "type": "string",
+       "description": "Name of the destination object. For information about how to URL encode object names to be path safe, see [Encoding URI Path Parts](https://cloud.google.com/storage/docs/request-endpoints#encoding).",
+       "required": true,
+       "location": "path"
+      },
+      "ifSourceGenerationMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the source object's current generation matches the given value. `ifSourceGenerationMatch` and `ifSourceGenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifSourceGenerationNotMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the source object's current generation does not match the given value. `ifSourceGenerationMatch` and `ifSourceGenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifSourceMetagenerationMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the source object's current metageneration matches the given value. `ifSourceMetagenerationMatch` and `ifSourceMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifSourceMetagenerationNotMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the source object's current metageneration does not match the given value. `ifSourceMetagenerationMatch` and `ifSourceMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifGenerationMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the destination object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object. `ifGenerationMatch` and `ifGenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifGenerationNotMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the destination object's current generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.`ifGenerationMatch` and `ifGenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifMetagenerationMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the destination object's current metageneration matches the given value. `ifMetagenerationMatch` and `ifMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "ifMetagenerationNotMatch": {
+       "type": "string",
+       "description": "Makes the operation conditional on whether the destination object's current metageneration does not match the given value. `ifMetagenerationMatch` and `ifMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request.",
+       "format": "int64",
+       "location": "query"
+      },
+      "projection": {
+       "type": "string",
+       "description": "Set of properties to return. Defaults to noAcl.",
+       "enum": [
+        "full",
+        "noAcl"
+       ],
+       "enumDescriptions": [
+        "Include all properties.",
+        "Omit the owner, acl property."
+       ],
+       "location": "query"
+      },
+      "userProject": {
+       "type": "string",
+       "description": "The project to be billed for this request. Required for Requester Pays buckets.",
+       "location": "query"
+      }
+     },
+     "parameterOrder": [
+      "bucket",
+      "sourceObject",
+      "destinationObject"
+     ],
+     "response": {
+      "$ref": "Object"
      },
      "scopes": [
       "https://www.googleapis.com/auth/cloud-platform",
@@ -5645,6 +6236,11 @@
        "type": "string",
        "description": "The project to be billed for this request. Required for Requester Pays buckets.",
        "location": "query"
+      },
+      "restoreToken": {
+       "type": "string",
+       "description": "Restore token used to differentiate sof-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets. This parameter is optional, and is only required in the rare case when there are multiple soft-deleted objects with the same name and generation.",
+       "location": "query"
       }
      },
      "parameterOrder": [
@@ -5936,6 +6532,6 @@
    }
   }
  },
- "revision": "20240831",
- "etag": "\"333930333234373737383136303738343630\""
+ "revision": "20251114",
+ "etag": "\"3131343430363139313037363636313331333233\""
 }
