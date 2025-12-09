@@ -139,6 +139,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
                              "iamcredentials" -> "v1",
                              "pubsub"         -> "v1",
                              "storage"        -> "v1",
+                             "sheets"         -> "v4",
                              // new clients can be added here
                              // 1. Place the specs into codegen/src/main/resources folder e.g.:
                              // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
