@@ -31,6 +31,7 @@ with support for creating [Signed URLs](https://cloud.google.com/storage/docs/ac
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
 - `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
+- `zio-gcp-sheets-v4` Client code for [Google Sheets API](https://developers.google.com/workspace/sheets/api/reference/rest).
 
 On how to add new API clients see section [Adding new clients](#adding-new-clients).
 
