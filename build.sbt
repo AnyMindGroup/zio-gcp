@@ -47,7 +47,7 @@ lazy val sttpClient4Version = "4.0.13"
 
 lazy val jsoniterVersion = "2.38.5"
 
-lazy val codegenVersion = "0.0.10"
+lazy val codegenVersion = "0.0.11"
 
 inThisBuild(
   List(
