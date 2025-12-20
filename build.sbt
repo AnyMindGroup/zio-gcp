@@ -3,7 +3,7 @@ import scalanativecrossproject.NativePlatform
 import sbtcrossproject.{JVMPlatform, CrossProject, CrossClasspathDependency}
 import zio.sbt.githubactions.{Job, Step, ActionRef}
 import scala.annotation.tailrec
-import _root_.io.circe.Json
+import zio.json.ast.Json
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
@@ -11,8 +11,8 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.flatMap {
   case s: Step.SingleStep if s.name.contains("Install libuv") =>
     List(
       Step.SingleStep(
-        name = "Install libuv",
-        run = Some("sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev"),
+        name = "Install libcurl",
+        run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
       )
     )
   case s => updatedBuildSetupStep(s)
@@ -27,7 +27,7 @@ def updatedBuildSetupStep(step: Step) = step match {
       Step.SingleStep(
         name = "Setup build tools",
         uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
-        parameters = Map("apps" -> Json.fromString("sbt"), "jvm" -> Json.fromString("temurin:21")),
+        parameters = Map("apps" -> Json.Str("sbt"), "jvm" -> Json.Str("temurin:21")),
       )
     )
   case s: Step.SingleStep if s.name == "Test" =>
@@ -39,15 +39,17 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-lazy val _scala3 = "3.3.7"
+val _scala3 = "3.3.7"
 
-lazy val _zioVersion = "2.1.23"
+val scala3Latest = "3.7.4"
 
-lazy val sttpClient4Version = "4.0.13"
+val _zioVersion = "2.1.23"
 
-lazy val jsoniterVersion = "2.38.6"
+val sttpClient4Version = "4.0.13"
 
-lazy val codegenVersion = "0.0.10"
+val jsoniterVersion = "2.38.6"
+
+val codegenVersion = "0.0.11"
 
 inThisBuild(
   List(
@@ -139,6 +141,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
                              "iamcredentials" -> "v1",
                              "pubsub"         -> "v1",
                              "storage"        -> "v1",
+                             "sheets"         -> "v4",
                              // new clients can be added here
                              // 1. Place the specs into codegen/src/main/resources folder e.g.:
                              // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
@@ -337,8 +340,9 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
-    scalaVersion       := _scala3,
-    crossScalaVersions := Seq(_scala3),
+    scalaVersion := scala3Latest,
+    Compile / scalacOptions ++= Seq("-source:future"),
+    crossScalaVersions := Seq(scala3Latest),
     fork               := true,
   )
 

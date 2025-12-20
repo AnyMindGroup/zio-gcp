@@ -15,7 +15,7 @@ Supported platforms:
  - ✅ JVM 
    - tested java versions: 21
  - ✅ Native with LLVM (via [scala-native](https://scala-native.org/))
-   - backed by [libuv](https://libuv.org) and [libcurl](https://curl.se/libcurl)
+   - backed by [libcurl](https://curl.se/libcurl)
    - http backend uses sync curl implementation, [async backend](https://github.com/softwaremill/sttp/issues/1424) might be added at some point...
  - ❌ JavaScript (via [scala-js](https://www.scala-js.org), could be potentially added)
 
@@ -31,6 +31,7 @@ with support for creating [Signed URLs](https://cloud.google.com/storage/docs/ac
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
 - `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
 - `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
+- `zio-gcp-sheets-v4` Client code for [Google Sheets API](https://developers.google.com/workspace/sheets/api/reference/rest).
 
 On how to add new API clients see section [Adding new clients](#adding-new-clients).
 
@@ -38,20 +39,21 @@ On how to add new API clients see section [Adding new clients](#adding-new-clien
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
 libraryDependencies ++= Seq(
-  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.0",
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.5",
   // add clients based on needs
-  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.0", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.5", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
   // generated clients
-  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.0",
-  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.0",
-  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.0",
-  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.0",
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.2.5",
 )
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.0"
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.5"
 // etc.
 ```
 
@@ -60,9 +62,9 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.0"
 #### Generate content via Vertex AI API:
 
 ```scala
-//> using scala 3.7.1
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.0
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.0
+//> using scala 3.7.4
+//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.5
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
@@ -71,11 +73,11 @@ object vertex_ai_generate_content extends ZIOAppDefault:
   def run = for
     authedBackend <- defaultAccessTokenBackend()
     endpoint       = Endpoint.`asia-northeast1`
-    request = projects.locations.publishers.Models.generateContent(
+    request        = projects.locations.publishers.Models.generateContent(
                 projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",
-                modelsId = "gemini-1.5-flash",
+                modelsId = "gemini-2.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(
@@ -86,7 +88,13 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                       ),
                       role = Some("user"),
                     )
-                  )
+                  ),
+                  generationConfig = Some(
+                    GoogleCloudAiplatformV1GenerationConfig(
+                      thinkingConfig =
+                        Some(GoogleCloudAiplatformV1GenerationConfigThinkingConfig(includeThoughts = Some(true)))
+                    )
+                  ),
                 ),
                 endpointUrl = endpoint.url,
               )
@@ -101,9 +109,9 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
-//> using scala 3.7.1
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.0
-//> using dep com.anymindgroup::zio-gcp-storage::0.2.0
+//> using scala 3.7.4
+//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
+//> using dep com.anymindgroup::zio-gcp-storage::0.2.5
 
 import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
 import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
