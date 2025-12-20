@@ -78,8 +78,8 @@ jobs:
         java:
         - '21'
     steps:
-    - name: Install libuv
-      run: sudo apt-get update && sudo apt-get install -y libuv1-dev libidn2-dev libcurl3-dev
+    - name: Install libcurl
+      run: sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev
     - name: Setup build tools
       uses: VirtusLab/scala-cli-setup@main
       with:

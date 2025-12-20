@@ -15,7 +15,7 @@ Supported platforms:
  - ✅ JVM 
    - tested java versions: 21
  - ✅ Native with LLVM (via [scala-native](https://scala-native.org/))
-   - backed by [libuv](https://libuv.org) and [libcurl](https://curl.se/libcurl)
+   - backed by [libcurl](https://curl.se/libcurl)
    - http backend uses sync curl implementation, [async backend](https://github.com/softwaremill/sttp/issues/1424) might be added at some point...
  - ❌ JavaScript (via [scala-js](https://www.scala-js.org), could be potentially added)
 
