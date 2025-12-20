@@ -47,6 +47,7 @@ libraryDependencies ++= Seq(
   "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.5",
   "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.5",
   "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.2.5",
 )
 ```
 
