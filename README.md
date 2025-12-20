@@ -39,20 +39,20 @@ On how to add new API clients see section [Adding new clients](#adding-new-clien
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
 libraryDependencies ++= Seq(
-  "com.anymindgroup" %% "zio-gcp-auth" % "0.0.1",
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.5",
   // add clients based on needs
-  "com.anymindgroup" %% "zio-gcp-storage" % "0.0.1", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.5", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
   // generated clients
-  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.0.1",
-  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.0.1",
-  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.0.1",
-  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.0.1",
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.5",
 )
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.0.1"
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.5"
 // etc.
 ```
 
@@ -62,8 +62,8 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.0.1"
 
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.0.1
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.0.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.5
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
@@ -109,8 +109,8 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.0.1
-//> using dep com.anymindgroup::zio-gcp-storage::0.0.1
+//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
+//> using dep com.anymindgroup::zio-gcp-storage::0.2.5
 
 import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
 import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
