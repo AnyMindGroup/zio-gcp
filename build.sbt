@@ -3,7 +3,7 @@ import scalanativecrossproject.NativePlatform
 import sbtcrossproject.{JVMPlatform, CrossProject, CrossClasspathDependency}
 import zio.sbt.githubactions.{Job, Step, ActionRef}
 import scala.annotation.tailrec
-import _root_.io.circe.Json
+import zio.json.ast.Json
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
@@ -27,7 +27,7 @@ def updatedBuildSetupStep(step: Step) = step match {
       Step.SingleStep(
         name = "Setup build tools",
         uses = Some(ActionRef("VirtusLab/scala-cli-setup@main")),
-        parameters = Map("apps" -> Json.fromString("sbt"), "jvm" -> Json.fromString("temurin:21")),
+        parameters = Map("apps" -> Json.Str("sbt"), "jvm" -> Json.Str("temurin:21")),
       )
     )
   case s: Step.SingleStep if s.name == "Test" =>
