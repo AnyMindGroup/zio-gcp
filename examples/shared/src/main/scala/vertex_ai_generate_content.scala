@@ -13,7 +13,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                 projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",
-                modelsId = "gemini-1.5-flash",
+                modelsId = "gemini-2.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(
@@ -24,7 +24,13 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                       ),
                       role = Some("user"),
                     )
-                  )
+                  ),
+                  generationConfig = Some(
+                    GoogleCloudAiplatformV1GenerationConfig(
+                      thinkingConfig =
+                        Some(GoogleCloudAiplatformV1GenerationConfigThinkingConfig(includeThoughts = Some(true)))
+                    )
+                  ),
                 ),
                 endpointUrl = endpoint.url,
               )

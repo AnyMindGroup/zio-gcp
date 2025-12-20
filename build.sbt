@@ -39,15 +39,17 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-lazy val _scala3 = "3.3.7"
+val _scala3 = "3.3.7"
 
-lazy val _zioVersion = "2.1.23"
+val scala3Latest = "3.7.4"
 
-lazy val sttpClient4Version = "4.0.13"
+val _zioVersion = "2.1.23"
 
-lazy val jsoniterVersion = "2.38.5"
+val sttpClient4Version = "4.0.13"
 
-lazy val codegenVersion = "0.0.11"
+val jsoniterVersion = "2.38.5"
+
+val codegenVersion = "0.0.11"
 
 inThisBuild(
   List(
@@ -338,8 +340,9 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
-    scalaVersion       := _scala3,
-    crossScalaVersions := Seq(_scala3),
+    scalaVersion := scala3Latest,
+    Compile / scalacOptions ++= Seq("-source:future"),
+    crossScalaVersions := Seq(scala3Latest),
     fork               := true,
   )
 

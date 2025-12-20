@@ -61,7 +61,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.0.1"
 #### Generate content via Vertex AI API:
 
 ```scala
-//> using scala 3.7.1
+//> using scala 3.7.4
 //> using dep com.anymindgroup::zio-gcp-auth::0.0.1
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.0.1
 
@@ -72,11 +72,11 @@ object vertex_ai_generate_content extends ZIOAppDefault:
   def run = for
     authedBackend <- defaultAccessTokenBackend()
     endpoint       = Endpoint.`asia-northeast1`
-    request = projects.locations.publishers.Models.generateContent(
+    request        = projects.locations.publishers.Models.generateContent(
                 projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",
-                modelsId = "gemini-1.5-flash",
+                modelsId = "gemini-2.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(
@@ -87,7 +87,13 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                       ),
                       role = Some("user"),
                     )
-                  )
+                  ),
+                  generationConfig = Some(
+                    GoogleCloudAiplatformV1GenerationConfig(
+                      thinkingConfig =
+                        Some(GoogleCloudAiplatformV1GenerationConfigThinkingConfig(includeThoughts = Some(true)))
+                    )
+                  ),
                 ),
                 endpointUrl = endpoint.url,
               )
@@ -102,7 +108,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
-//> using scala 3.7.1
+//> using scala 3.7.4
 //> using dep com.anymindgroup::zio-gcp-auth::0.0.1
 //> using dep com.anymindgroup::zio-gcp-storage::0.0.1
 
