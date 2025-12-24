@@ -7,6 +7,7 @@ import java.time.temporal.ChronoField
 import java.time.{Instant, ZoneOffset}
 
 import sttp.model.Uri.{QuerySegmentEncoding, Segment}
+import sttp.model.internal.Rfc3986
 import sttp.model.{MediaType, Method, QueryParams}
 
 // https://cloud.google.com/storage/docs/authentication/canonical-requests
@@ -109,8 +110,22 @@ private[storage] class V4CanonicalRequestBuilder(
   }
 }
 
+private[storage] val resourcePathAllowedChars =
+  Rfc3986.Query --
+    // https://docs.cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
+    Set('?', '=', '!', '#', '$', '&', '\'', '(', ')', '*', '+', ',', ':', ';', '@', '[', ']')
+
 private[storage] def toResourcePathSegments(resourcePath: Seq[String]) =
-  resourcePath.map(p => Segment(p, QuerySegmentEncoding.All))
+  resourcePath.map(p =>
+    Segment(
+      p,
+      Rfc3986.encode(
+        allowedCharacters = resourcePathAllowedChars,
+        spaceAsPlus = false,
+        encodePlus = true,
+      ),
+    )
+  )
 
 private[storage] object V4CanonicalRequestBuilder:
   def apply(): V4CanonicalRequestBuilder =

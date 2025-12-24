@@ -14,7 +14,7 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
   override def spec: Spec[Any, Any] = suite("V4SignUrlRequestBuilderSpec")(
     test("return signed url") {
       val testBucket        = "example-bucket"
-      val testResource      = List("test", """cat_?=!#$&'()*+,:;@[]".jpeg""")
+      val testResource      = List("test", """cat_?=!#$&'()*+,:;@[]"~.jpeg""")
       val signatureResponse =
         "PszqKoIc7Q3TU22ouo9YWxtMk9jtKZBWMdqEwKb57+XlritZsYnaBiNhRaE5YvARf421zqS/M2kKPuPbYJc9c2GyEk66Y/J8o2QFpo65tKaFIvADvkBUiNg6IXSs3YL4udg+roLeMPi6r5NJqjp3Rf+7FT6xN8xImtw33DGjbffkp6BhUuHSt9USOCzbDOSmjTAiTuuo5eNUSbL6f5xZroKq07wTj3ETDDICV/QkB6VlxGffi1TVKF14dgrBuE0jwATsWyVBFFVXJ7pB+uUc8UDgZQzAVTjahJUFWAevg9+QgA2HQlc5a0u3Cs+/tJZjWnsx3hm0S8NJqGIOa8mO0w=="
       val expectedSignature =
@@ -32,7 +32,7 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
                                 signAlgorithm = V4SignAlgorithm.`GOOG4-RSA-SHA256`,
                                 expiresInSeconds = V4SignatureExpiration.inSeconds(900),
                               )
-        expectedPath = "/example-bucket/test/cat_%3F%3D%21%23%24%26%27%28%29*%2B%2C%3A%3B%40%5B%5D%22.jpeg"
+        expectedPath = "/example-bucket/test/cat_%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~.jpeg"
         _           <- assertTrue(canonicalRequest.payloadPlain.linesIterator.drop(1).next == expectedPath)
         signedUrl   <- ZIO.fromEither:
                        V4SignUrlRequestBuilder
