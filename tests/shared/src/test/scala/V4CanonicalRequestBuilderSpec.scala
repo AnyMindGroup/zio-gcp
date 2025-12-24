@@ -92,7 +92,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                    method = Method.GET,
                    timestamp = Instant.parse("2019-12-01T19:08:59Z"),
                    // all characters from the docs https://cloud.google.com/storage/docs/authentication/canonical-requests#about-resource-path
-                   resourcePath = List("test", """?=!#$&'()*+,:;@[]".png"""),
+                   resourcePath = List("test", """?=!#$&'()*+,:;@[]"~.png"""),
                    contentType = Some(MediaType.ImagePng),
                    bucket = "test-bucket",
                    serviceAccountEmail = "test@gcp.iam.gserviceaccount.com",
@@ -104,7 +104,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
           assertTrue(
             req.payloadPlain.linesIterator
               .drop(1)
-              .next == """/test-bucket/test/%3F%3D%21%23%24%26%27%28%29*%2B%2C%3A%3B%40%5B%5D%22.png"""
+              .next == """/test-bucket/test/%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~.png"""
           )
       } yield assertCompletes
     },
