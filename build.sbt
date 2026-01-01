@@ -43,7 +43,7 @@ val _scala3 = "3.3.7"
 
 val scala3Latest = "3.7.4"
 
-val _zioVersion = "2.1.23"
+val _zioVersion = "2.1.24"
 
 val sttpClient4Version = "4.0.13"
 
