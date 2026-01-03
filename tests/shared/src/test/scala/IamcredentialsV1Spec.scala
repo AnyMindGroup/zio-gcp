@@ -12,7 +12,7 @@ import zio.test.*
 object IamcredentialsV1Spec extends ZIOSpecDefault:
   def spec = suite("IamcredentialsV1Spec")(
     test("sign blob") {
-      for {
+      for
         ab         <- defaultAccessTokenBackend()
         body        = "payload to sign".getBytes(StandardCharsets.UTF_8)
         serviceAcc <- ZIO.systemWith(_.env("GCP_TEST_SERVICE_ACCOUNT")).someOrFail("GCP_TEST_SERVICE_ACCOUNT not set")
@@ -24,10 +24,10 @@ object IamcredentialsV1Spec extends ZIOSpecDefault:
                    request = schemas.SignBlobRequest(payload = Base64.getEncoder().encodeToString(body)),
                  )
              ).flatMap {
-               case Response(Right(body), _, _, _, _, _) =>
+               case Response(body = Right(body)) =>
                  Console.printLine(s"Signed blob: ${body.signedBlob.getOrElse("")}")
-               case Response(Left(err), _, _, _, _, _) => Console.printError(s"Failure on signing: $err")
+               case Response(body = Left(err)) => Console.printError(s"Failure on signing: $err")
              }
-      } yield assertCompletes
+      yield assertCompletes
     }
   ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvNotSet("CI")

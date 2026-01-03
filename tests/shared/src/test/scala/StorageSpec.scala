@@ -15,7 +15,7 @@ import zio.test.*
 object StorageSpec extends ZIOSpecDefault:
   def spec = suite("StorageSpec")(
     test("insert object, create signed url, delete object") {
-      for {
+      for
         (bucket, svcAcc) <- ZIO.fromEither:
                               for
                                 b <- sys.env.get("GCP_TEST_STORAGE_BUCKET").toRight("Missing GCP_TEST_STORAGE_BUCKET")
@@ -58,9 +58,9 @@ object StorageSpec extends ZIOSpecDefault:
 
         // delete object
         _ <- backend.send(resources.Objects.delete(`object` = objPath.mkString("/"), bucket = bucket)).flatMap {
-               case Response(Right(body), _, _, _, _, _) => printLine(s"✅ Object deleted: $body")
-               case Response(Left(err), _, _, _, _, _)   => printError(s"❌ Failure on deleting object: $err")
+               case Response(body = Right(body)) => printLine(s"✅ Object deleted: $body")
+               case Response(body = Left(err))   => printError(s"❌ Failure on deleting object: $err")
              }
-      } yield assertCompletes
+      yield assertCompletes
     }
   ) @@ TestAspect.withLiveSystem @@ TestAspect.withLiveClock @@ TestAspect.ifEnvNotSet("CI")

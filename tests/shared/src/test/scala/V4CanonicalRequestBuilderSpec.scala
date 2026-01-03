@@ -13,7 +13,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
       val testTimestamp  = Instant.parse("2019-12-01T19:08:59Z")
       val testSvcAccount = "test@gcp.iam.gserviceaccount.com"
 
-      for {
+      for
         builder <- ZIO.succeed(V4CanonicalRequestBuilder())
         req     <- ZIO.fromEither(
                  builder.toCanonicalRequest(
@@ -44,13 +44,13 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                                       |20191201/auto/storage/goog4_request
                                       |d62c091b215aaae1a3ae90601dfae7623839ff5aab8980860bcea13748895465""".stripMargin
              )
-      } yield assertCompletes
+      yield assertCompletes
     },
     test("toCanonicalRequest (GET, with content type)") {
       val testTimestamp  = Instant.parse("2019-12-01T19:08:59Z")
       val testSvcAccount = "test@gcp.iam.gserviceaccount.com"
 
-      for {
+      for
         builder <- ZIO.succeed(V4CanonicalRequestBuilder())
         req     <- ZIO.fromEither(
                  builder.toCanonicalRequest(
@@ -82,10 +82,10 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
                                       |20191201/auto/storage/goog4_request
                                       |012eb316298a5202f1b404bb5d0be0c6c270d1442eda75b055303df96b05c137""".stripMargin
              )
-      } yield assertCompletes
+      yield assertCompletes
     },
     test("toCanonicalRequest (resource path is URL encoded)") {
-      for {
+      for
         builder <- ZIO.succeed(V4CanonicalRequestBuilder())
         req     <- ZIO.fromEither(
                  builder.toCanonicalRequest(
@@ -106,6 +106,6 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
               .drop(1)
               .next == """/test-bucket/test/%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~%20.png"""
           )
-      } yield assertCompletes
+      yield assertCompletes
     },
   )
