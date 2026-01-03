@@ -1,6 +1,3 @@
-//> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-sheets-v4::0.2.5
-
 import zio.*, zio.ZIO.{logInfo, logError, dieMessage}
 import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 import com.anymindgroup.gcp.sheets.v4.resources.Spreadsheets
