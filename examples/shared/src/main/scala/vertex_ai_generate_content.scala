@@ -1,5 +1,4 @@
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.5
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend

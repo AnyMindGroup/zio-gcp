@@ -41,15 +41,15 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.7"
 
-val scala3Latest = "3.7.4"
+val scala3Next = "3.7.4"
 
 val _zioVersion = "2.1.24"
 
 val sttpClient4Version = "4.0.13"
 
-val jsoniterVersion = "2.38.7"
+val jsoniterVersion = "2.38.8"
 
-val codegenVersion = "0.0.11"
+val codegenVersion = "0.0.13"
 
 inThisBuild(
   List(
@@ -157,6 +157,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
   CrossProject
     .apply(id = id, base = file(id))(JVMPlatform, NativePlatform)
     .settings(commonSettings)
+    .dependsOn(zioGcpAuth)
     .settings(
       Compile / scalacOptions --= Seq("-Xfatal-warnings"),
       Compile / sourceGenerators += codegenTask(
@@ -245,8 +246,6 @@ def codegenTask(
     } else {
       import sys.process.*
 
-      val dialect = if (scalaVersion.value.startsWith("2")) "Scala2" else "Scala3"
-
       logger.info(s"Generating Google client sources")
 
       val errs = ListBuffer.empty[String]
@@ -258,7 +257,7 @@ def codegenTask(
         s"-http-source=$httpSource",
         s"-json-codec=$jsonCodec",
         s"-array-type=$arrayType",
-        s"-dialect=$dialect",
+        s"-jsoniter-json-type=_root_.com.anymindgroup.jsoniter.Json",
       ).mkString(" ") ! ProcessLogger(i => logger.debug(i), e => errs += e) match {
         case 0 => ()
         case c => throw new InterruptedException(s"Failure on code generation:\n${errs.mkString("\n")}")
@@ -340,10 +339,13 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
-    scalaVersion := scala3Latest,
+    scalaVersion := scala3Next,
     Compile / scalacOptions ++= Seq("-source:future"),
-    crossScalaVersions := Seq(scala3Latest),
+    crossScalaVersions := Seq(scala3Next),
     fork               := true,
+    libraryDependencies ++= Seq(
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal"
+    ),
   )
 
 lazy val tests = crossProject(JVMPlatform, NativePlatform)
@@ -353,10 +355,12 @@ lazy val tests = crossProject(JVMPlatform, NativePlatform)
   .settings(commonSettings)
   .settings(noPublishSettings)
   .settings(
+    scalaVersion := scala3Next,
     libraryDependencies ++= Seq(
-      "dev.zio" %%% "zio-test"     % zioVersion.value % Test,
-      "dev.zio" %%% "zio-test-sbt" % zioVersion.value % Test,
-    )
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion  % Test,
+      "dev.zio"                               %%% "zio-test"              % zioVersion.value % Test,
+      "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
+    ),
   )
 
 lazy val docs = project

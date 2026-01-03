@@ -9,21 +9,14 @@ import zio.test.*
 object AiplatformV1Spec extends ZIOSpecDefault:
   def spec = suite("AiplatformV1Spec")(
     test("generate content") {
-      for {
+      for
         backend    <- defaultAccessTokenBackend()
-        endpoint    = Endpoint.`asia-northeast1`
         gcpProject <- ZIO.systemWith(_.env("GCP_TEST_PROJECT")).someOrFail("GCP_TEST_PROJECT not set")
-        endpoint   <-
-          ZIO
-            .systemWith(
-              _.env("GCP_TEST_LOCATION").map(_.flatMap(l => Endpoint.values.find(_.location.equalsIgnoreCase(l))))
-            )
-            .someOrFail("GCP_TEST_LOCATION not set or invalid")
-        req = resources.projects.locations.publishers.Models.generateContent(
+        req         = resources.projects.locations.publishers.Models.generateContent(
                 projectsId = gcpProject,
-                locationsId = endpoint.location,
+                locationsId = "global",
                 publishersId = "google",
-                modelsId = "gemini-1.5-flash",
+                modelsId = "gemini-2.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(
@@ -32,12 +25,11 @@ object AiplatformV1Spec extends ZIOSpecDefault:
                     )
                   )
                 ),
-                endpointUrl = endpoint.url,
               )
         res <- backend.send(req)
         _   <- res.body match
                case Left(err)   => ZIO.dieMessage(s"Failure $err")
                case Right(body) => Console.printLine(s"Response ok: $body")
-      } yield assertCompletes
+      yield assertCompletes
     }
   ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvNotSet("CI")
