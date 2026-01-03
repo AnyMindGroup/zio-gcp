@@ -58,8 +58,8 @@ object StorageSpec extends ZIOSpecDefault:
 
         // delete object
         _ <- backend.send(resources.Objects.delete(`object` = objPath.mkString("/"), bucket = bucket)).flatMap {
-               case Response(Right(body), _, _, _, _, _) => printLine(s"✅ Object deleted: $body")
-               case Response(Left(err), _, _, _, _, _)   => printError(s"❌ Failure on deleting object: $err")
+               case Response(body = Right(body)) => printLine(s"✅ Object deleted: $body")
+               case Response(body = Left(err))   => printError(s"❌ Failure on deleting object: $err")
              }
       yield assertCompletes
     }
