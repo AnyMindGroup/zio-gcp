@@ -122,39 +122,8 @@ Currently supported credentials and tokens:
 
 ## Authentication / token provider usage examples
 
-### Using default token provider (the token is cached and automatically refreshed)
-
 ```scala
 @ZIO_GCP_AUTH_EXAMPLE@
-```
-
-### Simple access token retrieval without caching and auto refreshing
-```scala
-import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object SimpleTokenRetrieval extends ZIOAppDefault:
-  def run = httpBackendScoped()
-    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
-    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
-```
-
-### Use specific credentials
-
-```scala
-import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object PassSpecificUserAccount extends ZIOAppDefault:
-  def run =
-    httpBackendScoped().flatMap: backend =>
-      TokenProvider
-        .accessTokenProvider(
-          Credentials.UserAccount(
-            refreshToken = "refresh_token",
-            clientId = "123.apps.googleusercontent.com",
-            clientSecret = Config.Secret("user_secret"),
-          ),
-          backend,
-        )
 ```
 
 ### Change log level

@@ -210,8 +210,6 @@ Currently supported credentials and tokens:
 
 ## Authentication / token provider usage examples
 
-### Using default token provider (the token is cached and automatically refreshed)
-
 ```scala
 import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
 
@@ -233,7 +231,7 @@ object AccessTokenByUser extends ZIOAppDefault:
           // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
           // 2. Default applications credentials
           //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-          //    Windows: %APPDATA%gcloudapplication_default_credentials.json
+          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
           // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
           TokenProvider.defaultAccessTokenProvider(
             backend = backend,
@@ -277,35 +275,6 @@ object PassSpecificUserAccount extends ZIOAppDefault:
 object SetLogLevelToDebug extends ZIOAppDefault:
   def run = ZIO.logLevel(LogLevel.Debug)(httpBackendScoped().flatMap(TokenProvider.defaultAccessTokenProvider(_)))
 
-```
-
-### Simple access token retrieval without caching and auto refreshing
-```scala
-import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object SimpleTokenRetrieval extends ZIOAppDefault:
-  def run = httpBackendScoped()
-    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
-    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
-```
-
-### Use specific credentials
-
-```scala
-import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object PassSpecificUserAccount extends ZIOAppDefault:
-  def run =
-    httpBackendScoped().flatMap: backend =>
-      TokenProvider
-        .accessTokenProvider(
-          Credentials.UserAccount(
-            refreshToken = "refresh_token",
-            clientId = "123.apps.googleusercontent.com",
-            clientSecret = Config.Secret("user_secret"),
-          ),
-          backend,
-        )
 ```
 
 ### Change log level

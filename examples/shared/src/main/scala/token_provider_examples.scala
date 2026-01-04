@@ -18,7 +18,7 @@ object AccessTokenByUser extends ZIOAppDefault:
           // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
           // 2. Default applications credentials
           //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
+          //    Windows: %APPDATA%\\gcloud\\application_default_credentials.json
           // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
           TokenProvider.defaultAccessTokenProvider(
             backend = backend,

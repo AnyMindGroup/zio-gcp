@@ -406,6 +406,7 @@ lazy val docs = project
     mdocVariables ++= {
       Map(
         "VERSION" -> {
+          // to fix the default impl which returns the oldest tag
           "git tag -l --sort=-v:refname".!!.split("\n").collectFirst {
             case v if v.startsWith("v") => v.tail
           }.getOrElse(version.value)
@@ -418,9 +419,8 @@ lazy val docs = project
         ),
         "ZIO_GCP_AUTH_EXAMPLE" -> IO.read(
           file("./examples/shared/src/main/scala/token_provider_examples.scala")
-        )
+        ),
       )
     },
   )
   .enablePlugins(WebsitePlugin)
-  .dependsOn(zioGcpAuth.jvm)
