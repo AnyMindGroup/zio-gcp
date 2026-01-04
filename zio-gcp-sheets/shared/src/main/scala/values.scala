@@ -51,5 +51,5 @@ def readValuesFromRange(
 ): Either[Throwable, Chunk[Chunk[ValueRangeCell]]] = range.values match
   case Some(value) =>
     try Right(value.map(_.map(_.readAsUnsafe[ValueRangeCell](using ValueRangeCell.codec))))
-    catch case e => Left(e)
+    catch case e: Throwable => Left(e)
   case None => Right(Chunk.empty)
