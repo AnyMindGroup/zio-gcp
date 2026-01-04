@@ -13,7 +13,7 @@ object sheets_example extends ZIOAppDefault:
       // for use with user credentials a quota project is required:
       // https://docs.cloud.google.com/docs/authentication/troubleshoot-adc#user-creds-client-based
       // https://docs.cloud.google.com/docs/authentication/rest#set-billing-project
-      xGoogUserProject = Header("x-goog-user-project", "anychat-staging")
+      xGoogUserProject = Header("x-goog-user-project", "my-gcp-project")
 
       // Create a spreadsheet with a title
       createReq = Spreadsheet(properties = Some(SpreadsheetProperties(title = Some("zio-gcp example spreadsheet"))))
