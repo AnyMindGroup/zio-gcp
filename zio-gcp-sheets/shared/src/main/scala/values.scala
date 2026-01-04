@@ -8,7 +8,8 @@ import com.github.plokhotnyuk.jsoniter_scala.macros.JsonCodecMaker
 
 import zio.*
 
-// For input, supported value types are: bool, string, and double
+// For input, supported value types are: bool, string, and double. All numeric values must be passed as Double
+// (e.g. use 30.0 or 30d instead of 30).
 type ValueRangeCell = String | Boolean | Double
 object ValueRangeCell:
   given codec: JsonValueCodec[ValueRangeCell] = new JsonValueCodec {
