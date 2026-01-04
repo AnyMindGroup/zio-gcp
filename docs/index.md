@@ -25,6 +25,8 @@ Supported platforms:
 More details about authentication under [Authentication](#authentication) section.
 - `zio-gcp-storage` Google Cloud Storage package based on `zio-gcp-storage-v1` and `zio-gcp-iamcredentials-v1` client code 
 with support for creating [Signed URLs](https://cloud.google.com/storage/docs/access-control/signed-urls).
+- `zio-gcp-sheets` Google Spreadsheets package based on `zio-gcp-sheets-v4` with extra methods / json codecs for convenience
+ (see usage [example](../examples/shared/src/main/scala/sheets_example.scala)).
 
 ### generated clients
 - `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
@@ -42,6 +44,7 @@ libraryDependencies ++= Seq(
   "com.anymindgroup" %% "zio-gcp-auth" % "@VERSION@",
   // add clients based on needs
   "com.anymindgroup" %% "zio-gcp-storage" % "@VERSION@", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-sheets" % "@VERSION@", // includes zio-gcp-sheets-v4
   // generated clients
   "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "@VERSION@",
   "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "@VERSION@",
@@ -63,105 +66,17 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "@VERSION@"
 
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::@VERSION@
 //> using dep com.anymindgroup::zio-gcp-aiplatform-v1::@VERSION@
 
-import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
-import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
-
-object vertex_ai_generate_content extends ZIOAppDefault:
-  def run = for
-    authedBackend <- defaultAccessTokenBackend()
-    endpoint       = Endpoint.`asia-northeast1`
-    request        = projects.locations.publishers.Models.generateContent(
-                projectsId = "my-gcp-project",
-                locationsId = endpoint.location,
-                publishersId = "google",
-                modelsId = "gemini-2.5-flash",
-                request = GoogleCloudAiplatformV1GenerateContentRequest(
-                  contents = Chunk(
-                    GoogleCloudAiplatformV1Content(
-                      parts = Chunk(
-                        GoogleCloudAiplatformV1Part(
-                          text = Some("hello how are you doing?")
-                        )
-                      ),
-                      role = Some("user"),
-                    )
-                  ),
-                  generationConfig = Some(
-                    GoogleCloudAiplatformV1GenerationConfig(
-                      thinkingConfig =
-                        Some(GoogleCloudAiplatformV1GenerationConfigThinkingConfig(includeThoughts = Some(true)))
-                    )
-                  ),
-                ),
-                endpointUrl = endpoint.url,
-              )
-    _ <- authedBackend
-           .send(request)
-           .flatMap:
-             _.body match
-               case Right(body) => ZIO.logInfo(s"Response ok: $body")
-               case Left(err)   => ZIO.logError(s"Failure: $err")
-  yield ()
+@ZIO_GCP_AIPLATFORM_EXAMPLE@
 ```
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::@VERSION@
 //> using dep com.anymindgroup::zio-gcp-storage::@VERSION@
 
-import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
-import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
-
-object storage_example extends ZIOAppDefault:
-  def run =
-    for
-      backend   <- defaultAccessTokenBackend()
-      bucket     = "my-bucket"
-      objPath    = List("folder", "my_file.txt")
-      objContent = "my file content".getBytes("UTF-8")
-      // insert file
-      _ <- backend
-             .send(
-               Objects
-                 .insert(bucket = bucket, name = Some(objPath.mkString("/")))
-                 .headers(
-                   Header.contentType(MediaType.TextPlain),
-                   Header.contentLength(objContent.length),
-                 )
-                 .body(objContent)
-             )
-             .map(_.body)
-             .flatMap:
-               case Right(body) => ZIO.logInfo(s"Upload ok: $body")
-               case Left(err)   => ZIO.dieMessage(s"Failure on upload: $err")
-
-      // create signed url
-      signedUrl <- V4SignUrlRequestBuilder
-                     .create()
-                     .signUrlRequest(
-                       bucket = bucket,
-                       resourcePath = objPath,
-                       contentType = None,
-                       method = Method.GET,
-                       serviceAccountEmail = "example@example-project.iam.gserviceaccount.com",
-                       signAlgorithm = V4SignAlgorithm.`GOOG4-RSA-SHA256`,
-                       expiresInSeconds = V4SignatureExpiration.inSeconds(300),
-                     )
-                     .flatMap(_.send(backend).flatMap(r => ZIO.fromEither(r.body)))
-      _ <- ZIO.logInfo(s"✅ Created signed url: $signedUrl")
-
-      // delete file
-      _ <- backend
-             .send(Objects.delete(`object` = objPath.mkString("/"), bucket = bucket))
-             .flatMap:
-               _.body match
-                 case Right(body) => ZIO.logInfo(s"Object deleted.")
-                 case Left(err)   => ZIO.logError(s"Failure on deleting: $err")
-    yield ()
+@ZIO_GCP_STORAGE_EXAMPLE@
 ```
 
 ## Adding new clients
@@ -207,79 +122,8 @@ Currently supported credentials and tokens:
 
 ## Authentication / token provider usage examples
 
-### Using default token provider (the token is cached and automatically refreshed)
-
 ```scala
-import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object AccessTokenByUser extends ZIOAppDefault:
-  def run =
-    for
-      // choose the required token provider
-      //
-      // use TokenProvider[AccessToken] if the application doesn't require identity information
-      // see https://cloud.google.com/docs/authentication/token-types#access for more information
-      //
-      // use TokenProvider[IdToken] if the token needs to be inspected by the application
-      // see https://cloud.google.com/docs/authentication/token-types#id for more information
-      //
-      // use TokenProvider[Token] if it doesn't matter whether the provided token is an Access or ID token
-      tokenProvider: TokenProvider[Token] <-
-        httpBackendScoped().flatMap: backend =>
-          // Default token provider looks up credentials in the following order
-          // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
-          // 2. Default applications credentials
-          //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
-          // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
-          TokenProvider.defaultAccessTokenProvider(
-            backend = backend,
-            // Optional parameter: whether to lookup credentials from the compute metadata service before applications credentials
-            // Default: false
-            lookupComputeMetadataFirst = false,
-            // Optional parameter: retry Schedule on token retrieval failures.
-            // Dafault: Schedule.recurs(5)
-            refreshRetrySchedule = Schedule.recurs(5),
-            // Optional parameter: at what stage of expiration in percent to request a new token.
-            // Default: 0.9 (90%)
-            // e.g. a token that expires in 3600 seconds, will be refreshed after 3240 seconds (6 mins before expiry)
-            refreshAtExpirationPercent = 0.9,
-          )
-      tokenReceipt <- tokenProvider.token
-      token         = tokenReceipt.token
-      _            <- printLine(s"Pass as bearer token to a Google Cloud API: ${token.token}")
-      _            <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
-      _            <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
-    yield ()
-```
-
-### Simple access token retrieval without caching and auto refreshing
-```scala
-import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object SimpleTokenRetrieval extends ZIOAppDefault:
-  def run = httpBackendScoped()
-    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
-    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
-```
-
-### Use specific credentials
-
-```scala
-import zio.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
-
-object PassSpecificUserAccount extends ZIOAppDefault:
-  def run =
-    httpBackendScoped().flatMap: backend =>
-      TokenProvider
-        .accessTokenProvider(
-          Credentials.UserAccount(
-            refreshToken = "refresh_token",
-            clientId = "123.apps.googleusercontent.com",
-            clientSecret = Config.Secret("user_secret"),
-          ),
-          backend,
-        )
+@ZIO_GCP_AUTH_EXAMPLE@
 ```
 
 ### Change log level
