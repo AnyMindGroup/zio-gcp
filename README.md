@@ -25,6 +25,8 @@ Supported platforms:
 More details about authentication under [Authentication](#authentication) section.
 - `zio-gcp-storage` Google Cloud Storage package based on `zio-gcp-storage-v1` and `zio-gcp-iamcredentials-v1` client code 
 with support for creating [Signed URLs](https://cloud.google.com/storage/docs/access-control/signed-urls).
+- `zio-gcp-sheets` Google Spreadsheets package based on `zio-gcp-sheets-v4` with extra methods / json codecs for convenience
+ (see usage [example](docs/../examples/shared/src/main/scala/sheets_example.scala)).
 
 ### generated clients
 - `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
@@ -39,21 +41,22 @@ On how to add new API clients see section [Adding new clients](#adding-new-clien
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
 libraryDependencies ++= Seq(
-  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.7",
   // add clients based on needs
-  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.5", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.7", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-sheets" % "0.2.7", // includes zio-gcp-sheets-v4
   // generated clients
-  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.5",
-  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.5",
-  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.5",
-  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.5",
-  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.2.5",
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.2.7",
 )
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.5"
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.7"
 // etc.
 ```
 
@@ -63,8 +66,7 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.5"
 
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.5
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.7
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
@@ -105,13 +107,13 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                case Right(body) => ZIO.logInfo(s"Response ok: $body")
                case Left(err)   => ZIO.logError(s"Failure: $err")
   yield ()
+
 ```
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
 //> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-auth::0.2.5
-//> using dep com.anymindgroup::zio-gcp-storage::0.2.5
+//> using dep com.anymindgroup::zio-gcp-storage::0.2.7
 
 import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
 import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
@@ -162,6 +164,7 @@ object storage_example extends ZIOAppDefault:
                  case Right(body) => ZIO.logInfo(s"Object deleted.")
                  case Left(err)   => ZIO.logError(s"Failure on deleting: $err")
     yield ()
+
 ```
 
 ## Adding new clients
@@ -230,7 +233,7 @@ object AccessTokenByUser extends ZIOAppDefault:
           // 1. Credentials key file under the location set via GOOGLE_APPLICATION_CREDENTIALS environment variable
           // 2. Default applications credentials
           //    Linux, macOS: $HOME/.config/gcloud/application_default_credentials.json
-          //    Windows: %APPDATA%\gcloud\application_default_credentials.json
+          //    Windows: %APPDATA%gcloudapplication_default_credentials.json
           // 3. Attached service account via compute metadata service https://cloud.google.com/compute/docs/metadata/overview
           TokenProvider.defaultAccessTokenProvider(
             backend = backend,
@@ -251,6 +254,29 @@ object AccessTokenByUser extends ZIOAppDefault:
       _            <- printLine(s"Received token at ${tokenReceipt.receivedAt}")
       _            <- printLine(s"Token expires in ${token.expiresIn.getSeconds()}s")
     yield ()
+
+// access token retrieval without caching and auto refreshing
+object SimpleTokenRetrieval extends ZIOAppDefault:
+  def run = httpBackendScoped()
+    .flatMap(TokenProvider.defaultAccessTokenProvider(_).flatMap(_.token))
+    .flatMap(r => printLine(s"got access token: ${r.token.token} at ${r.receivedAt}"))
+
+object PassSpecificUserAccount extends ZIOAppDefault:
+  def run =
+    httpBackendScoped().flatMap: backend =>
+      TokenProvider
+        .accessTokenProvider(
+          Credentials.UserAccount(
+            refreshToken = "refresh_token",
+            clientId = "123.apps.googleusercontent.com",
+            clientSecret = Config.Secret("user_secret"),
+          ),
+          backend,
+        )
+
+object SetLogLevelToDebug extends ZIOAppDefault:
+  def run = ZIO.logLevel(LogLevel.Debug)(httpBackendScoped().flatMap(TokenProvider.defaultAccessTokenProvider(_)))
+
 ```
 
 ### Simple access token retrieval without caching and auto refreshing
