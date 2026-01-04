@@ -41,8 +41,8 @@ object sheets_example extends ZIOAppDefault:
       values = toWriteValueRange(
                  Chunk(
                    Chunk("Name", "Age", "City", "Over 18"),
-                   Chunk("Alice", 30, "New York", true),
-                   Chunk("Bob", 17, "San Francisco", false),
+                   Chunk("Alice", 30.0, "New York", true),
+                   Chunk("Bob", 17.0, "San Francisco", false),
                  )
                )
       _ <- backend
