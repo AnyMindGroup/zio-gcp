@@ -5,7 +5,7 @@ addSbtPlugin("dev.zio" % "zio-sbt-ecosystem" % zioSbtVersion)
 
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.9")
 
-addSbtPlugin("org.typelevel" % "sbt-tpolecat" % "0.5.2")
+addSbtPlugin("org.typelevel" % "sbt-tpolecat" % "0.5.3")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.6")
 
