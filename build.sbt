@@ -42,7 +42,7 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.7"
 
-val scala3Next = "3.7.4"
+val scala3Next = "3.8.2"
 
 val _zioVersion = "2.1.24"
 
@@ -50,7 +50,7 @@ val sttpClient4Version = "4.0.15"
 
 val jsoniterVersion = "2.38.8"
 
-val codegenVersion = "0.0.13"
+val codegenVersion = "0.0.14"
 
 inThisBuild(
   List(
@@ -123,7 +123,7 @@ inThisBuild(
 lazy val commonSettings = List(
   javacOptions ++= Seq("-source", "21"),
   Compile / scalacOptions ++= Seq("-source:future", "-rewrite"),
-  Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),
+  Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Werror"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Xfatal-warnings"),
   semanticdbEnabled := true,
@@ -144,6 +144,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
                              "pubsub"         -> "v1",
                              "storage"        -> "v1",
                              "sheets"         -> "v4",
+                             "bigquery"       -> "v2",
                              // new clients can be added here
                              // 1. Place the specs into codegen/src/main/resources folder e.g.:
                              // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
@@ -290,7 +291,7 @@ lazy val root =
 
 lazy val codegen = (project in file("codegen"))
   .settings(
-    scalaVersion := "3.7.4",
+    scalaVersion := scala3Next,
     libraryDependencies ++= Seq(
       "dev.rolang" %%% "gcp-codegen-cli" % codegenVersion
     ),
@@ -420,6 +421,9 @@ lazy val docs = project
         ),
         "ZIO_GCP_AUTH_EXAMPLE" -> IO.read(
           file("./examples/shared/src/main/scala/token_provider_examples.scala")
+        ),
+        "ZIO_GCP_BIGQUERY_EXAMPLE" -> IO.read(
+          file("./examples/shared/src/main/scala/bigquery_v2_example.scala")
         ),
       )
     },

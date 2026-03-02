@@ -30,9 +30,10 @@ with support for creating [Signed URLs](https://cloud.google.com/storage/docs/ac
 
 ### generated clients
 - `zio-gcp-aiplatform-v1` Client code for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
+- `zio-gcp-bigquery-v2` Client code for [Google Cloud BigQuery API](https://cloud.google.com/bigquery/docs/reference/rest) (see usage [example](docs/../examples/shared/src/main/scala/bigquery_v2_example.scala)).
 - `zio-gcp-pubsub-v1` Client code for [Google Cloud Pub/Sub API](https://cloud.google.com/pubsub/docs/reference/rest/).
-- `zio-gcp-storage-v1`Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
-- `zio-gcp-iamcredentials-v1`Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
+- `zio-gcp-storage-v1` Client code for [Google Cloud Storage API](https://cloud.google.com/storage/docs/json_api).
+- `zio-gcp-iamcredentials-v1` Client code for [Google Cloud IAM Credentials API](https://cloud.google.com/iam/docs/reference/credentials/rest/).
 - `zio-gcp-sheets-v4` Client code for [Google Sheets API](https://developers.google.com/workspace/sheets/api/reference/rest).
 
 On how to add new API clients see section [Adding new clients](#adding-new-clients).
@@ -41,22 +42,23 @@ On how to add new API clients see section [Adding new clients](#adding-new-clien
 To get started with sbt, add the dependency to your project in `build.sbt`
 ```scala
 libraryDependencies ++= Seq(
-  "com.anymindgroup" %% "zio-gcp-auth" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-auth" % "0.3.0",
   // add clients based on needs
-  "com.anymindgroup" %% "zio-gcp-storage" % "0.2.7", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
-  "com.anymindgroup" %% "zio-gcp-sheets" % "0.2.7", // includes zio-gcp-sheets-v4
+  "com.anymindgroup" %% "zio-gcp-storage" % "0.3.0", // includes zio-gcp-storage-v1 and zio-gcp-iamcredentials-v1
+  "com.anymindgroup" %% "zio-gcp-sheets" % "0.3.0", // includes zio-gcp-sheets-v4
   // generated clients
-  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.2.7",
-  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.2.7",
-  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.2.7",
-  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.2.7",
-  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.2.7",
+  "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "0.3.0",
+  "com.anymindgroup" %% "zio-gcp-bigquery-v2" % "0.3.0",
+  "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "0.3.0",
+  "com.anymindgroup" %% "zio-gcp-storage-v1" % "0.3.0",
+  "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "0.3.0",
+  "com.anymindgroup" %% "zio-gcp-sheets-v4" % "0.3.0",
 )
 ```
 
 In a cross-platform project via [sbt-crossproject](https://github.com/portable-scala/sbt-crossproject) use `%%%` operator:
 ```scala
-libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.7"
+libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.3.0"
 // etc.
 ```
 
@@ -65,8 +67,8 @@ libraryDependencies += "com.anymindgroup" %%% "zio-gcp-auth" % "0.2.7"
 #### Generate content via Vertex AI API:
 
 ```scala
-//> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.2.7
+//> using scala 3.8.2
+//> using dep com.anymindgroup::zio-gcp-aiplatform-v1::0.3.0
 
 import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
 import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
@@ -112,8 +114,8 @@ object vertex_ai_generate_content extends ZIOAppDefault:
 
 #### Upload file to storage bucket, create signed url, delete file
 ```scala
-//> using scala 3.7.4
-//> using dep com.anymindgroup::zio-gcp-storage::0.2.7
+//> using scala 3.8.2
+//> using dep com.anymindgroup::zio-gcp-storage::0.3.0
 
 import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
 import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
