@@ -125,7 +125,7 @@ lazy val commonSettings = List(
   Compile / scalacOptions ++= Seq("-source:future", "-rewrite"),
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Werror"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
-  Test / scalacOptions --= Seq("-Xfatal-warnings"),
+  Test / scalacOptions --= Seq("-Werror"),
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
 )
@@ -162,7 +162,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
     .settings(commonSettings)
     .dependsOn(zioGcpAuth)
     .settings(
-      Compile / scalacOptions --= Seq("-Xfatal-warnings"),
+      Compile / scalacOptions --= Seq("-Werror"),
       Compile / sourceGenerators += codegenTask(
         apiName = apiName,
         apiVersion = apiVersion,
@@ -319,7 +319,7 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     )
   )
   .nativeSettings(
-    Compile / scalacOptions --= Seq("-Xfatal-warnings"),
+    Compile / scalacOptions --= Seq("-Werror"),
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     ),
@@ -391,7 +391,7 @@ lazy val docs = project
   .settings(
     moduleName := "zio-gcp-docs",
     scalacOptions -= "-Yno-imports",
-    scalacOptions -= "-Xfatal-warnings",
+    scalacOptions -= "-Werror",
     projectName                                := "Google Cloud clients for ZIO",
     mainModuleName                             := (zioGcpAuth.jvm / moduleName).value,
     projectStage                               := ProjectStage.Development,
