@@ -52,6 +52,8 @@ val jsoniterVersion = "2.38.8"
 
 val codegenVersion = "0.0.14"
 
+val scalaNativeCryptoVersion = "0.3.0"
+
 inThisBuild(
   List(
     name         := "ZIO Google Cloud clients",
@@ -384,6 +386,11 @@ lazy val tests = crossProject(JVMPlatform, NativePlatform)
       "dev.zio"                               %%% "zio-test"              % zioVersion.value % Test,
       "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
     ),
+  )
+  .nativeSettings(
+    libraryDependencies ++= Seq(
+      "com.github.lolgab" %%% "scala-native-crypto" % scalaNativeCryptoVersion % Test
+    )
   )
 
 lazy val docs = project
