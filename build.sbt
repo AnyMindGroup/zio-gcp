@@ -42,7 +42,7 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.7"
 
-val scala3Next = "3.7.4"
+val scala3Next = "3.8.2"
 
 val _zioVersion = "2.1.24"
 
@@ -50,7 +50,9 @@ val sttpClient4Version = "4.0.15"
 
 val jsoniterVersion = "2.38.8"
 
-val codegenVersion = "0.0.13"
+val codegenVersion = "0.0.14"
+
+val scalaNativeCryptoVersion = "0.3.0"
 
 inThisBuild(
   List(
@@ -123,9 +125,9 @@ inThisBuild(
 lazy val commonSettings = List(
   javacOptions ++= Seq("-source", "21"),
   Compile / scalacOptions ++= Seq("-source:future", "-rewrite"),
-  Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Xfatal-warnings"))(_ => Nil),
+  Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Werror"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
-  Test / scalacOptions --= Seq("-Xfatal-warnings"),
+  Test / scalacOptions --= Seq("-Werror"),
   semanticdbEnabled := true,
   semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
 )
@@ -144,6 +146,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
                              "pubsub"         -> "v1",
                              "storage"        -> "v1",
                              "sheets"         -> "v4",
+                             "bigquery"       -> "v2",
                              // new clients can be added here
                              // 1. Place the specs into codegen/src/main/resources folder e.g.:
                              // curl 'https://redis.googleapis.com/$discovery/rest?version=v1' > codegen/src/main/resources/redis_v1.json
@@ -161,7 +164,7 @@ lazy val gcpClientsCrossProjects: Seq[CrossProject] = for {
     .settings(commonSettings)
     .dependsOn(zioGcpAuth)
     .settings(
-      Compile / scalacOptions --= Seq("-Xfatal-warnings"),
+      Compile / scalacOptions --= Seq("-Werror"),
       Compile / sourceGenerators += codegenTask(
         apiName = apiName,
         apiVersion = apiVersion,
@@ -290,7 +293,7 @@ lazy val root =
 
 lazy val codegen = (project in file("codegen"))
   .settings(
-    scalaVersion := "3.7.4",
+    scalaVersion := scala3Next,
     libraryDependencies ++= Seq(
       "dev.rolang" %%% "gcp-codegen-cli" % codegenVersion
     ),
@@ -318,7 +321,7 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     )
   )
   .nativeSettings(
-    Compile / scalacOptions --= Seq("-Xfatal-warnings"),
+    Compile / scalacOptions --= Seq("-Werror"),
     libraryDependencies ++= Seq(
       "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     ),
@@ -384,13 +387,18 @@ lazy val tests = crossProject(JVMPlatform, NativePlatform)
       "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
     ),
   )
+  .nativeSettings(
+    libraryDependencies ++= Seq(
+      "com.github.lolgab" %%% "scala-native-crypto" % scalaNativeCryptoVersion % Test
+    )
+  )
 
 lazy val docs = project
   .in(file("zio-gcp-docs"))
   .settings(
     moduleName := "zio-gcp-docs",
     scalacOptions -= "-Yno-imports",
-    scalacOptions -= "-Xfatal-warnings",
+    scalacOptions -= "-Werror",
     projectName                                := "Google Cloud clients for ZIO",
     mainModuleName                             := (zioGcpAuth.jvm / moduleName).value,
     projectStage                               := ProjectStage.Development,
@@ -420,6 +428,9 @@ lazy val docs = project
         ),
         "ZIO_GCP_AUTH_EXAMPLE" -> IO.read(
           file("./examples/shared/src/main/scala/token_provider_examples.scala")
+        ),
+        "ZIO_GCP_BIGQUERY_EXAMPLE" -> IO.read(
+          file("./examples/shared/src/main/scala/bigquery_v2_example.scala")
         ),
       )
     },
