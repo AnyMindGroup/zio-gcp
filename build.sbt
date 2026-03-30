@@ -46,7 +46,7 @@ val scala3Next = "3.8.2"
 
 val _zioVersion = "2.1.24"
 
-val sttpClient4Version = "4.0.20"
+val sttpClient4Version = "4.0.21"
 
 val jsoniterVersion = "2.38.9"
 
