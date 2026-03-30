@@ -1,0 +1,84 @@
+name: Update Google API Discovery Specs
+
+on:
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  update-specs:
+    name: Update Google API Discovery Specs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Git Checkout
+      uses: actions/checkout@v6
+
+    - name: Update Discovery Documents
+      run: |
+        update_spec() {
+          local name="$1" version="$2"
+          local url="https://${name}.googleapis.com/\$discovery/rest?version=${version}"
+          local file="codegen/src/main/resources/${name}_${version}.json"
+          local tmp
+          tmp=$(mktemp)
+          if curl -sf "$url" | jq . > "$tmp" && [ -s "$tmp" ]; then
+            mv "$tmp" "$file"
+            echo "Updated $file"
+          else
+            echo "Failed to update $file" >&2
+            rm -f "$tmp"
+            return 1
+          fi
+        }
+
+        update_spec aiplatform v1
+        update_spec bigquery v2
+        update_spec iamcredentials v1
+        update_spec pubsub v1
+        update_spec sheets v4
+        update_spec storage v1
+
+    - name: Generate Token
+      id: generate-token
+      uses: zio/generate-github-app-token@v1.0.0
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+    - name: Create Pull Request
+      id: cpr
+      uses: peter-evans/create-pull-request@v8
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        commit-message: Update Google API discovery specs
+        branch: update-discovery-specs
+        delete-branch: true
+        title: Update Google API discovery specs
+        body: |
+          Automated daily update of Google API discovery documents.
+
+          Updated specs:
+          - aiplatform v1
+          - bigquery v2
+          - iamcredentials v1
+          - pubsub v1
+          - sheets v4
+          - storage v1
+
+    - name: Approve PR
+      if: ${{ steps.cpr.outputs.pull-request-number }}
+      run: gh pr review "$PR_URL" --approve
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+
+    - name: Enable Auto-Merge
+      if: ${{ steps.cpr.outputs.pull-request-number }}
+      run: gh pr merge --auto --squash "$PR_URL" || gh pr merge --squash "$PR_URL"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
