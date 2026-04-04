@@ -309,21 +309,11 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
     libraryDependencies ++= Seq(
       "dev.zio"                               %%% "zio"                   % zioVersion.value,
       "com.softwaremill.sttp.client4"         %%% "core"                  % sttpClient4Version,
+      "com.softwaremill.sttp.client4"         %%% "zio"                   % sttpClient4Version,
       "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-core"   % jsoniterVersion,
       "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion  % "compile-internal",
       "dev.zio"                               %%% "zio-test"              % zioVersion.value % Test,
       "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
-    ),
-  )
-  .jvmSettings(
-    libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.client4" %%% "zio" % sttpClient4Version
-    )
-  )
-  .nativeSettings(
-    Compile / scalacOptions --= Seq("-Werror"),
-    libraryDependencies ++= Seq(
-      "io.github.cquiroz" %%% "scala-java-time" % "2.6.0"
     ),
   )
 

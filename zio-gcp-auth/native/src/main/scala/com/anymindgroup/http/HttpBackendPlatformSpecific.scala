@@ -3,16 +3,15 @@ package com.anymindgroup.http
 import scala.annotation.tailrec
 
 import sttp.client4.Backend
-import sttp.client4.impl.zio.CurlZioBackend
+import sttp.client4.curl.zio.CurlZioBackend
 
 import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
 private[http] trait HttpClientBackendPlatformSpecific {
-  def httpBackendLayer(): ZLayer[Any, Throwable, Backend[Task]] =
-    ZLayer.scoped(httpBackendScoped())
+  def httpBackendLayer(verbose: Boolean = false): ZLayer[Any, Throwable, Backend[Task]] =
+    CurlZioBackend.layer(verbose)
 
-  def httpBackendScoped(): ZIO[Scope, Throwable, Backend[Task]] =
-    ZIO.acquireRelease(ZIO.attempt(CurlZioBackend()))(_.close().ignore)
+  def httpBackendScoped(verbose: Boolean = false): ZIO[Scope, Throwable, Backend[Task]] = CurlZioBackend.scoped(verbose)
 }
 
 class UnresolvedAddressException(underlying: Throwable) extends Throwable(underlying)
