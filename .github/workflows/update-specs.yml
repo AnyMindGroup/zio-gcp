@@ -54,7 +54,7 @@ jobs:
         if ! git diff --quiet; then
           git checkout -B "$BRANCH"
           git add codegen/src/main/resources/
-          git commit -m "Update Google API discovery specs"
+          git commit -m "Update Google API discovery specs $(date -u +%Y-%m-%d)"
           git push origin "$BRANCH" --force
           if ! gh pr view "$BRANCH" --json number -q .number 2>/dev/null; then
             gh pr create \
