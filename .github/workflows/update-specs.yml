@@ -48,7 +48,7 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
       run: |
-        BRANCH="sync-discovery-specs-$(date -u +%Y-%m-%d)"
+        BRANCH="update/sync-discovery-specs-$(date +%s%3N)"
         git config --global user.name "anymind-bot"
         git config --global user.email "anymind-bot@users.noreply.github.com"
         if ! git diff --quiet; then
