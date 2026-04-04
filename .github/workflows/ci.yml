@@ -121,12 +121,6 @@ jobs:
         git config --local user.name "ZIO Assistant"
         git add README.md
         git commit -m "Update README.md" || echo "No changes to commit"
-    - name: Generate Token
-      id: generate-token
-      uses: zio/generate-github-app-token@v1.0.0
-      with:
-        app_id: ${{ secrets.APP_ID }}
-        app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - name: Create Pull Request
       id: cpr
       uses: peter-evans/create-pull-request@v8
@@ -139,7 +133,7 @@ jobs:
             - After any changes to the "docs/index.md" file, I will update the README.md file accordingly.
         branch: zio-sbt-website/update-readme
         commit-message: Update README.md
-        token: ${{ steps.generate-token.outputs.token }}
+        token: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
         delete-branch: true
         title: Update README.md
     - name: Approve PR

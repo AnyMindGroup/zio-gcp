@@ -22,8 +22,18 @@ def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.flatMap {
 def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.flatMap(updatedBuildSetupStep))
 
 def updatedBuildSetupStep(step: Step) = step match {
-  case s: Step.SingleStep if s.name.contains("Setup Scala") => Nil
-  case s: Step.SingleStep if s.name.contains("Setup SBT")   =>
+  case s: Step.SingleStep if s.name.contains("Setup Scala")  => Nil
+  case s: Step.SingleStep if s.id.contains("generate-token") => Nil
+  case s: Step.SingleStep if s.id.contains("cpr")            =>
+    List(
+      s.copy(parameters =
+        s.parameters.updated(
+          "token",
+          Json.Str("${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}"),
+        )
+      )
+    )
+  case s: Step.SingleStep if s.name.contains("Setup SBT") =>
     List(
       Step.SingleStep(
         name = "Setup build tools",
@@ -84,6 +94,21 @@ inThisBuild(
     ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
+    ciUpdateReadmeJobs := ciUpdateReadmeJobs.value.map { j =>
+      j.copy(steps = j.steps.flatMap {
+        case s: Step.SingleStep if s.id.contains("generate-token") => Nil
+        case s: Step.SingleStep if s.id.contains("cpr")            =>
+          List(
+            s.copy(parameters =
+              s.parameters.updated(
+                "token",
+                Json.Str("${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}"),
+              )
+            )
+          )
+        case s => List(s)
+      })
+    },
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx5G", "-Xss4M", "-XX:+UseG1GC"),
     ciDefaultJavaVersion := "21",
     ciTargetJavaVersions := Seq("21"),
