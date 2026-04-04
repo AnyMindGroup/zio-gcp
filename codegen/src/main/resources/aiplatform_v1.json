@@ -1,5 +1,96 @@
 {
-  "version_module": true,
+  "ownerName": "Google",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    }
+  },
+  "fullyEncodeReservedExpansion": true,
+  "protocol": "rest",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/cloud-platform.read-only": {
+          "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        }
+      }
+    }
+  },
   "schemas": {
     "GoogleCloudLocationListLocationsResponse": {
       "id": "GoogleCloudLocationListLocationsResponse",
@@ -32870,107 +32961,264 @@
       }
     }
   },
+  "name": "aiplatform",
+  "kind": "discovery#restDescription",
+  "discoveryVersion": "v1",
+  "documentationLink": "https://cloud.google.com/vertex-ai/",
+  "version_module": true,
+  "rootUrl": "https://aiplatform.googleapis.com/",
+  "servicePath": "",
+  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
+  "title": "Vertex AI API",
+  "ownerDomain": "google.com",
+  "canonicalName": "Aiplatform",
+  "batchPath": "batch",
+  "id": "aiplatform:v1",
   "icons": {
     "x16": "http://www.google.com/images/icons/product/search-16.gif",
     "x32": "http://www.google.com/images/icons/product/search-32.gif"
   },
-  "rootUrl": "https://aiplatform.googleapis.com/",
-  "canonicalName": "Aiplatform",
-  "protocol": "rest",
-  "version": "v1",
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
+  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
+  "endpoints": [
+    {
+      "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
+      "location": "africa-south1",
+      "description": "Locational Endpoint"
     },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-east1-aiplatform.googleapis.com/",
+      "location": "asia-east1",
+      "description": "Locational Endpoint"
     },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-east2-aiplatform.googleapis.com/",
+      "location": "asia-east2",
+      "description": "Locational Endpoint"
     },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-northeast1-aiplatform.googleapis.com/",
+      "location": "asia-northeast1",
+      "description": "Locational Endpoint"
     },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-northeast2-aiplatform.googleapis.com/",
+      "location": "asia-northeast2",
+      "description": "Locational Endpoint"
     },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-northeast3-aiplatform.googleapis.com/",
+      "location": "asia-northeast3",
+      "description": "Locational Endpoint"
     },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-south1-aiplatform.googleapis.com/",
+      "location": "asia-south1",
+      "description": "Locational Endpoint"
     },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-south2-aiplatform.googleapis.com/",
+      "location": "asia-south2",
+      "description": "Locational Endpoint"
     },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-southeast1-aiplatform.googleapis.com/",
+      "location": "asia-southeast1",
+      "description": "Locational Endpoint"
     },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
+    {
+      "endpointUrl": "https://asia-southeast2-aiplatform.googleapis.com/",
+      "location": "asia-southeast2",
+      "description": "Locational Endpoint"
     },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
+    {
+      "endpointUrl": "https://australia-southeast1-aiplatform.googleapis.com/",
+      "location": "australia-southeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://australia-southeast2-aiplatform.googleapis.com/",
+      "location": "australia-southeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-central2-aiplatform.googleapis.com/",
+      "location": "europe-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-north1-aiplatform.googleapis.com/",
+      "location": "europe-north1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-north2-aiplatform.googleapis.com/",
+      "location": "europe-north2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-southwest1-aiplatform.googleapis.com/",
+      "location": "europe-southwest1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west1-aiplatform.googleapis.com/",
+      "location": "europe-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west10-aiplatform.googleapis.com/",
+      "location": "europe-west10",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west15-aiplatform.googleapis.com/",
+      "location": "europe-west15",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west2-aiplatform.googleapis.com/",
+      "location": "europe-west2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west3-aiplatform.googleapis.com/",
+      "location": "europe-west3",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west4-aiplatform.googleapis.com/",
+      "location": "europe-west4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west6-aiplatform.googleapis.com/",
+      "location": "europe-west6",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west8-aiplatform.googleapis.com/",
+      "location": "europe-west8",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west9-aiplatform.googleapis.com/",
+      "location": "europe-west9",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west12-aiplatform.googleapis.com/",
+      "location": "europe-west12",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-central1-aiplatform.googleapis.com/",
+      "location": "me-central1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-central2-aiplatform.googleapis.com/",
+      "location": "me-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-west1-aiplatform.googleapis.com/",
+      "location": "me-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://northamerica-northeast1-aiplatform.googleapis.com/",
+      "location": "northamerica-northeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://northamerica-northeast2-aiplatform.googleapis.com/",
+      "location": "northamerica-northeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://southamerica-east1-aiplatform.googleapis.com/",
+      "location": "southamerica-east1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://southamerica-west1-aiplatform.googleapis.com/",
+      "location": "southamerica-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-central1-aiplatform.googleapis.com/",
+      "location": "us-central1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-central2-aiplatform.googleapis.com/",
+      "location": "us-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east1-aiplatform.googleapis.com/",
+      "location": "us-east1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east4-aiplatform.googleapis.com/",
+      "location": "us-east4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east7-aiplatform.googleapis.com/",
+      "location": "us-east7",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-south1-aiplatform.googleapis.com/",
+      "location": "us-south1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west1-aiplatform.googleapis.com/",
+      "location": "us-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west2-aiplatform.googleapis.com/",
+      "location": "us-west2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west3-aiplatform.googleapis.com/",
+      "location": "us-west3",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west4-aiplatform.googleapis.com/",
+      "location": "us-west4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east5-aiplatform.googleapis.com/",
+      "location": "us-east5",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west8-aiplatform.googleapis.com/",
+      "location": "us-west8",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://aiplatform.us.rep.googleapis.com/",
+      "location": "us",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://aiplatform.eu.rep.googleapis.com/",
+      "location": "eu",
+      "description": "Regional Endpoint"
     }
-  },
-  "servicePath": "",
-  "title": "Vertex AI API",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/cloud-platform.read-only": {
-          "description": "View your data across Google Cloud services and see the email address of your Google Account"
-        }
-      }
-    }
-  },
-  "discoveryVersion": "v1",
+  ],
   "baseUrl": "https://aiplatform.googleapis.com/",
+  "revision": "20260327",
+  "basePath": "",
   "resources": {
     "operations": {
       "methods": {
@@ -63492,253 +63740,5 @@
       }
     }
   },
-  "revision": "20260327",
-  "id": "aiplatform:v1",
-  "ownerName": "Google",
-  "kind": "discovery#restDescription",
-  "fullyEncodeReservedExpansion": true,
-  "endpoints": [
-    {
-      "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
-      "location": "africa-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-east1-aiplatform.googleapis.com/",
-      "location": "asia-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-east2-aiplatform.googleapis.com/",
-      "location": "asia-east2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast1-aiplatform.googleapis.com/",
-      "location": "asia-northeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast2-aiplatform.googleapis.com/",
-      "location": "asia-northeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast3-aiplatform.googleapis.com/",
-      "location": "asia-northeast3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-south1-aiplatform.googleapis.com/",
-      "location": "asia-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-south2-aiplatform.googleapis.com/",
-      "location": "asia-south2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-southeast1-aiplatform.googleapis.com/",
-      "location": "asia-southeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-southeast2-aiplatform.googleapis.com/",
-      "location": "asia-southeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://australia-southeast1-aiplatform.googleapis.com/",
-      "location": "australia-southeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://australia-southeast2-aiplatform.googleapis.com/",
-      "location": "australia-southeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-central2-aiplatform.googleapis.com/",
-      "location": "europe-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-north1-aiplatform.googleapis.com/",
-      "location": "europe-north1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-north2-aiplatform.googleapis.com/",
-      "location": "europe-north2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-southwest1-aiplatform.googleapis.com/",
-      "location": "europe-southwest1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west1-aiplatform.googleapis.com/",
-      "location": "europe-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west10-aiplatform.googleapis.com/",
-      "location": "europe-west10",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west15-aiplatform.googleapis.com/",
-      "location": "europe-west15",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west2-aiplatform.googleapis.com/",
-      "location": "europe-west2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west3-aiplatform.googleapis.com/",
-      "location": "europe-west3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west4-aiplatform.googleapis.com/",
-      "location": "europe-west4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west6-aiplatform.googleapis.com/",
-      "location": "europe-west6",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west8-aiplatform.googleapis.com/",
-      "location": "europe-west8",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west9-aiplatform.googleapis.com/",
-      "location": "europe-west9",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west12-aiplatform.googleapis.com/",
-      "location": "europe-west12",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-central1-aiplatform.googleapis.com/",
-      "location": "me-central1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-central2-aiplatform.googleapis.com/",
-      "location": "me-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-west1-aiplatform.googleapis.com/",
-      "location": "me-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://northamerica-northeast1-aiplatform.googleapis.com/",
-      "location": "northamerica-northeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://northamerica-northeast2-aiplatform.googleapis.com/",
-      "location": "northamerica-northeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://southamerica-east1-aiplatform.googleapis.com/",
-      "location": "southamerica-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://southamerica-west1-aiplatform.googleapis.com/",
-      "location": "southamerica-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-central1-aiplatform.googleapis.com/",
-      "location": "us-central1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-central2-aiplatform.googleapis.com/",
-      "location": "us-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east1-aiplatform.googleapis.com/",
-      "location": "us-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east4-aiplatform.googleapis.com/",
-      "location": "us-east4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east7-aiplatform.googleapis.com/",
-      "location": "us-east7",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-south1-aiplatform.googleapis.com/",
-      "location": "us-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west1-aiplatform.googleapis.com/",
-      "location": "us-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west2-aiplatform.googleapis.com/",
-      "location": "us-west2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west3-aiplatform.googleapis.com/",
-      "location": "us-west3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west4-aiplatform.googleapis.com/",
-      "location": "us-west4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east5-aiplatform.googleapis.com/",
-      "location": "us-east5",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west8-aiplatform.googleapis.com/",
-      "location": "us-west8",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://aiplatform.us.rep.googleapis.com/",
-      "location": "us",
-      "description": "Regional Endpoint"
-    },
-    {
-      "endpointUrl": "https://aiplatform.eu.rep.googleapis.com/",
-      "location": "eu",
-      "description": "Regional Endpoint"
-    }
-  ],
-  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
-  "name": "aiplatform",
-  "documentationLink": "https://cloud.google.com/vertex-ai/",
-  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
-  "basePath": "",
-  "batchPath": "batch",
-  "ownerDomain": "google.com"
+  "version": "v1"
 }
