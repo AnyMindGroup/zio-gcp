@@ -42,43 +42,25 @@ jobs:
         update_spec sheets v4
         update_spec storage v1
 
-    - name: Generate Token
-      id: generate-token
-      uses: zio/generate-github-app-token@v1.0.0
-      with:
-        app_id: ${{ secrets.APP_ID }}
-        app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
     - name: Create Pull Request
-      id: cpr
-      uses: peter-evans/create-pull-request@v8
-      with:
-        token: ${{ steps.generate-token.outputs.token }}
-        commit-message: Update Google API discovery specs
-        branch: update-discovery-specs
-        delete-branch: true
-        title: Update Google API discovery specs
-        body: |
-          Automated daily update of Google API discovery documents.
-
-          Updated specs:
-          - aiplatform v1
-          - bigquery v2
-          - iamcredentials v1
-          - pubsub v1
-          - sheets v4
-          - storage v1
-
-    - name: Approve PR
-      if: ${{ steps.cpr.outputs.pull-request-number }}
-      run: gh pr review "$PR_URL" --approve
+      run: |
+        BRANCH="sync-discovery-specs-$(date -u +%Y-%m-%d)"
+        git config user.name "anychat-bot"
+        git config user.email "anychat-bot@users.noreply.github.com"
+        if ! git diff --quiet; then
+          git checkout -B "$BRANCH"
+          git add codegen/src/main/resources/
+          git commit -m "Update Google API discovery specs"
+          git push origin "$BRANCH" --force
+          if ! gh pr view "$BRANCH" --json number -q .number 2>/dev/null; then
+            gh pr create \
+              --title "Update Google API discovery specs" \
+              --body "$(printf 'Automated daily update of Google API discovery documents.\n\nUpdated specs:\n- aiplatform v1\n- bigquery v2\n- iamcredentials v1\n- pubsub v1\n- sheets v4\n- storage v1')" \
+              --head "$BRANCH" \
+              --base main
+          fi
+        else
+          echo "No changes to commit"
+        fi
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
-
-    - name: Enable Auto-Merge
-      if: ${{ steps.cpr.outputs.pull-request-number }}
-      run: gh pr merge --auto --squash "$PR_URL" || gh pr merge --squash "$PR_URL"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+        GITHUB_TOKEN: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
