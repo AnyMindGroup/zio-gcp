@@ -45,8 +45,8 @@ jobs:
     - name: Create Pull Request
       run: |
         BRANCH="sync-discovery-specs-$(date -u +%Y-%m-%d)"
-        git config user.name "anychat-bot"
-        git config user.email "anychat-bot@users.noreply.github.com"
+        git config user.name "anymind-bot"
+        git config user.email "anymind-bot@users.noreply.github.com"
         if ! git diff --quiet; then
           git checkout -B "$BRANCH"
           git add codegen/src/main/resources/
