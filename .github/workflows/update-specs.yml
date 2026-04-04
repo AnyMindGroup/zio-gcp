@@ -61,7 +61,7 @@ jobs:
               --title "Update Google API discovery specs" \
               --body "$(printf 'Automated daily update of Google API discovery documents.\n\nUpdated specs:\n- aiplatform v1\n- bigquery v2\n- iamcredentials v1\n- pubsub v1\n- sheets v4\n- storage v1')" \
               --head "$BRANCH" \
-              --base main
+              --base master
           fi
         else
           echo "No changes to commit"
