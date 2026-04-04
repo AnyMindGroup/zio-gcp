@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Git Checkout
       uses: actions/checkout@v6
+      with:
+        token: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
 
     - name: Update Discovery Documents
       run: |
@@ -62,5 +64,4 @@ jobs:
         else
           echo "No changes to commit"
         fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
+
