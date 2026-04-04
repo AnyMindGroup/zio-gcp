@@ -46,11 +46,11 @@ jobs:
 
     - name: Create Pull Request
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}
       run: |
         BRANCH="sync-discovery-specs-$(date -u +%Y-%m-%d)"
-        git config user.name "anymind-bot"
-        git config user.email "anymind-bot@users.noreply.github.com"
+        git config --global user.name "anymind-bot"
+        git config --global user.email "anymind-bot@users.noreply.github.com"
         if ! git diff --quiet; then
           git checkout -B "$BRANCH"
           git add codegen/src/main/resources/
