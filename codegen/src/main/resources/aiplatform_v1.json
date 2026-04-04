@@ -1,249 +1,5 @@
 {
-  "endpoints": [
-    {
-      "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
-      "location": "africa-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-east1-aiplatform.googleapis.com/",
-      "location": "asia-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-east2-aiplatform.googleapis.com/",
-      "location": "asia-east2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast1-aiplatform.googleapis.com/",
-      "location": "asia-northeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast2-aiplatform.googleapis.com/",
-      "location": "asia-northeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-northeast3-aiplatform.googleapis.com/",
-      "location": "asia-northeast3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-south1-aiplatform.googleapis.com/",
-      "location": "asia-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-south2-aiplatform.googleapis.com/",
-      "location": "asia-south2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-southeast1-aiplatform.googleapis.com/",
-      "location": "asia-southeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://asia-southeast2-aiplatform.googleapis.com/",
-      "location": "asia-southeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://australia-southeast1-aiplatform.googleapis.com/",
-      "location": "australia-southeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://australia-southeast2-aiplatform.googleapis.com/",
-      "location": "australia-southeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-central2-aiplatform.googleapis.com/",
-      "location": "europe-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-north1-aiplatform.googleapis.com/",
-      "location": "europe-north1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-north2-aiplatform.googleapis.com/",
-      "location": "europe-north2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-southwest1-aiplatform.googleapis.com/",
-      "location": "europe-southwest1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west1-aiplatform.googleapis.com/",
-      "location": "europe-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west10-aiplatform.googleapis.com/",
-      "location": "europe-west10",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west15-aiplatform.googleapis.com/",
-      "location": "europe-west15",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west2-aiplatform.googleapis.com/",
-      "location": "europe-west2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west3-aiplatform.googleapis.com/",
-      "location": "europe-west3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west4-aiplatform.googleapis.com/",
-      "location": "europe-west4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west6-aiplatform.googleapis.com/",
-      "location": "europe-west6",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west8-aiplatform.googleapis.com/",
-      "location": "europe-west8",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west9-aiplatform.googleapis.com/",
-      "location": "europe-west9",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://europe-west12-aiplatform.googleapis.com/",
-      "location": "europe-west12",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-central1-aiplatform.googleapis.com/",
-      "location": "me-central1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-central2-aiplatform.googleapis.com/",
-      "location": "me-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://me-west1-aiplatform.googleapis.com/",
-      "location": "me-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://northamerica-northeast1-aiplatform.googleapis.com/",
-      "location": "northamerica-northeast1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://northamerica-northeast2-aiplatform.googleapis.com/",
-      "location": "northamerica-northeast2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://southamerica-east1-aiplatform.googleapis.com/",
-      "location": "southamerica-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://southamerica-west1-aiplatform.googleapis.com/",
-      "location": "southamerica-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-central1-aiplatform.googleapis.com/",
-      "location": "us-central1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-central2-aiplatform.googleapis.com/",
-      "location": "us-central2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east1-aiplatform.googleapis.com/",
-      "location": "us-east1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east4-aiplatform.googleapis.com/",
-      "location": "us-east4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east7-aiplatform.googleapis.com/",
-      "location": "us-east7",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-south1-aiplatform.googleapis.com/",
-      "location": "us-south1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west1-aiplatform.googleapis.com/",
-      "location": "us-west1",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west2-aiplatform.googleapis.com/",
-      "location": "us-west2",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west3-aiplatform.googleapis.com/",
-      "location": "us-west3",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west4-aiplatform.googleapis.com/",
-      "location": "us-west4",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-east5-aiplatform.googleapis.com/",
-      "location": "us-east5",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://us-west8-aiplatform.googleapis.com/",
-      "location": "us-west8",
-      "description": "Locational Endpoint"
-    },
-    {
-      "endpointUrl": "https://aiplatform.us.rep.googleapis.com/",
-      "location": "us",
-      "description": "Regional Endpoint"
-    },
-    {
-      "endpointUrl": "https://aiplatform.eu.rep.googleapis.com/",
-      "location": "eu",
-      "description": "Regional Endpoint"
-    }
-  ],
-  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
-  "canonicalName": "Aiplatform",
-  "ownerDomain": "google.com",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "revision": "20260327",
+  "version_module": true,
   "schemas": {
     "GoogleCloudLocationListLocationsResponse": {
       "id": "GoogleCloudLocationListLocationsResponse",
@@ -310,7 +66,7 @@
     },
     "GoogleIamV1Policy": {
       "id": "GoogleIamV1Policy",
-      "description": "An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { \"bindings\": [ { \"role\": \"roles/resourcemanager.organizationAdmin\", \"members\": [ \"user:mike@example.com\", \"group:admins@example.com\", \"domain:google.com\", \"serviceAccount:my-project-id@appspot.gserviceaccount.com\" ] }, { \"role\": \"roles/resourcemanager.organizationViewer\", \"members\": [ \"user:eve@example.com\" ], \"condition\": { \"title\": \"expirable access\", \"description\": \"Does not grant access after Sep 2020\", \"expression\": \"request.time \u003c timestamp('2020-10-01T00:00:00.000Z')\", } } ], \"etag\": \"BwWWja0YfJA=\", \"version\": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time \u003c timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).",
+      "description": "An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { \"bindings\": [ { \"role\": \"roles/resourcemanager.organizationAdmin\", \"members\": [ \"user:mike@example.com\", \"group:admins@example.com\", \"domain:google.com\", \"serviceAccount:my-project-id@appspot.gserviceaccount.com\" ] }, { \"role\": \"roles/resourcemanager.organizationViewer\", \"members\": [ \"user:eve@example.com\" ], \"condition\": { \"title\": \"expirable access\", \"description\": \"Does not grant access after Sep 2020\", \"expression\": \"request.time < timestamp('2020-10-01T00:00:00.000Z')\", } } ], \"etag\": \"BwWWja0YfJA=\", \"version\": 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time < timestamp('2020-10-01T00:00:00.000Z') etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).",
       "type": "object",
       "properties": {
         "version": {
@@ -356,7 +112,7 @@
     },
     "GoogleTypeExpr": {
       "id": "GoogleTypeExpr",
-      "description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: \"Summary size limit\" description: \"Determines if a summary is less than 100 chars\" expression: \"document.summary.size() \u003c 100\" Example (Equality): title: \"Requestor is owner\" description: \"Determines if requestor is the document owner\" expression: \"document.owner == request.auth.claims.email\" Example (Logic): title: \"Public documents\" description: \"Determine whether the document should be publicly visible\" expression: \"document.type != 'private' && document.type != 'internal'\" Example (Data Manipulation): title: \"Notification string\" description: \"Create a notification string with a timestamp.\" expression: \"'New message received at ' + string(document.create_time)\" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.",
+      "description": "Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: \"Summary size limit\" description: \"Determines if a summary is less than 100 chars\" expression: \"document.summary.size() < 100\" Example (Equality): title: \"Requestor is owner\" description: \"Determines if requestor is the document owner\" expression: \"document.owner == request.auth.claims.email\" Example (Logic): title: \"Public documents\" description: \"Determine whether the document should be publicly visible\" expression: \"document.type != 'private' && document.type != 'internal'\" Example (Data Manipulation): title: \"Notification string\" description: \"Create a notification string with a timestamp.\" expression: \"'New message received at ' + string(document.create_time)\" The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information.",
       "type": "object",
       "properties": {
         "expression": {
@@ -870,7 +626,7 @@
           "type": "string",
           "enumDescriptions": [
             "Unspecified language. This value should not be used.",
-            "Python \u003e= 3.10, with numpy and simpy available."
+            "Python >= 3.10, with numpy and simpy available."
           ],
           "enum": [
             "LANGUAGE_UNSPECIFIED",
@@ -5471,7 +5227,7 @@
       "type": "object",
       "properties": {
         "evaluationFunction": {
-          "description": "Required. Python function. Expected user to define the following function, e.g.: def evaluate(instance: dict[str, Any]) -\u003e float: Please include this function signature in the code snippet. Instance is the evaluation instance, any fields populated in the instance are available to the function as instance[field_name]. Example: Example input: ``` instance= EvaluationInstance( response=EvaluationInstance.InstanceData(text=\"The answer is 4.\"), reference=EvaluationInstance.InstanceData(text=\"4\") ) ``` Example converted input: ``` { 'response': {'text': 'The answer is 4.'}, 'reference': {'text': '4'} } ``` Example python function: ``` def evaluate(instance: dict[str, Any]) -\u003e float: if instance'response' == instance'reference': return 1.0 return 0.0 ``` CustomCodeExecutionSpec is also supported in Batch Evaluation (EvalDataset RPC) and Tuning Evaluation. Each line in the input jsonl file will be converted to dict[str, Any] and passed to the evaluation function.",
+          "description": "Required. Python function. Expected user to define the following function, e.g.: def evaluate(instance: dict[str, Any]) -> float: Please include this function signature in the code snippet. Instance is the evaluation instance, any fields populated in the instance are available to the function as instance[field_name]. Example: Example input: ``` instance= EvaluationInstance( response=EvaluationInstance.InstanceData(text=\"The answer is 4.\"), reference=EvaluationInstance.InstanceData(text=\"4\") ) ``` Example converted input: ``` { 'response': {'text': 'The answer is 4.'}, 'reference': {'text': '4'} } ``` Example python function: ``` def evaluate(instance: dict[str, Any]) -> float: if instance'response' == instance'reference': return 1.0 return 0.0 ``` CustomCodeExecutionSpec is also supported in Batch Evaluation (EvalDataset RPC) and Tuning Evaluation. Each line in the input jsonl file will be converted to dict[str, Any] and passed to the evaluation function.",
           "type": "string"
         }
       }
@@ -5725,7 +5481,7 @@
           }
         },
         "turns": {
-          "description": "Optional. The chronological list of conversation turns. Each turn represents a logical execution cycle (e.g., User Input -\u003e Agent Response).",
+          "description": "Optional. The chronological list of conversation turns. Each turn represents a logical execution cycle (e.g., User Input -> Agent Response).",
           "type": "array",
           "items": {
             "$ref": "GoogleCloudAiplatformV1EvaluationInstanceDeprecatedAgentDataConversationTurn"
@@ -8355,7 +8111,7 @@
           "type": "string"
         },
         "aggregationFunction": {
-          "description": "Required. The Python code string containing the aggregation function. Expected function signature: `def aggregate(instances: list[dict[str, Any]]) -\u003e dict[str, float]:` The `instances` argument is a list of dictionaries, where each dictionary represents a single evaluation result item. The structure of each dictionary corresponds to the fields in the `EvaluationResult` message. This includes: - `\"request\"`: Contains the original input data and model inputs (from `EvaluationResult.EvaluationRequest`). - `\"candidate_results\"`: Contains the results of any instance-level metrics (from `EvaluationResult.CandidateResults`). Example of a single item in the `instances` list: { \"request\": { \"prompt\": {\"text\": \"What is the capital of France?\"}, \"golden_response\": {\"text\": \"Paris\"}, \"candidate_responses\": [{\"candidate\": \"model-v1\", \"text\": \"Paris\"}] }, \"candidate_results\": [ {\"metric\": \"exact_match\", \"score\": 1.0}, {\"metric\": \"bleu\", \"score\": 0.9} ] }",
+          "description": "Required. The Python code string containing the aggregation function. Expected function signature: `def aggregate(instances: list[dict[str, Any]]) -> dict[str, float]:` The `instances` argument is a list of dictionaries, where each dictionary represents a single evaluation result item. The structure of each dictionary corresponds to the fields in the `EvaluationResult` message. This includes: - `\"request\"`: Contains the original input data and model inputs (from `EvaluationResult.EvaluationRequest`). - `\"candidate_results\"`: Contains the results of any instance-level metrics (from `EvaluationResult.CandidateResults`). Example of a single item in the `instances` list: { \"request\": { \"prompt\": {\"text\": \"What is the capital of France?\"}, \"golden_response\": {\"text\": \"Paris\"}, \"candidate_responses\": [{\"candidate\": \"model-v1\", \"text\": \"Paris\"}] }, \"candidate_results\": [ {\"metric\": \"exact_match\", \"score\": 1.0}, {\"metric\": \"bleu\", \"score\": 0.9} ] }",
           "type": "string"
         }
       }
@@ -9695,7 +9451,7 @@
           "$ref": "GoogleCloudAiplatformV1BigQueryDestination"
         },
         "tfrecordDestination": {
-          "description": "Output in TFRecord format. Below are the mapping from Feature value type in Featurestore to Feature value type in TFRecord: Value type in Featurestore | Value type in TFRecord DOUBLE, DOUBLE_ARRAY | FLOAT_LIST INT64, INT64_ARRAY | INT64_LIST STRING, STRING_ARRAY, BYTES | BYTES_LIST true -\u003e byte_string(\"true\"), false -\u003e byte_string(\"false\") BOOL, BOOL_ARRAY (true, false) | BYTES_LIST",
+          "description": "Output in TFRecord format. Below are the mapping from Feature value type in Featurestore to Feature value type in TFRecord: Value type in Featurestore | Value type in TFRecord DOUBLE, DOUBLE_ARRAY | FLOAT_LIST INT64, INT64_ARRAY | INT64_LIST STRING, STRING_ARRAY, BYTES | BYTES_LIST true -> byte_string(\"true\"), false -> byte_string(\"false\") BOOL, BOOL_ARRAY (true, false) | BYTES_LIST",
           "$ref": "GoogleCloudAiplatformV1TFRecordDestination"
         },
         "csvDestination": {
@@ -10855,11 +10611,11 @@
           "type": "string",
           "enumDescriptions": [
             "Unspecified operator.",
-            "Entities are eligible if their value is \u003c the query's.",
-            "Entities are eligible if their value is \u003c= the query's.",
+            "Entities are eligible if their value is < the query's.",
+            "Entities are eligible if their value is <= the query's.",
             "Entities are eligible if their value is == the query's.",
-            "Entities are eligible if their value is \u003e= the query's.",
-            "Entities are eligible if their value is \u003e the query's.",
+            "Entities are eligible if their value is >= the query's.",
+            "Entities are eligible if their value is > the query's.",
             "Entities are eligible if their value is != the query's."
           ],
           "enum": [
@@ -10880,7 +10636,7 @@
       "type": "object",
       "properties": {
         "approximateNeighborCandidates": {
-          "description": "Optional. The number of neighbors to find via approximate search before exact reordering is performed; if set, this value must be \u003e neighbor_count.",
+          "description": "Optional. The number of neighbors to find via approximate search before exact reordering is performed; if set, this value must be > neighbor_count.",
           "type": "integer",
           "format": "int32"
         },
@@ -11831,7 +11587,7 @@
       "type": "object",
       "properties": {
         "attributions": {
-          "description": "Output only. Feature attributions grouped by predicted outputs. For Models that predict only one output, such as regression Models that predict only one score, there is only one attibution that explains the predicted output. For Models that predict multiple outputs, such as multiclass Models that predict multiple classes, each element explains one specific item. Attribution.output_index can be used to identify which output this attribution is explaining. By default, we provide Shapley values for the predicted class. However, you can configure the explanation request to generate Shapley values for any other classes too. For example, if a model predicts a probability of `0.4` for approving a loan application, the model's decision is to reject the application since `p(reject) = 0.6 \u003e p(approve) = 0.4`, and the default Shapley values would be computed for rejection decision and not approval, even though the latter might be the positive class. If users set ExplanationParameters.top_k, the attributions are sorted by instance_output_value in descending order. If ExplanationParameters.output_indices is specified, the attributions are stored by Attribution.output_index in the same order as they appear in the output_indices.",
+          "description": "Output only. Feature attributions grouped by predicted outputs. For Models that predict only one output, such as regression Models that predict only one score, there is only one attibution that explains the predicted output. For Models that predict multiple outputs, such as multiclass Models that predict multiple classes, each element explains one specific item. Attribution.output_index can be used to identify which output this attribution is explaining. By default, we provide Shapley values for the predicted class. However, you can configure the explanation request to generate Shapley values for any other classes too. For example, if a model predicts a probability of `0.4` for approving a loan application, the model's decision is to reject the application since `p(reject) = 0.6 > p(approve) = 0.4`, and the default Shapley values would be computed for rejection decision and not approval, even though the latter might be the positive class. If users set ExplanationParameters.top_k, the attributions are sorted by instance_output_value in descending order. If ExplanationParameters.output_indices is specified, the attributions are stored by Attribution.output_index in the same order as they appear in the output_indices.",
           "readOnly": true,
           "type": "array",
           "items": {
@@ -11854,7 +11610,7 @@
       "type": "object",
       "properties": {
         "baselineOutputValue": {
-          "description": "Output only. Model predicted output if the input instance is constructed from the baselines of all the features defined in ExplanationMetadata.inputs. The field name of the output is determined by the key in ExplanationMetadata.outputs. If the Model's predicted output has multiple dimensions (rank \u003e 1), this is the value in the output located by output_index. If there are multiple baselines, their output values are averaged.",
+          "description": "Output only. Model predicted output if the input instance is constructed from the baselines of all the features defined in ExplanationMetadata.inputs. The field name of the output is determined by the key in ExplanationMetadata.outputs. If the Model's predicted output has multiple dimensions (rank > 1), this is the value in the output located by output_index. If there are multiple baselines, their output values are averaged.",
           "readOnly": true,
           "type": "number",
           "format": "double"
@@ -12115,7 +11871,7 @@
       "type": "object",
       "properties": {
         "index": {
-          "description": "Output only. The 0-based index of this candidate in the list of generated responses. This is useful for distinguishing between multiple candidates when `candidate_count` \u003e 1.",
+          "description": "Output only. The 0-based index of this candidate in the list of generated responses. This is useful for distinguishing between multiple candidates when `candidate_count` > 1.",
           "readOnly": true,
           "type": "integer",
           "format": "int32"
@@ -14558,11 +14314,11 @@
           "type": "string",
           "enumDescriptions": [
             "Default value of the enum.",
-            "Datapoints are eligible iff their value is \u003c the query's.",
-            "Datapoints are eligible iff their value is \u003c= the query's.",
+            "Datapoints are eligible iff their value is < the query's.",
+            "Datapoints are eligible iff their value is <= the query's.",
             "Datapoints are eligible iff their value is == the query's.",
-            "Datapoints are eligible iff their value is \u003e= the query's.",
-            "Datapoints are eligible iff their value is \u003e the query's.",
+            "Datapoints are eligible iff their value is >= the query's.",
+            "Datapoints are eligible iff their value is > the query's.",
             "Datapoints are eligible iff their value is != the query's."
           ],
           "enum": [
@@ -15870,7 +15626,7 @@
           "format": "int64"
         },
         "minStepCount": {
-          "description": "Minimum number of steps for a trial to complete. Trials which do not have a measurement with step_count \u003e min_step_count won't be considered for early stopping. It's ok to set it to 0, and a trial can be early stopped at any stage. By default, min_step_count is set to be one-tenth of the max_step_count. When use_elapsed_duration is true, this field is set to the minimum elapsed seconds.",
+          "description": "Minimum number of steps for a trial to complete. Trials which do not have a measurement with step_count > min_step_count won't be considered for early stopping. It's ok to set it to 0, and a trial can be early stopped at any stage. By default, min_step_count is set to be one-tenth of the max_step_count. When use_elapsed_duration is true, this field is set to the minimum elapsed seconds.",
           "type": "string",
           "format": "int64"
         },
@@ -18280,7 +18036,7 @@
           "format": "int32"
         },
         "approximateNeighborCount": {
-          "description": "The number of neighbors to find via approximate search before exact reordering is performed. If not set, the default value from scam config is used; if set, this value must be \u003e 0.",
+          "description": "The number of neighbors to find via approximate search before exact reordering is performed. If not set, the default value from scam config is used; if set, this value must be > 0.",
           "type": "integer",
           "format": "int32"
         },
@@ -19138,7 +18894,7 @@
       "type": "object",
       "properties": {
         "filter": {
-          "description": "Required. A required filter matching the Artifacts to be purged. E.g., `update_time \u003c= 2020-11-19T11:30:00-04:00`.",
+          "description": "Required. A required filter matching the Artifacts to be purged. E.g., `update_time <= 2020-11-19T11:30:00-04:00`.",
           "type": "string"
         },
         "force": {
@@ -19237,7 +18993,7 @@
       "type": "object",
       "properties": {
         "filter": {
-          "description": "Required. A required filter matching the Contexts to be purged. E.g., `update_time \u003c= 2020-11-19T11:30:00-04:00`.",
+          "description": "Required. A required filter matching the Contexts to be purged. E.g., `update_time <= 2020-11-19T11:30:00-04:00`.",
           "type": "string"
         },
         "force": {
@@ -19489,7 +19245,7 @@
       "type": "object",
       "properties": {
         "filter": {
-          "description": "Required. A required filter matching the Executions to be purged. E.g., `update_time \u003c= 2020-11-19T11:30:00-04:00`.",
+          "description": "Required. A required filter matching the Executions to be purged. E.g., `update_time <= 2020-11-19T11:30:00-04:00`.",
           "type": "string"
         },
         "force": {
@@ -21816,12 +21572,12 @@
       "type": "object",
       "properties": {
         "minReplicaCount": {
-          "description": "Optional. min replicas in the node pool, must be ≤ replica_count and \u003c max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be \u003e 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.",
+          "description": "Optional. min replicas in the node pool, must be ≤ replica_count and < max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be > 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.",
           "type": "string",
           "format": "int64"
         },
         "maxReplicaCount": {
-          "description": "Optional. max replicas in the node pool, must be ≥ replica_count and \u003e min_replica_count or will throw error",
+          "description": "Optional. max replicas in the node pool, must be ≥ replica_count and > min_replica_count or will throw error",
           "type": "string",
           "format": "int64"
         }
@@ -23801,12 +23557,12 @@
           "format": "google-datetime"
         },
         "endTime": {
-          "description": "Optional. Timestamp after which no new runs can be scheduled. If specified, The schedule will be completed when either end_time is reached or when scheduled_run_count \u003e= max_run_count. If not specified, new runs will keep getting scheduled until this Schedule is paused or deleted. Already scheduled runs will be allowed to complete. Unset if not specified.",
+          "description": "Optional. Timestamp after which no new runs can be scheduled. If specified, The schedule will be completed when either end_time is reached or when scheduled_run_count >= max_run_count. If not specified, new runs will keep getting scheduled until this Schedule is paused or deleted. Already scheduled runs will be allowed to complete. Unset if not specified.",
           "type": "string",
           "format": "google-datetime"
         },
         "maxRunCount": {
-          "description": "Optional. Maximum run count of the schedule. If specified, The schedule will be completed when either started_run_count \u003e= max_run_count or when end_time is reached. If not specified, new runs will keep getting scheduled until this Schedule is paused or deleted. Already scheduled runs will be allowed to complete. Unset if not specified.",
+          "description": "Optional. Maximum run count of the schedule. If specified, The schedule will be completed when either started_run_count >= max_run_count or when end_time is reached. If not specified, new runs will keep getting scheduled until this Schedule is paused or deleted. Already scheduled runs will be allowed to complete. Unset if not specified.",
           "type": "string",
           "format": "int64"
         },
@@ -25812,7 +25568,7 @@
           "$ref": "GoogleCloudAiplatformV1RagVectorDbConfigRagManagedDbKNN"
         },
         "ann": {
-          "description": "Performs an ANN search on RagCorpus. Use this if you have a lot of files (\u003e 10K) in your RagCorpus and want to reduce the search latency.",
+          "description": "Performs an ANN search on RagCorpus. Use this if you have a lot of files (> 10K) in your RagCorpus and want to reduce the search latency.",
           "$ref": "GoogleCloudAiplatformV1RagVectorDbConfigRagManagedDbANN"
         }
       }
@@ -32077,7 +31833,7 @@
     },
     "GoogleTypeColor": {
       "id": "GoogleTypeColor",
-      "description": "Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. For example, the fields of this representation can be trivially provided to the constructor of `java.awt.Color` in Java; it can also be trivially provided to UIColor's `+colorWithRed:green:blue:alpha` method in iOS; and, with just a little work, it can be easily formatted into a CSS `rgba()` string in JavaScript. This reference page doesn't have information about the absolute color space that should be used to interpret the RGB value—for example, sRGB, Adobe RGB, DCI-P3, and BT.2020. By default, applications should assume the sRGB color space. When color equality needs to be decided, implementations, unless documented otherwise, treat two colors as equal if all their red, green, blue, and alpha values each differ by at most `1e-5`. Example (Java): import com.google.type.Color; // ... public static java.awt.Color fromProto(Color protocolor) { float alpha = protocolor.hasAlpha() ? protocolor.getAlpha().getValue() : 1.0; return new java.awt.Color( protocolor.getRed(), protocolor.getGreen(), protocolor.getBlue(), alpha); } public static Color toProto(java.awt.Color color) { float red = (float) color.getRed(); float green = (float) color.getGreen(); float blue = (float) color.getBlue(); float denominator = 255.0; Color.Builder resultBuilder = Color .newBuilder() .setRed(red / denominator) .setGreen(green / denominator) .setBlue(blue / denominator); int alpha = color.getAlpha(); if (alpha != 255) { result.setAlpha( FloatValue .newBuilder() .setValue(((float) alpha) / denominator) .build()); } return resultBuilder.build(); } // ... Example (iOS / Obj-C): // ... static UIColor* fromProto(Color* protocolor) { float red = [protocolor red]; float green = [protocolor green]; float blue = [protocolor blue]; FloatValue* alpha_wrapper = [protocolor alpha]; float alpha = 1.0; if (alpha_wrapper != nil) { alpha = [alpha_wrapper value]; } return [UIColor colorWithRed:red green:green blue:blue alpha:alpha]; } static Color* toProto(UIColor* color) { CGFloat red, green, blue, alpha; if (![color getRed:&red green:&green blue:&blue alpha:&alpha]) { return nil; } Color* result = [[Color alloc] init]; [result setRed:red]; [result setGreen:green]; [result setBlue:blue]; if (alpha \u003c= 0.9999) { [result setAlpha:floatWrapperWithValue(alpha)]; } [result autorelease]; return result; } // ... Example (JavaScript): // ... var protoToCssColor = function(rgb_color) { var redFrac = rgb_color.red || 0.0; var greenFrac = rgb_color.green || 0.0; var blueFrac = rgb_color.blue || 0.0; var red = Math.floor(redFrac * 255); var green = Math.floor(greenFrac * 255); var blue = Math.floor(blueFrac * 255); if (!('alpha' in rgb_color)) { return rgbToCssColor(red, green, blue); } var alphaFrac = rgb_color.alpha.value || 0.0; var rgbParams = [red, green, blue].join(','); return ['rgba(', rgbParams, ',', alphaFrac, ')'].join(''); }; var rgbToCssColor = function(red, green, blue) { var rgbNumber = new Number((red \u003c\u003c 16) | (green \u003c\u003c 8) | blue); var hexString = rgbNumber.toString(16); var missingZeros = 6 - hexString.length; var resultBuilder = ['#']; for (var i = 0; i \u003c missingZeros; i++) { resultBuilder.push('0'); } resultBuilder.push(hexString); return resultBuilder.join(''); }; // ...",
+      "description": "Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. For example, the fields of this representation can be trivially provided to the constructor of `java.awt.Color` in Java; it can also be trivially provided to UIColor's `+colorWithRed:green:blue:alpha` method in iOS; and, with just a little work, it can be easily formatted into a CSS `rgba()` string in JavaScript. This reference page doesn't have information about the absolute color space that should be used to interpret the RGB value—for example, sRGB, Adobe RGB, DCI-P3, and BT.2020. By default, applications should assume the sRGB color space. When color equality needs to be decided, implementations, unless documented otherwise, treat two colors as equal if all their red, green, blue, and alpha values each differ by at most `1e-5`. Example (Java): import com.google.type.Color; // ... public static java.awt.Color fromProto(Color protocolor) { float alpha = protocolor.hasAlpha() ? protocolor.getAlpha().getValue() : 1.0; return new java.awt.Color( protocolor.getRed(), protocolor.getGreen(), protocolor.getBlue(), alpha); } public static Color toProto(java.awt.Color color) { float red = (float) color.getRed(); float green = (float) color.getGreen(); float blue = (float) color.getBlue(); float denominator = 255.0; Color.Builder resultBuilder = Color .newBuilder() .setRed(red / denominator) .setGreen(green / denominator) .setBlue(blue / denominator); int alpha = color.getAlpha(); if (alpha != 255) { result.setAlpha( FloatValue .newBuilder() .setValue(((float) alpha) / denominator) .build()); } return resultBuilder.build(); } // ... Example (iOS / Obj-C): // ... static UIColor* fromProto(Color* protocolor) { float red = [protocolor red]; float green = [protocolor green]; float blue = [protocolor blue]; FloatValue* alpha_wrapper = [protocolor alpha]; float alpha = 1.0; if (alpha_wrapper != nil) { alpha = [alpha_wrapper value]; } return [UIColor colorWithRed:red green:green blue:blue alpha:alpha]; } static Color* toProto(UIColor* color) { CGFloat red, green, blue, alpha; if (![color getRed:&red green:&green blue:&blue alpha:&alpha]) { return nil; } Color* result = [[Color alloc] init]; [result setRed:red]; [result setGreen:green]; [result setBlue:blue]; if (alpha <= 0.9999) { [result setAlpha:floatWrapperWithValue(alpha)]; } [result autorelease]; return result; } // ... Example (JavaScript): // ... var protoToCssColor = function(rgb_color) { var redFrac = rgb_color.red || 0.0; var greenFrac = rgb_color.green || 0.0; var blueFrac = rgb_color.blue || 0.0; var red = Math.floor(redFrac * 255); var green = Math.floor(greenFrac * 255); var blue = Math.floor(blueFrac * 255); if (!('alpha' in rgb_color)) { return rgbToCssColor(red, green, blue); } var alphaFrac = rgb_color.alpha.value || 0.0; var rgbParams = [red, green, blue].join(','); return ['rgba(', rgbParams, ',', alphaFrac, ')'].join(''); }; var rgbToCssColor = function(red, green, blue) { var rgbNumber = new Number((red << 16) | (green << 8) | blue); var hexString = rgbNumber.toString(16); var missingZeros = 6 - hexString.length; var resultBuilder = ['#']; for (var i = 0; i < missingZeros; i++) { resultBuilder.push('0'); } resultBuilder.push(hexString); return resultBuilder.join(''); }; // ...",
       "type": "object",
       "properties": {
         "red": {
@@ -33114,10 +32870,14 @@
       }
     }
   },
-  "basePath": "",
-  "name": "aiplatform",
-  "id": "aiplatform:v1",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
   "rootUrl": "https://aiplatform.googleapis.com/",
+  "canonicalName": "Aiplatform",
+  "protocol": "rest",
+  "version": "v1",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -33195,14 +32955,7 @@
       "location": "query"
     }
   },
-  "ownerName": "Google",
-  "fullyEncodeReservedExpansion": true,
-  "documentationLink": "https://cloud.google.com/vertex-ai/",
-  "protocol": "rest",
-  "version": "v1",
-  "kind": "discovery#restDescription",
   "servicePath": "",
-  "version_module": true,
   "title": "Vertex AI API",
   "auth": {
     "oauth2": {
@@ -33216,6 +32969,8 @@
       }
     }
   },
+  "discoveryVersion": "v1",
+  "baseUrl": "https://aiplatform.googleapis.com/",
   "resources": {
     "operations": {
       "methods": {
@@ -41329,7 +41084,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Lists the featurestores that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `online_serving_config.fixed_node_count`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. * `labels`: Supports key-value equality and key presence. Examples: * `create_time \u003e \"2020-01-01\" OR update_time \u003e \"2020-01-01\"` Featurestores created or updated after 2020-01-01. * `labels.env = \"prod\"` Featurestores with label \"env\" set to \"prod\".",
+                      "description": "Lists the featurestores that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `online_serving_config.fixed_node_count`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. * `labels`: Supports key-value equality and key presence. Examples: * `create_time > \"2020-01-01\" OR update_time > \"2020-01-01\"` Featurestores created or updated after 2020-01-01. * `labels.env = \"prod\"` Featurestores with label \"env\" set to \"prod\".",
                       "location": "query",
                       "type": "string"
                     },
@@ -41473,7 +41228,7 @@
                       "type": "string"
                     },
                     "query": {
-                      "description": "Query string that is a conjunction of field-restricted queries and/or field-restricted filters. Field-restricted queries and filters can be combined using `AND` to form a conjunction. A field query is in the form FIELD:QUERY. This implicitly checks if QUERY exists as a substring within Feature's FIELD. The QUERY and the FIELD are converted to a sequence of words (i.e. tokens) for comparison. This is done by: * Removing leading/trailing whitespace and tokenizing the search value. Characters that are not one of alphanumeric `[a-zA-Z0-9]`, underscore `_`, or asterisk `*` are treated as delimiters for tokens. `*` is treated as a wildcard that matches characters within a token. * Ignoring case. * Prepending an asterisk to the first and appending an asterisk to the last token in QUERY. A QUERY must be either a singular token or a phrase. A phrase is one or multiple words enclosed in double quotation marks (\"). With phrases, the order of the words is important. Words in the phrase must be matching in order and consecutively. Supported FIELDs for field-restricted queries: * `feature_id` * `description` * `entity_type_id` Examples: * `feature_id: foo` --\u003e Matches a Feature with ID containing the substring `foo` (eg. `foo`, `foofeature`, `barfoo`). * `feature_id: foo*feature` --\u003e Matches a Feature with ID containing the substring `foo*feature` (eg. `foobarfeature`). * `feature_id: foo AND description: bar` --\u003e Matches a Feature with ID containing the substring `foo` and description containing the substring `bar`. Besides field queries, the following exact-match filters are supported. The exact-match filters do not support wildcards. Unlike field-restricted queries, exact-match filters are case-sensitive. * `feature_id`: Supports = comparisons. * `description`: Supports = comparisons. Multi-token filters should be enclosed in quotes. * `entity_type_id`: Supports = comparisons. * `value_type`: Supports = and != comparisons. * `labels`: Supports key-value equality as well as key presence. * `featurestore_id`: Supports = comparisons. Examples: * `description = \"foo bar\"` --\u003e Any Feature with description exactly equal to `foo bar` * `value_type = DOUBLE` --\u003e Features whose type is DOUBLE. * `labels.active = yes AND labels.env = prod` --\u003e Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --\u003e Any Feature which has a label with `env` as the key.",
+                      "description": "Query string that is a conjunction of field-restricted queries and/or field-restricted filters. Field-restricted queries and filters can be combined using `AND` to form a conjunction. A field query is in the form FIELD:QUERY. This implicitly checks if QUERY exists as a substring within Feature's FIELD. The QUERY and the FIELD are converted to a sequence of words (i.e. tokens) for comparison. This is done by: * Removing leading/trailing whitespace and tokenizing the search value. Characters that are not one of alphanumeric `[a-zA-Z0-9]`, underscore `_`, or asterisk `*` are treated as delimiters for tokens. `*` is treated as a wildcard that matches characters within a token. * Ignoring case. * Prepending an asterisk to the first and appending an asterisk to the last token in QUERY. A QUERY must be either a singular token or a phrase. A phrase is one or multiple words enclosed in double quotation marks (\"). With phrases, the order of the words is important. Words in the phrase must be matching in order and consecutively. Supported FIELDs for field-restricted queries: * `feature_id` * `description` * `entity_type_id` Examples: * `feature_id: foo` --> Matches a Feature with ID containing the substring `foo` (eg. `foo`, `foofeature`, `barfoo`). * `feature_id: foo*feature` --> Matches a Feature with ID containing the substring `foo*feature` (eg. `foobarfeature`). * `feature_id: foo AND description: bar` --> Matches a Feature with ID containing the substring `foo` and description containing the substring `bar`. Besides field queries, the following exact-match filters are supported. The exact-match filters do not support wildcards. Unlike field-restricted queries, exact-match filters are case-sensitive. * `feature_id`: Supports = comparisons. * `description`: Supports = comparisons. Multi-token filters should be enclosed in quotes. * `entity_type_id`: Supports = comparisons. * `value_type`: Supports = and != comparisons. * `labels`: Supports key-value equality as well as key presence. * `featurestore_id`: Supports = comparisons. Examples: * `description = \"foo bar\"` --> Any Feature with description exactly equal to `foo bar` * `value_type = DOUBLE` --> Features whose type is DOUBLE. * `labels.active = yes AND labels.env = prod` --> Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --> Any Feature which has a label with `env` as the key.",
                       "location": "query",
                       "type": "string"
                     },
@@ -41750,7 +41505,7 @@
                           "type": "string"
                         },
                         "filter": {
-                          "description": "Lists the EntityTypes that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003e=`, and `\u003c=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003e=`, and `\u003c=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `create_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\"` --\u003e EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --\u003e EntityTypes having both (active: yes) and (env: prod) labels. * `labels.env: *` --\u003e Any EntityType which has a label with 'env' as the key.",
+                          "description": "Lists the EntityTypes that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `>=`, and `<=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `>=`, and `<=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `create_time > \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time > \\\"2020-01-31T15:30:00.000000Z\\\"` --> EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --> EntityTypes having both (active: yes) and (env: prod) labels. * `labels.env: *` --> Any EntityType which has a label with 'env' as the key.",
                           "location": "query",
                           "type": "string"
                         },
@@ -42196,7 +41951,7 @@
                               "type": "string"
                             },
                             "filter": {
-                              "description": "Lists the Features that match the filter expression. The following filters are supported: * `value_type`: Supports = and != comparisons. * `create_time`: Supports =, !=, \u003c, \u003e, \u003e=, and \u003c= comparisons. Values must be in RFC 3339 format. * `update_time`: Supports =, !=, \u003c, \u003e, \u003e=, and \u003c= comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `value_type = DOUBLE` --\u003e Features whose type is DOUBLE. * `create_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\"` --\u003e EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --\u003e Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --\u003e Any Feature which has a label with 'env' as the key.",
+                              "description": "Lists the Features that match the filter expression. The following filters are supported: * `value_type`: Supports = and != comparisons. * `create_time`: Supports =, !=, <, >, >=, and <= comparisons. Values must be in RFC 3339 format. * `update_time`: Supports =, !=, <, >, >=, and <= comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `value_type = DOUBLE` --> Features whose type is DOUBLE. * `create_time > \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time > \\\"2020-01-31T15:30:00.000000Z\\\"` --> EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --> Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --> Any Feature which has a label with 'env' as the key.",
                               "location": "query",
                               "type": "string"
                             },
@@ -42223,7 +41978,7 @@
                               "format": "google-fieldmask"
                             },
                             "latestStatsCount": {
-                              "description": "Only applicable for Vertex AI Feature Store (Legacy). If set, return the most recent ListFeaturesRequest.latest_stats_count of stats for each Feature in response. Valid value is [0, 10]. If number of stats exists \u003c ListFeaturesRequest.latest_stats_count, return all existing stats.",
+                              "description": "Only applicable for Vertex AI Feature Store (Legacy). If set, return the most recent ListFeaturesRequest.latest_stats_count of stats for each Feature in response. Valid value is [0, 10]. If number of stats exists < ListFeaturesRequest.latest_stats_count, return all existing stats.",
                               "location": "query",
                               "type": "integer",
                               "format": "int32"
@@ -44211,7 +43966,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Lists the FeatureOnlineStores that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. Examples: * `create_time \u003e \"2020-01-01\" OR update_time \u003e \"2020-01-01\"` FeatureOnlineStores created or updated after 2020-01-01. * `labels.env = \"prod\"` FeatureOnlineStores with label \"env\" set to \"prod\".",
+                      "description": "Lists the FeatureOnlineStores that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. Examples: * `create_time > \"2020-01-01\" OR update_time > \"2020-01-01\"` FeatureOnlineStores created or updated after 2020-01-01. * `labels.env = \"prod\"` FeatureOnlineStores with label \"env\" set to \"prod\".",
                       "location": "query",
                       "type": "string"
                     },
@@ -44478,7 +44233,7 @@
                           "type": "string"
                         },
                         "filter": {
-                          "description": "Lists the FeatureViews that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003e=`, and `\u003c=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003e=`, and `\u003c=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `create_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\"` --\u003e FeatureViews created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --\u003e FeatureViews having both (active: yes) and (env: prod) labels. * `labels.env: *` --\u003e Any FeatureView which has a label with 'env' as the key.",
+                          "description": "Lists the FeatureViews that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `>=`, and `<=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `>=`, and `<=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `create_time > \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time > \\\"2020-01-31T15:30:00.000000Z\\\"` --> FeatureViews created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --> FeatureViews having both (active: yes) and (env: prod) labels. * `labels.env: *` --> Any FeatureView which has a label with 'env' as the key.",
                           "location": "query",
                           "type": "string"
                         },
@@ -44883,7 +44638,7 @@
                               "type": "string"
                             },
                             "filter": {
-                              "description": "Lists the FeatureViewSyncs that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003e=`, and `\u003c=` comparisons. Values must be in RFC 3339 format. Examples: * `create_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\"` --\u003e FeatureViewSyncs created after 2020-01-31T15:30:00.000000Z.",
+                              "description": "Lists the FeatureViewSyncs that match the filter expression. The following filters are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `>=`, and `<=` comparisons. Values must be in RFC 3339 format. Examples: * `create_time > \\\"2020-01-31T15:30:00.000000Z\\\"` --> FeatureViewSyncs created after 2020-01-31T15:30:00.000000Z.",
                               "location": "query",
                               "type": "string"
                             },
@@ -45216,7 +44971,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Lists the FeatureGroups that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. Examples: * `create_time \u003e \"2020-01-01\" OR update_time \u003e \"2020-01-01\"` FeatureGroups created or updated after 2020-01-01. * `labels.env = \"prod\"` FeatureGroups with label \"env\" set to \"prod\".",
+                      "description": "Lists the FeatureGroups that match the filter expression. The following fields are supported: * `create_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. Examples: * `create_time > \"2020-01-01\" OR update_time > \"2020-01-01\"` FeatureGroups created or updated after 2020-01-01. * `labels.env = \"prod\"` FeatureGroups with label \"env\" set to \"prod\".",
                       "location": "query",
                       "type": "string"
                     },
@@ -45547,7 +45302,7 @@
                           "type": "string"
                         },
                         "filter": {
-                          "description": "Lists the Features that match the filter expression. The following filters are supported: * `value_type`: Supports = and != comparisons. * `create_time`: Supports =, !=, \u003c, \u003e, \u003e=, and \u003c= comparisons. Values must be in RFC 3339 format. * `update_time`: Supports =, !=, \u003c, \u003e, \u003e=, and \u003c= comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `value_type = DOUBLE` --\u003e Features whose type is DOUBLE. * `create_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time \u003e \\\"2020-01-31T15:30:00.000000Z\\\"` --\u003e EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --\u003e Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --\u003e Any Feature which has a label with 'env' as the key.",
+                          "description": "Lists the Features that match the filter expression. The following filters are supported: * `value_type`: Supports = and != comparisons. * `create_time`: Supports =, !=, <, >, >=, and <= comparisons. Values must be in RFC 3339 format. * `update_time`: Supports =, !=, <, >, >=, and <= comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality as well as key presence. Examples: * `value_type = DOUBLE` --> Features whose type is DOUBLE. * `create_time > \\\"2020-01-31T15:30:00.000000Z\\\" OR update_time > \\\"2020-01-31T15:30:00.000000Z\\\"` --> EntityTypes created or updated after 2020-01-31T15:30:00.000000Z. * `labels.active = yes AND labels.env = prod` --> Features having both (active: yes) and (env: prod) labels. * `labels.env: *` --> Any Feature which has a label with 'env' as the key.",
                           "location": "query",
                           "type": "string"
                         },
@@ -45574,7 +45329,7 @@
                           "format": "google-fieldmask"
                         },
                         "latestStatsCount": {
-                          "description": "Only applicable for Vertex AI Feature Store (Legacy). If set, return the most recent ListFeaturesRequest.latest_stats_count of stats for each Feature in response. Valid value is [0, 10]. If number of stats exists \u003c ListFeaturesRequest.latest_stats_count, return all existing stats.",
+                          "description": "Only applicable for Vertex AI Feature Store (Legacy). If set, return the most recent ListFeaturesRequest.latest_stats_count of stats for each Feature in response. Valid value is [0, 10]. If number of stats exists < ListFeaturesRequest.latest_stats_count, return all existing stats.",
                           "location": "query",
                           "type": "integer",
                           "format": "int32"
@@ -49061,7 +48816,7 @@
                               "type": "string"
                             },
                             "filter": {
-                              "description": "Optional. The standard list filter. Supported fields: * `timestamp` range (i.e. `timestamp\u003e=\"2025-01-31T11:30:00-04:00\"` where the timestamp is in RFC 3339 format) More detail in [AIP-160](https://google.aip.dev/160).",
+                              "description": "Optional. The standard list filter. Supported fields: * `timestamp` range (i.e. `timestamp>=\"2025-01-31T11:30:00-04:00\"` where the timestamp is in RFC 3339 format) More detail in [AIP-160](https://google.aip.dev/160).",
                               "location": "query",
                               "type": "string"
                             },
@@ -52534,7 +52289,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Optional. An expression for filtering the results of the request. For field names both snake_case and camelCase are supported. * `index_endpoint` supports = and !=. `index_endpoint` represents the IndexEndpoint ID, ie. the last segment of the IndexEndpoint's resourcename. * `display_name` supports =, != and regex() (uses [re2](https://github.com/google/re2/wiki/Syntax) syntax) * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* or labels:key - key existence A key including a space must be quoted. `labels.\"a key\"`. Some examples: * `index_endpoint=\"1\"` * `display_name=\"myDisplayName\"` * `regex(display_name, \"^A\") -\u003e The display name starts with an A. * `labels.myKey=\"myValue\"`",
+                      "description": "Optional. An expression for filtering the results of the request. For field names both snake_case and camelCase are supported. * `index_endpoint` supports = and !=. `index_endpoint` represents the IndexEndpoint ID, ie. the last segment of the IndexEndpoint's resourcename. * `display_name` supports =, != and regex() (uses [re2](https://github.com/google/re2/wiki/Syntax) syntax) * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* or labels:key - key existence A key including a space must be quoted. `labels.\"a key\"`. Some examples: * `index_endpoint=\"1\"` * `display_name=\"myDisplayName\"` * `regex(display_name, \"^A\") -> The display name starts with an A. * `labels.myKey=\"myValue\"`",
                       "location": "query",
                       "type": "string"
                     },
@@ -52995,7 +52750,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -53310,7 +53065,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -53630,7 +53385,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -53946,7 +53701,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -54170,7 +53925,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `model_display_name` supports `=`, `!=` comparisons. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `model_display_name` supports `=`, `!=` comparisons. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -54355,7 +54110,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -57672,7 +57427,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `training_task_definition` `=`, `!=` comparisons, and `:` wildcard. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"PIPELINE_STATE_SUCCEEDED\" AND display_name:\"my_pipeline_*\"` * `state!=\"PIPELINE_STATE_FAILED\" OR display_name=\"my_pipeline\"` * `NOT display_name=\"my_pipeline\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `training_task_definition:\"*automl_text_classification*\"`",
+                      "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `state` supports `=`, `!=` comparisons. * `training_task_definition` `=`, `!=` comparisons, and `:` wildcard. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"PIPELINE_STATE_SUCCEEDED\" AND display_name:\"my_pipeline_*\"` * `state!=\"PIPELINE_STATE_FAILED\" OR display_name=\"my_pipeline\"` * `NOT display_name=\"my_pipeline\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `training_task_definition:\"*automl_text_classification*\"`",
                       "location": "query",
                       "type": "string"
                     },
@@ -57992,7 +57747,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Lists the PipelineJobs that match the filter expression. The following fields are supported: * `pipeline_name`: Supports `=` and `!=` comparisons. * `display_name`: Supports `=`, `!=` comparisons, and `:` wildcard. * `pipeline_job_user_id`: Supports `=`, `!=` comparisons, and `:` wildcard. for example, can check if pipeline's display_name contains *step* by doing display_name:\\\"*step*\\\" * `state`: Supports `=` and `!=` comparisons. * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `end_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. * `template_uri`: Supports `=`, `!=` comparisons, and `:` wildcard. * `template_metadata.version`: Supports `=`, `!=` comparisons, and `:` wildcard. Filter expressions can be combined together using logical operators (`AND` & `OR`). For example: `pipeline_name=\"test\" AND create_time\u003e\"2020-05-18T13:30:00Z\"`. The syntax to define filter expression is based on https://google.aip.dev/160. Examples: * `create_time\u003e\"2021-05-18T00:00:00Z\" OR update_time\u003e\"2020-05-18T00:00:00Z\"` PipelineJobs created or updated after 2020-05-18 00:00:00 UTC. * `labels.env = \"prod\"` PipelineJobs with label \"env\" set to \"prod\".",
+                      "description": "Lists the PipelineJobs that match the filter expression. The following fields are supported: * `pipeline_name`: Supports `=` and `!=` comparisons. * `display_name`: Supports `=`, `!=` comparisons, and `:` wildcard. * `pipeline_job_user_id`: Supports `=`, `!=` comparisons, and `:` wildcard. for example, can check if pipeline's display_name contains *step* by doing display_name:\\\"*step*\\\" * `state`: Supports `=` and `!=` comparisons. * `create_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `update_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `end_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `labels`: Supports key-value equality and key presence. * `template_uri`: Supports `=`, `!=` comparisons, and `:` wildcard. * `template_metadata.version`: Supports `=`, `!=` comparisons, and `:` wildcard. Filter expressions can be combined together using logical operators (`AND` & `OR`). For example: `pipeline_name=\"test\" AND create_time>\"2020-05-18T13:30:00Z\"`. The syntax to define filter expression is based on https://google.aip.dev/160. Examples: * `create_time>\"2021-05-18T00:00:00Z\" OR update_time>\"2020-05-18T00:00:00Z\"` PipelineJobs created or updated after 2020-05-18 00:00:00 UTC. * `labels.env = \"prod\"` PipelineJobs with label \"env\" set to \"prod\".",
                       "location": "query",
                       "type": "string"
                     },
@@ -58393,7 +58148,7 @@
                       "type": "string"
                     },
                     "filter": {
-                      "description": "Lists the Schedules that match the filter expression. The following fields are supported: * `display_name`: Supports `=`, `!=` comparisons, and `:` wildcard. * `state`: Supports `=` and `!=` comparisons. * `request`: Supports existence of the check. (e.g. `create_pipeline_job_request:*` --\u003e Schedule has create_pipeline_job_request). * `create_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `start_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. * `end_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, `\u003e=` comparisons and `:*` existence check. Values must be in RFC 3339 format. * `next_run_time`: Supports `=`, `!=`, `\u003c`, `\u003e`, `\u003c=`, and `\u003e=` comparisons. Values must be in RFC 3339 format. Filter expressions can be combined together using logical operators (`NOT`, `AND` & `OR`). The syntax to define filter expression is based on https://google.aip.dev/160. Examples: * `state=\"ACTIVE\" AND display_name:\"my_schedule_*\"` * `NOT display_name=\"my_schedule\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `end_time\u003e\"2021-05-18T00:00:00Z\" OR NOT end_time:*` * `create_pipeline_job_request:*`",
+                      "description": "Lists the Schedules that match the filter expression. The following fields are supported: * `display_name`: Supports `=`, `!=` comparisons, and `:` wildcard. * `state`: Supports `=` and `!=` comparisons. * `request`: Supports existence of the check. (e.g. `create_pipeline_job_request:*` --> Schedule has create_pipeline_job_request). * `create_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `start_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. * `end_time`: Supports `=`, `!=`, `<`, `>`, `<=`, `>=` comparisons and `:*` existence check. Values must be in RFC 3339 format. * `next_run_time`: Supports `=`, `!=`, `<`, `>`, `<=`, and `>=` comparisons. Values must be in RFC 3339 format. Filter expressions can be combined together using logical operators (`NOT`, `AND` & `OR`). The syntax to define filter expression is based on https://google.aip.dev/160. Examples: * `state=\"ACTIVE\" AND display_name:\"my_schedule_*\"` * `NOT display_name=\"my_schedule\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `end_time>\"2021-05-18T00:00:00Z\" OR NOT end_time:*` * `create_pipeline_job_request:*`",
                       "location": "query",
                       "type": "string"
                     },
@@ -62680,7 +62435,7 @@
               "type": "string"
             },
             "filter": {
-              "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `model_display_name` supports `=`, `!=` comparisons. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`\u003c`, `\u003c=`,`\u003e`, `\u003e=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time\u003e\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
+              "description": "The standard list filter. Supported fields: * `display_name` supports `=`, `!=` comparisons, and `:` wildcard. * `model_display_name` supports `=`, `!=` comparisons. * `state` supports `=`, `!=` comparisons. * `create_time` supports `=`, `!=`,`<`, `<=`,`>`, `>=` comparisons. `create_time` must be in RFC 3339 format. * `labels` supports general map functions that is: `labels.key=value` - key:value equality `labels.key:* - key existence Some examples of using the filter are: * `state=\"JOB_STATE_SUCCEEDED\" AND display_name:\"my_job_*\"` * `state!=\"JOB_STATE_FAILED\" OR display_name=\"my_job\"` * `NOT display_name=\"my_job\"` * `create_time>\"2021-05-18T00:00:00Z\"` * `labels.keyA=valueA` * `labels.keyB:*`",
               "location": "query",
               "type": "string"
             },
@@ -63737,8 +63492,253 @@
       }
     }
   },
-  "discoveryVersion": "v1",
+  "revision": "20260327",
+  "id": "aiplatform:v1",
+  "ownerName": "Google",
+  "kind": "discovery#restDescription",
+  "fullyEncodeReservedExpansion": true,
+  "endpoints": [
+    {
+      "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
+      "location": "africa-south1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-east1-aiplatform.googleapis.com/",
+      "location": "asia-east1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-east2-aiplatform.googleapis.com/",
+      "location": "asia-east2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-northeast1-aiplatform.googleapis.com/",
+      "location": "asia-northeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-northeast2-aiplatform.googleapis.com/",
+      "location": "asia-northeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-northeast3-aiplatform.googleapis.com/",
+      "location": "asia-northeast3",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-south1-aiplatform.googleapis.com/",
+      "location": "asia-south1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-south2-aiplatform.googleapis.com/",
+      "location": "asia-south2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-southeast1-aiplatform.googleapis.com/",
+      "location": "asia-southeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://asia-southeast2-aiplatform.googleapis.com/",
+      "location": "asia-southeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://australia-southeast1-aiplatform.googleapis.com/",
+      "location": "australia-southeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://australia-southeast2-aiplatform.googleapis.com/",
+      "location": "australia-southeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-central2-aiplatform.googleapis.com/",
+      "location": "europe-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-north1-aiplatform.googleapis.com/",
+      "location": "europe-north1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-north2-aiplatform.googleapis.com/",
+      "location": "europe-north2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-southwest1-aiplatform.googleapis.com/",
+      "location": "europe-southwest1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west1-aiplatform.googleapis.com/",
+      "location": "europe-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west10-aiplatform.googleapis.com/",
+      "location": "europe-west10",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west15-aiplatform.googleapis.com/",
+      "location": "europe-west15",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west2-aiplatform.googleapis.com/",
+      "location": "europe-west2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west3-aiplatform.googleapis.com/",
+      "location": "europe-west3",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west4-aiplatform.googleapis.com/",
+      "location": "europe-west4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west6-aiplatform.googleapis.com/",
+      "location": "europe-west6",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west8-aiplatform.googleapis.com/",
+      "location": "europe-west8",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west9-aiplatform.googleapis.com/",
+      "location": "europe-west9",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://europe-west12-aiplatform.googleapis.com/",
+      "location": "europe-west12",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-central1-aiplatform.googleapis.com/",
+      "location": "me-central1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-central2-aiplatform.googleapis.com/",
+      "location": "me-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://me-west1-aiplatform.googleapis.com/",
+      "location": "me-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://northamerica-northeast1-aiplatform.googleapis.com/",
+      "location": "northamerica-northeast1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://northamerica-northeast2-aiplatform.googleapis.com/",
+      "location": "northamerica-northeast2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://southamerica-east1-aiplatform.googleapis.com/",
+      "location": "southamerica-east1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://southamerica-west1-aiplatform.googleapis.com/",
+      "location": "southamerica-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-central1-aiplatform.googleapis.com/",
+      "location": "us-central1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-central2-aiplatform.googleapis.com/",
+      "location": "us-central2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east1-aiplatform.googleapis.com/",
+      "location": "us-east1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east4-aiplatform.googleapis.com/",
+      "location": "us-east4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east7-aiplatform.googleapis.com/",
+      "location": "us-east7",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-south1-aiplatform.googleapis.com/",
+      "location": "us-south1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west1-aiplatform.googleapis.com/",
+      "location": "us-west1",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west2-aiplatform.googleapis.com/",
+      "location": "us-west2",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west3-aiplatform.googleapis.com/",
+      "location": "us-west3",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west4-aiplatform.googleapis.com/",
+      "location": "us-west4",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-east5-aiplatform.googleapis.com/",
+      "location": "us-east5",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://us-west8-aiplatform.googleapis.com/",
+      "location": "us-west8",
+      "description": "Locational Endpoint"
+    },
+    {
+      "endpointUrl": "https://aiplatform.us.rep.googleapis.com/",
+      "location": "us",
+      "description": "Regional Endpoint"
+    },
+    {
+      "endpointUrl": "https://aiplatform.eu.rep.googleapis.com/",
+      "location": "eu",
+      "description": "Regional Endpoint"
+    }
+  ],
+  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
+  "name": "aiplatform",
+  "documentationLink": "https://cloud.google.com/vertex-ai/",
+  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
+  "basePath": "",
   "batchPath": "batch",
-  "baseUrl": "https://aiplatform.googleapis.com/",
-  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/"
+  "ownerDomain": "google.com"
 }
