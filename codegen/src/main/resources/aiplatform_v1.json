@@ -1,5 +1,7 @@
 {
-  "version_module": true,
+  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
+  "servicePath": "",
+  "rootUrl": "https://aiplatform.googleapis.com/",
   "schemas": {
     "GoogleCloudLocationListLocationsResponse": {
       "id": "GoogleCloudLocationListLocationsResponse",
@@ -7585,7 +7587,8 @@
             "The evaluation run has failed.",
             "The evaluation run has been cancelled.",
             "The evaluation run is performing inference.",
-            "The evaluation run is performing rubric generation."
+            "The evaluation run is performing rubric generation.",
+            "The evaluation run is performing loss analysis."
           ],
           "enum": [
             "STATE_UNSPECIFIED",
@@ -7595,7 +7598,8 @@
             "FAILED",
             "CANCELLED",
             "INFERENCE",
-            "GENERATING_RUBRICS"
+            "GENERATING_RUBRICS",
+            "GENERATING_LOSS_CLUSTERS"
           ]
         },
         "error": {
@@ -18198,7 +18202,7 @@
           "format": "google-datetime"
         },
         "fact": {
-          "description": "Required. Semantic knowledge extracted from the source content.",
+          "description": "Optional. Semantic knowledge extracted from the source content.",
           "type": "string"
         },
         "scope": {
@@ -31545,6 +31549,13 @@
         "humanPose": {
           "description": "Human pose parameters for Pose Control",
           "$ref": "CloudAiLargeModelsVisionHumanPose"
+        },
+        "conditioningFrames": {
+          "description": "Conditioning frames for veo experimental models ONLY, not to be confused with keyframes (ID:31) in GenerateVideoRequest.",
+          "type": "array",
+          "items": {
+            "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsConditioningFrame"
+          }
         }
       }
     },
@@ -31588,6 +31599,47 @@
         },
         "faceLandmarksGcsUri": {
           "description": "GCS URI of the face landmarks video to condition video generation.",
+          "type": "string"
+        },
+        "perfMeshGcsUri": {
+          "description": "GCS URI of the performance mesh to condition video generation.",
+          "type": "string"
+        }
+      }
+    },
+    "CloudAiLargeModelsVisionGenerateVideoExperimentsConditioningFrame": {
+      "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsConditioningFrame",
+      "type": "object",
+      "properties": {
+        "image": {
+          "description": "The image data for this conditioning frame.",
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoRequestImage"
+        },
+        "frameNum": {
+          "description": "The index of the frame, starts with zero and must be a multiple of 8.",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "CloudAiLargeModelsVisionGenerateVideoRequestImage": {
+      "id": "CloudAiLargeModelsVisionGenerateVideoRequestImage",
+      "description": "The image bytes or Cloud Storage URI to make the prediction on.",
+      "type": "object",
+      "properties": {
+        "bytesBase64Encoded": {
+          "description": "Base64 encoded bytes string representing the image.",
+          "type": "string"
+        },
+        "gcsUri": {
+          "type": "string"
+        },
+        "blobId": {
+          "description": "Blob ID of the image. This is used for storing the large images in the request.",
+          "type": "string"
+        },
+        "mimeType": {
+          "description": "The MIME type of the content of the image. Only the images in below listed MIME types are supported. - image/jpeg - image/png",
           "type": "string"
         }
       }
@@ -32870,107 +32922,6 @@
       }
     }
   },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "rootUrl": "https://aiplatform.googleapis.com/",
-  "canonicalName": "Aiplatform",
-  "protocol": "rest",
-  "version": "v1",
-  "parameters": {
-    "access_token": {
-      "type": "string",
-      "description": "OAuth access token.",
-      "location": "query"
-    },
-    "alt": {
-      "type": "string",
-      "description": "Data format for response.",
-      "default": "json",
-      "enum": [
-        "json",
-        "media",
-        "proto"
-      ],
-      "enumDescriptions": [
-        "Responses with Content-Type of application/json",
-        "Media download with context-dependent Content-Type",
-        "Responses with Content-Type of application/x-protobuf"
-      ],
-      "location": "query"
-    },
-    "callback": {
-      "type": "string",
-      "description": "JSONP",
-      "location": "query"
-    },
-    "fields": {
-      "type": "string",
-      "description": "Selector specifying which fields to include in a partial response.",
-      "location": "query"
-    },
-    "key": {
-      "type": "string",
-      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
-      "location": "query"
-    },
-    "oauth_token": {
-      "type": "string",
-      "description": "OAuth 2.0 token for the current user.",
-      "location": "query"
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "description": "Returns response with indentations and line breaks.",
-      "default": "true",
-      "location": "query"
-    },
-    "quotaUser": {
-      "type": "string",
-      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
-      "location": "query"
-    },
-    "upload_protocol": {
-      "type": "string",
-      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
-      "location": "query"
-    },
-    "uploadType": {
-      "type": "string",
-      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
-      "location": "query"
-    },
-    "$.xgafv": {
-      "type": "string",
-      "description": "V1 error format.",
-      "enum": [
-        "1",
-        "2"
-      ],
-      "enumDescriptions": [
-        "v1 error format",
-        "v2 error format"
-      ],
-      "location": "query"
-    }
-  },
-  "servicePath": "",
-  "title": "Vertex AI API",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/cloud-platform.read-only": {
-          "description": "View your data across Google Cloud services and see the email address of your Google Account"
-        }
-      }
-    }
-  },
-  "discoveryVersion": "v1",
-  "baseUrl": "https://aiplatform.googleapis.com/",
   "resources": {
     "operations": {
       "methods": {
@@ -49820,7 +49771,7 @@
                     "https://www.googleapis.com/auth/cloud-platform",
                     "https://www.googleapis.com/auth/cloud-platform.read-only"
                   ],
-                  "description": "Perform an online prediction."
+                  "description": ""
                 },
                 "rawPredict": {
                   "id": "aiplatform.projects.locations.endpoints.rawPredict",
@@ -51227,7 +51178,7 @@
                         "https://www.googleapis.com/auth/cloud-platform",
                         "https://www.googleapis.com/auth/cloud-platform.read-only"
                       ],
-                      "description": "Perform an online prediction."
+                      "description": ""
                     },
                     "rawPredict": {
                       "id": "aiplatform.projects.locations.publishers.models.rawPredict",
@@ -61739,7 +61690,7 @@
             "https://www.googleapis.com/auth/cloud-platform",
             "https://www.googleapis.com/auth/cloud-platform.read-only"
           ],
-          "description": "Perform an online prediction."
+          "description": ""
         },
         "predictLongRunning": {
           "id": "aiplatform.endpoints.predictLongRunning",
@@ -62137,7 +62088,7 @@
                 "https://www.googleapis.com/auth/cloud-platform",
                 "https://www.googleapis.com/auth/cloud-platform.read-only"
               ],
-              "description": "Perform an online prediction."
+              "description": ""
             },
             "predictLongRunning": {
               "id": "aiplatform.publishers.models.predictLongRunning",
@@ -63492,11 +63443,6 @@
       }
     }
   },
-  "revision": "20260327",
-  "id": "aiplatform:v1",
-  "ownerName": "Google",
-  "kind": "discovery#restDescription",
-  "fullyEncodeReservedExpansion": true,
   "endpoints": [
     {
       "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
@@ -63734,11 +63680,115 @@
       "description": "Regional Endpoint"
     }
   ],
-  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
-  "name": "aiplatform",
-  "documentationLink": "https://cloud.google.com/vertex-ai/",
-  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
+  "ownerName": "Google",
   "basePath": "",
+  "description": "Train high-quality custom machine learning models with minimal machine learning expertise and effort.",
   "batchPath": "batch",
-  "ownerDomain": "google.com"
+  "version": "v1",
+  "id": "aiplatform:v1",
+  "documentationLink": "https://cloud.google.com/vertex-ai/",
+  "fullyEncodeReservedExpansion": true,
+  "baseUrl": "https://aiplatform.googleapis.com/",
+  "title": "Vertex AI API",
+  "protocol": "rest",
+  "canonicalName": "Aiplatform",
+  "kind": "discovery#restDescription",
+  "version_module": true,
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "revision": "20260329",
+  "name": "aiplatform",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/cloud-platform.read-only": {
+          "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        }
+      }
+    }
+  },
+  "ownerDomain": "google.com",
+  "parameters": {
+    "access_token": {
+      "type": "string",
+      "description": "OAuth access token.",
+      "location": "query"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "callback": {
+      "type": "string",
+      "description": "JSONP",
+      "location": "query"
+    },
+    "fields": {
+      "type": "string",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "location": "query"
+    },
+    "key": {
+      "type": "string",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "location": "query"
+    },
+    "oauth_token": {
+      "type": "string",
+      "description": "OAuth 2.0 token for the current user.",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "type": "boolean",
+      "description": "Returns response with indentations and line breaks.",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "type": "string",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "location": "query"
+    },
+    "upload_protocol": {
+      "type": "string",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "location": "query"
+    },
+    "uploadType": {
+      "type": "string",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "type": "string",
+      "description": "V1 error format.",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    }
+  },
+  "discoveryVersion": "v1"
 }
