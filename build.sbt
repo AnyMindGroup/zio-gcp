@@ -31,18 +31,8 @@ def withTestSetupUpdate(j: Job) = if (j.id == "test") {
 def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.flatMap(updatedBuildSetupStep))
 
 def updatedBuildSetupStep(step: Step) = step match {
-  case s: Step.SingleStep if s.name.contains("Setup Scala")  => Nil
-  case s: Step.SingleStep if s.id.contains("generate-token") => Nil
-  case s: Step.SingleStep if s.id.contains("cpr")            =>
-    List(
-      s.copy(parameters =
-        s.parameters.updated(
-          "token",
-          Json.Str("${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}"),
-        )
-      )
-    )
-  case s: Step.SingleStep if s.name.contains("Setup SBT") =>
+  case s: Step.SingleStep if s.name.contains("Setup Scala") => Nil
+  case s: Step.SingleStep if s.name.contains("Setup SBT")   =>
     List(
       Step.SingleStep(
         name = "Setup build tools",
@@ -103,21 +93,7 @@ inThisBuild(
     ciTestJobs         := ciTestJobs.value.map(withTestSetupUpdate),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
-    ciUpdateReadmeJobs := ciUpdateReadmeJobs.value.map { j =>
-      j.copy(steps = j.steps.flatMap {
-        case s: Step.SingleStep if s.id.contains("generate-token") => Nil
-        case s: Step.SingleStep if s.id.contains("cpr")            =>
-          List(
-            s.copy(parameters =
-              s.parameters.updated(
-                "token",
-                Json.Str("${{ secrets.ANYCHAT_BOT_GITHUB_TOKEN }}"),
-              )
-            )
-          )
-        case s => List(s)
-      })
-    },
+    ciUpdateReadmeJobs := Nil,
     ciJvmOptions ++= Seq("-Xms2G", "-Xmx5G", "-Xss4M", "-XX:+UseG1GC"),
     ciDefaultJavaVersion := "21",
     ciTargetJavaVersions := Seq("21"),
@@ -495,47 +471,3 @@ lazy val zioPubsubTestkit =
         "dev.zio" %% "zio-test" % zioVersion.value
       )
     )
-
-lazy val docs = project
-  .in(file("zio-gcp-docs"))
-  .settings(
-    moduleName := "zio-gcp-docs",
-    scalacOptions -= "-Yno-imports",
-    scalacOptions -= "-Werror",
-    projectName                                := "Google Cloud clients for ZIO",
-    mainModuleName                             := (zioGcpAuth.jvm / moduleName).value,
-    projectStage                               := ProjectStage.Development,
-    ScalaUnidoc / unidoc / unidocProjectFilter := inProjects(zioGcpAuth.jvm),
-    readmeDocumentation                        := "",
-    readmeContribution                         := "",
-    readmeSupport                              := "",
-    readmeLicense                              := "",
-    readmeAcknowledgement                      := "",
-    readmeCodeOfConduct                        := "",
-    readmeCredits                              := "",
-    readmeBanner                               := "",
-    readmeMaintainers                          := "",
-    mdocVariables ++= {
-      Map(
-        "VERSION" -> {
-          // to fix the default impl which returns the oldest tag
-          "git tag -l --sort=-v:refname".!!.split("\n").collectFirst {
-            case v if v.startsWith("v") => v.tail
-          }.getOrElse(version.value)
-        },
-        "ZIO_GCP_AIPLATFORM_EXAMPLE" -> IO.read(
-          file("./examples/shared/src/main/scala/vertex_ai_generate_content.scala")
-        ),
-        "ZIO_GCP_STORAGE_EXAMPLE" -> IO.read(
-          file("./examples/shared/src/main/scala/storage_example.scala")
-        ),
-        "ZIO_GCP_AUTH_EXAMPLE" -> IO.read(
-          file("./examples/shared/src/main/scala/token_provider_examples.scala")
-        ),
-        "ZIO_GCP_BIGQUERY_EXAMPLE" -> IO.read(
-          file("./examples/shared/src/main/scala/bigquery_v2_example.scala")
-        ),
-      )
-    },
-  )
-  .enablePlugins(WebsitePlugin)

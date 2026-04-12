@@ -1,6 +1,6 @@
-val zioSbtVersion   = "0.5.0"
-addSbtPlugin("dev.zio" % "zio-sbt-website"   % zioSbtVersion)
-addSbtPlugin("dev.zio" % "zio-sbt-ci"        % zioSbtVersion exclude ("org.xerial.sbt", "sbt-sonatype"))
+val zioSbtVersion = "0.5.0"
+
+addSbtPlugin("dev.zio" % "zio-sbt-ci"        % zioSbtVersion)
 addSbtPlugin("dev.zio" % "zio-sbt-ecosystem" % zioSbtVersion)
 
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.11")
