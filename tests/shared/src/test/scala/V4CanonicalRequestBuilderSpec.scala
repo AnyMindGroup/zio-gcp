@@ -104,7 +104,7 @@ object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
           assertTrue(
             req.payloadPlain.linesIterator
               .drop(1)
-              .next == """/test-bucket/test/%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~%20.png"""
+              .next() == """/test-bucket/test/%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~%20.png"""
           )
       yield assertCompletes
     },

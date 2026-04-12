@@ -89,6 +89,8 @@ jobs:
       uses: actions/checkout@v6
       with:
         fetch-depth: '0'
+    - name: Start up pubsub emulator
+      run: docker compose up -d && until curl -s http://localhost:8085; do printf 'waiting for pubsub...'; sleep 1; done && echo "pubsub ready"
     - name: Test
       run: sbt buildCodegenBin +test
   update-readme:

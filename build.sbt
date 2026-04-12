@@ -8,16 +8,25 @@ import zio.json.ast.Json
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
-def withCurlInstallStep(j: Job) = j.copy(steps = j.steps.flatMap {
-  case s: Step.SingleStep if s.name.contains("Install libuv") =>
-    List(
-      Step.SingleStep(
-        name = "Install libcurl",
-        run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
+def withTestSetupUpdate(j: Job) = if (j.id == "test") {
+  val startPubsub = Step.SingleStep(
+    name = "Start up pubsub emulator",
+    run = Some(
+      "docker compose up -d && until curl -s http://localhost:8085; do printf 'waiting for pubsub...'; sleep 1; done && echo \"pubsub ready\""
+    ),
+  )
+  j.copy(steps = j.steps.flatMap {
+    case s: Step.SingleStep if s.name.contains("Git Checkout")  => Seq(s, startPubsub)
+    case s: Step.SingleStep if s.name.contains("Install libuv") =>
+      List(
+        Step.SingleStep(
+          name = "Install libcurl",
+          run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
+        )
       )
-    )
-  case s => updatedBuildSetupStep(s)
-})
+    case s => updatedBuildSetupStep(s)
+  })
+} else j
 
 def withBuildSetupUpdate(j: Job) = j.copy(steps = j.steps.flatMap(updatedBuildSetupStep))
 
@@ -52,7 +61,7 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.7"
 
-val scala3Next = "3.8.2"
+val scala3Next = "3.8.3"
 
 val _zioVersion = "2.1.25"
 
@@ -91,7 +100,7 @@ inThisBuild(
     crossScalaVersions := Seq(_scala3),
     versionScheme      := Some("early-semver"),
     ciEnabledBranches  := Seq("master"),
-    ciTestJobs         := ciTestJobs.value.map(withCurlInstallStep),
+    ciTestJobs         := ciTestJobs.value.map(withTestSetupUpdate),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
     ciLintJobs         := ciLintJobs.value.map(withBuildSetupUpdate),
     ciUpdateReadmeJobs := ciUpdateReadmeJobs.value.map { j =>
@@ -149,7 +158,7 @@ inThisBuild(
 
 lazy val commonSettings = List(
   javacOptions ++= Seq("-source", "21"),
-  Compile / scalacOptions ++= Seq("-source:future", "-rewrite"),
+  Compile / scalacOptions ++= Seq("-source:future", "-rewrite", "-Wunused:imports"),
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Werror"))(_ => Nil),
   Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Werror"),
@@ -309,6 +318,15 @@ lazy val root =
       zioGcpStorage.native,
       zioGcpSheets.jvm,
       zioGcpSheets.native,
+      zioPubsub.jvm,
+      zioPubsub.native,
+      zioPubsubHttp.jvm,
+      zioPubsubHttp.native,
+      zioPubsubSerdeZioSchema.jvm,
+      zioPubsubSerdeZioSchema.native,
+      zioPubsubGoogle,
+      zioPubsubTestkit.jvm,
+      zioPubsubTestkit.native,
       tests.jvm,
       tests.native,
     )
@@ -375,7 +393,7 @@ lazy val zioGcpSheets = crossProject(JVMPlatform, NativePlatform)
 
 lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .in(file("examples"))
-  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets)
+  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets, zioPubsubHttp)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
@@ -384,13 +402,17 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
     crossScalaVersions := Seq(scala3Next),
     fork               := true,
     libraryDependencies ++= Seq(
-      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal"
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
+      "dev.zio"                               %%% "zio-json"              % "0.9.1",
     ),
+  )
+  .jvmConfigure(
+    _.dependsOn(zioPubsubGoogle)
   )
 
 lazy val tests = crossProject(JVMPlatform, NativePlatform)
   .in(file("tests"))
-  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets)
+  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets, zioPubsubHttp, zioPubsubTestkit)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(commonSettings)
   .settings(noPublishSettings)
@@ -407,6 +429,72 @@ lazy val tests = crossProject(JVMPlatform, NativePlatform)
       "com.github.lolgab" %%% "scala-native-crypto" % scalaNativeCryptoVersion % Test
     )
   )
+  .jvmConfigure(
+    _.dependsOn(zioPubsubGoogle)
+  )
+
+lazy val zioPubsub = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub"))
+  .settings(moduleName := "zio-pubsub")
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio"         % zioVersion.value,
+      "dev.zio" %%% "zio-streams" % zioVersion.value,
+    )
+  )
+
+lazy val zioPubsubHttp = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub-http"))
+  .settings(moduleName := "zio-pubsub-http")
+  .dependsOn(zioPubsub, zioGcpAuth)
+  .dependsOn(
+    gcpClientsCrossProjects
+      .filter(_.projects.exists { case (_, p) =>
+        Set("zio-gcp-pubsub-v1").exists(p.id.startsWith(_))
+      })
+      .map(p => new CrossClasspathDependency(p, p.configuration)) *
+  )
+  .settings(commonSettings)
+
+val zioSchemaVersion             = "1.8.3"
+lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub-serde-zio-schema"))
+  .settings(moduleName := "zio-pubsub-serde-zio-schema")
+  .dependsOn(zioPubsub)
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio-schema" % zioSchemaVersion
+    )
+  )
+
+val googleCloudPubsubVersion = "1.150.0"
+lazy val zioPubsubGoogle     = (project in file("zio-pubsub-google"))
+  .settings(
+    moduleName          := "zio-pubsub-google",
+    Test / scalaVersion := scala3Next,
+  )
+  .dependsOn(zioPubsub.jvm)
+  .aggregate(zioPubsub.jvm)
+  .settings(commonSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "com.google.cloud" % "google-cloud-pubsub" % googleCloudPubsubVersion
+    )
+  )
+
+lazy val zioPubsubTestkit =
+  crossProject(JVMPlatform, NativePlatform)
+    .in(file("zio-pubsub-testkit"))
+    .dependsOn(zioPubsub, zioPubsubHttp)
+    .settings(moduleName := "zio-pubsub-testkit")
+    .settings(commonSettings)
+    .settings(
+      libraryDependencies ++= Seq(
+        "dev.zio" %% "zio-test" % zioVersion.value
+      )
+    )
 
 lazy val docs = project
   .in(file("zio-gcp-docs"))

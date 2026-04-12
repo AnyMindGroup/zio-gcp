@@ -1,0 +1,8 @@
+services:
+  pubsub:
+    # https://cloud.google.com/sdk/docs/downloads-docker
+    # https://console.cloud.google.com/artifacts/docker/google.com:cloudsdktool/us/gcr.io/cloud-sdk
+    image: gcr.io/google.com/cloudsdktool/cloud-sdk:564.0.0-emulators
+    ports:
+      - "8085:8085"
+    command: gcloud beta emulators pubsub start --project=any --host-port=0.0.0.0:8085
