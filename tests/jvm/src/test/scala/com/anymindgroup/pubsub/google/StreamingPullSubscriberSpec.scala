@@ -163,13 +163,12 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         }
       }
 
-      for
-        _ <- Live.live(
-               StreamingPullSubscriber
-                 .makeServerStream(testBidiStream)
-                 .timeout(500.millis)
-                 .runDrain
-             )
+      for _ <- Live.live(
+                 StreamingPullSubscriber
+                   .makeServerStream(testBidiStream)
+                   .timeout(500.millis)
+                   .runDrain
+               )
       yield assertTrue(cancelled.get)
     } @@ TestAspect.timeout(5.seconds),
     test("server stream is canceled on interruption when running with ack stream") {
