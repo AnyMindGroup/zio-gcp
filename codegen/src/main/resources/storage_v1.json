@@ -979,6 +979,10 @@
         "pendingUpdate": {
           "type": "boolean",
           "description": "True if the cache instance has an active Update long-running operation."
+        },
+        "ingestOnWrite": {
+          "type": "boolean",
+          "description": "Specifies whether objects are ingested into the cache upon write."
         }
       }
     },
@@ -2346,7 +2350,7 @@
           "id": "storage.anywhereCaches.update",
           "path": "b/{bucket}/anywhereCaches/{anywhereCacheId}",
           "httpMethod": "PATCH",
-          "description": "Updates the config(ttl and admissionPolicy) of an Anywhere Cache instance.",
+          "description": "Updates the config of an Anywhere Cache instance.",
           "parameters": {
             "bucket": {
               "type": "string",
@@ -6596,6 +6600,6 @@
       }
     }
   },
-  "revision": "20260303",
-  "etag": "\"33313138343230363830393038393336313639\""
+  "revision": "20260408",
+  "etag": "\"3136383236333536383830353031333435373432\""
 }
