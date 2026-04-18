@@ -7,3 +7,5 @@ import sttp.client4.testing.BackendStub
 import zio.Task
 
 def platformStub = BackendStub[Task](new RIOMonadAsyncError[Any])
+
+val isNativePlatform: Boolean = true

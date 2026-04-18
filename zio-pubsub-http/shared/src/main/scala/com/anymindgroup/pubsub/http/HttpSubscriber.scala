@@ -26,6 +26,7 @@ class HttpSubscriber private[http] (
   ackQueue: Queue[(String, Boolean)],
   retrySchedule: Schedule[Any, Throwable, ?],
   base64Decoder: Decoder,
+  returnImmediatelyOnPull: Boolean,
 ) extends Subscriber {
   private def processAckQueue(chunkSizeLimit: Option[Int], subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
     chunkSizeLimit
@@ -79,14 +80,14 @@ class HttpSubscriber private[http] (
 
   private[pubsub] def pull(
     subscriptionName: SubscriptionName,
-    returnImmediately: Option[Boolean] = None,
+    returnImmediately: Boolean = returnImmediatelyOnPull,
     maxMessages: Int = maxMessagesPerPull,
   ): ZIO[Any, Throwable, Chunk[(ReceivedMessage[Chunk[Byte]], AckReply)]] =
     p.Subscriptions
       .pull(
         projectsId = subscriptionName.projectId,
         subscriptionsId = subscriptionName.subscription,
-        request = s.PullRequest(maxMessages = maxMessages, returnImmediately = returnImmediately),
+        request = s.PullRequest(maxMessages = maxMessages, returnImmediately = Some(returnImmediately)),
       )
       .send(backend)
       .flatMap { res =>
@@ -162,11 +163,18 @@ object HttpSubscriber {
   object defaults:
     val maxMessagesPerPull: Int                      = 100
     val retrySchedule: Schedule[Any, Throwable, Any] = Schedule.recurs(5)
+    // From pubsub docs:
+    // If this field set to true, the system will respond immediately even if it there are no messages available to return in the `Pull` response
+    // Otherwise, the system may wait (for a bounded amount of time) until at least one message is available, rather than returning no messages
+    // Warning: setting this field to `true` is discouraged because it adversely impacts the performance of `Pull` operations
+    // We recommend that users do not set this field.
+    val returnImmediatelyOnPull: Boolean = false
 
   private[pubsub] def makeFromAuthedBackend(
     authedBackend: AuthedBackend,
     maxMessagesPerPull: Int,
     retrySchedule: Schedule[Any, Throwable, ?],
+    returnImmediatelyOnPull: Boolean,
   ): ZIO[Scope, Nothing, HttpSubscriber] =
     ZIO
       .acquireRelease(Queue.unbounded[(String, Boolean)])(_.shutdown)
@@ -177,6 +185,7 @@ object HttpSubscriber {
           ackQueue = ackQueue,
           retrySchedule = retrySchedule,
           base64Decoder = Base64.getDecoder(),
+          returnImmediatelyOnPull = returnImmediatelyOnPull,
         )
 
   def make(
@@ -184,11 +193,13 @@ object HttpSubscriber {
     tokenProvider: TokenProvider[Token],
     maxMessagesPerPull: Int = defaults.maxMessagesPerPull,
     retrySchedule: Schedule[Any, Throwable, ?] = defaults.retrySchedule,
+    returnImmediatelyOnPull: Boolean = defaults.returnImmediatelyOnPull,
   ): ZIO[Scope, Nothing, HttpSubscriber] =
     makeFromAuthedBackend(
       authedBackend = toAuthedBackend(tokenProvider, backend),
       maxMessagesPerPull = maxMessagesPerPull,
       retrySchedule = retrySchedule,
+      returnImmediatelyOnPull = returnImmediatelyOnPull,
     )
 
   def makeWithDefaultTokenProvider(
@@ -196,6 +207,7 @@ object HttpSubscriber {
     maxMessagesPerPull: Int = defaults.maxMessagesPerPull,
     retrySchedule: Schedule[Any, Throwable, ?] = defaults.retrySchedule,
     authConfig: AuthConfig = AuthConfig.default,
+    returnImmediatelyOnPull: Boolean = defaults.returnImmediatelyOnPull,
   ): ZIO[Scope, TokenProviderException, HttpSubscriber] =
     TokenProvider
       .defaultAccessTokenProvider(
@@ -217,6 +229,7 @@ object HttpSubscriber {
     maxMessagesPerPull: Int = defaults.maxMessagesPerPull,
     retrySchedule: Schedule[Any, Throwable, ?] = defaults.retrySchedule,
     authConfig: AuthConfig = AuthConfig.default,
+    returnImmediatelyOnPull: Boolean = defaults.returnImmediatelyOnPull,
   ): ZIO[Scope, Throwable, HttpSubscriber] =
     connection match
       case emulator: PubsubConnectionConfig.Emulator =>
@@ -225,6 +238,7 @@ object HttpSubscriber {
             authedBackend = EmulatorBackend(backend, emulator),
             maxMessagesPerPull = maxMessagesPerPull,
             retrySchedule = retrySchedule,
+            returnImmediatelyOnPull = returnImmediatelyOnPull,
           )
       case PubsubConnectionConfig.Cloud =>
         defaultAccessTokenBackend(
@@ -236,5 +250,6 @@ object HttpSubscriber {
             authedBackend = authedBackend,
             maxMessagesPerPull = maxMessagesPerPull,
             retrySchedule = retrySchedule,
+            returnImmediatelyOnPull = returnImmediatelyOnPull,
           )
 }

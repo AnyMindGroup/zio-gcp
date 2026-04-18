@@ -14,7 +14,12 @@ object HttpPubsubSpec extends ZIOSpecDefault {
       PubsubIntegrationSpec.spec(
         publisherImpl = (connection, topic) =>
           makeTopicPublisher(connection = connection, topicName = topic, serializer = Serde.utf8String),
-        subscriberImpl = connection => makeSubscriber(connection = connection),
+        subscriberImpl = connection =>
+          makeSubscriber(
+            connection = connection,
+            // temp workaround for native due to currently blocking and uninterruptible curl call
+            returnImmediatelyOnPull = isNativePlatform,
+          ),
       ),
       suite("HttpSubscriberSpec")(
         List(true, false).map: ack =>

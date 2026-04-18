@@ -56,6 +56,7 @@ def makeSubscriber(
   maxMessagesPerPull: Int = HttpSubscriber.defaults.maxMessagesPerPull,
   retrySchedule: Schedule[Any, Throwable, ?] = HttpSubscriber.defaults.retrySchedule,
   authConfig: AuthConfig = AuthConfig.default,
+  returnImmediatelyOnPull: Boolean = HttpSubscriber.defaults.returnImmediatelyOnPull,
 ): ZIO[Scope, Throwable, HttpSubscriber] = backend match
   case None =>
     HttpSubscriber.makeWithDefaultBackend(
@@ -63,12 +64,14 @@ def makeSubscriber(
       maxMessagesPerPull = maxMessagesPerPull,
       retrySchedule = retrySchedule,
       authConfig = authConfig,
+      returnImmediatelyOnPull = returnImmediatelyOnPull,
     )
   case Some(b: AuthedBackend) =>
     HttpSubscriber.makeFromAuthedBackend(
       authedBackend = b,
       maxMessagesPerPull = maxMessagesPerPull,
       retrySchedule = retrySchedule,
+      returnImmediatelyOnPull = returnImmediatelyOnPull,
     )
   case Some(b) =>
     HttpSubscriber.makeWithDefaultTokenProvider(
@@ -76,4 +79,5 @@ def makeSubscriber(
       maxMessagesPerPull = maxMessagesPerPull,
       retrySchedule = retrySchedule,
       authConfig = authConfig,
+      returnImmediatelyOnPull = returnImmediatelyOnPull,
     )

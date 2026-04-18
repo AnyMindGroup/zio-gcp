@@ -158,6 +158,6 @@ object PubsubTestSupport {
     maxMessages: Int = HttpSubscriber.defaults.maxMessagesPerPull,
   ): ZIO[HttpSubscriber, Throwable, Chunk[(ReceivedMessage[Chunk[Byte]], AckReply)]] =
     ZIO.serviceWithZIO[HttpSubscriber](
-      _.pull(subscription, returnImmediately = Some(returnImmediately), maxMessages = maxMessages)
+      _.pull(subscription, returnImmediately = returnImmediately, maxMessages = maxMessages)
     )
 }
