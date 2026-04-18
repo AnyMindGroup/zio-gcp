@@ -21,7 +21,7 @@ object bigquery_v2_example extends ZIOAppDefault:
       projectId <- System
                      .env("GCP_PROJECT_ID")
                      .someOrFail(new RuntimeException("GCP_PROJECT_ID env var is required"))
-      backend   <- com.anymindgroup.gcp.auth.defaultAccessTokenBackend()
+      backend <- com.anymindgroup.gcp.auth.defaultAccessTokenBackend()
 
       // 1. Create a dataset
       _ <- backend
