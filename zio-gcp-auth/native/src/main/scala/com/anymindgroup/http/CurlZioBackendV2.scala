@@ -344,7 +344,7 @@ class CurlZioBackendV2 private (
     val lastHttpIdx = lines.lastIndexWhere(_.startsWith("HTTP/"))
     val respLines   = if lastHttpIdx >= 0 then lines.drop(lastHttpIdx) else lines
     val statusLine  = respLines.head
-    val statusText = {
+    val statusText  = {
       val i = statusLine.indexOf(' ')
       if (i < 0) ""
       else {

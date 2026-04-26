@@ -13,7 +13,7 @@ import com.anymindgroup.gcp.auth.{
 }
 import com.anymindgroup.gcp.pubsub.v1.resources.projects as p
 import com.anymindgroup.gcp.pubsub.v1.schemas as s
-import com.anymindgroup.http.httpBackendScoped
+import com.anymindgroup.http.*
 import com.anymindgroup.pubsub.*
 import sttp.client4.*
 
