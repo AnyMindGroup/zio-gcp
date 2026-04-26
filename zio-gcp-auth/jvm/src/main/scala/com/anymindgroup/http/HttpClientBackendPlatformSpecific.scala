@@ -5,10 +5,14 @@ import java.net.http.HttpClient
 import scala.annotation.tailrec
 
 import sttp.capabilities.zio.ZioStreams
+import sttp.capabilities.{Effect, WebSockets}
 import sttp.client4.WebSocketStreamBackend
 import sttp.client4.httpclient.zio.HttpClientZioBackend
 
 import zio.{Cause, Scope, Task, ZIO, ZLayer}
+
+type HttpPlatformBackend      = sttp.client4.WebSocketStreamBackend[Task, ZioStreams]
+type HttpPlatformCapabilities = ZioStreams & WebSockets & Effect[Task]
 
 private[http] trait HttpClientBackendPlatformSpecific {
   def httpBackendLayer(): ZLayer[Any, Throwable, WebSocketStreamBackend[Task, ZioStreams]] =

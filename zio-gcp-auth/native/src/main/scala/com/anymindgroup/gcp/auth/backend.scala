@@ -1,18 +1,18 @@
 package com.anymindgroup.gcp.auth
 
-import com.anymindgroup.http.httpBackendScoped
-import sttp.capabilities.Effect
-import sttp.client4.{Backend, GenericRequest, Response}
+import com.anymindgroup.http.*
+import sttp.capabilities.zio.ZioStreams
+import sttp.client4.{GenericRequest, Response, StreamBackend}
 import sttp.monad.MonadError
 
 import zio.*
 
-trait AuthedBackend extends Backend[Task]
+trait AuthedBackend extends StreamBackend[Task, ZioStreams]
 
 object AuthedBackend:
-  def apply(tp: TokenProvider[Token], backend: Backend[Task]): AuthedBackend =
+  def apply(tp: TokenProvider[Token], backend: HttpPlatformBackend): AuthedBackend =
     new AuthedBackend:
-      override def send[T](request: GenericRequest[T, Effect[Task]]): Task[Response[T]] =
+      override def send[T](request: GenericRequest[T, HttpPlatformCapabilities]): Task[Response[T]] =
         tp.token.flatMap(t => backend.send(request.auth.bearer(t.token.token)))
       override def close(): Task[Unit]     = backend.close()
       override def monad: MonadError[Task] = backend.monad

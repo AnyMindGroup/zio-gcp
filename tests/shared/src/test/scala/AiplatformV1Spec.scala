@@ -32,4 +32,4 @@ object AiplatformV1Spec extends ZIOSpecDefault:
                case Right(body) => Console.printLine(s"Response ok: $body")
       yield assertCompletes
     }
-  ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvNotSet("CI")
+  ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvSet("GCP_TEST_PROJECT")

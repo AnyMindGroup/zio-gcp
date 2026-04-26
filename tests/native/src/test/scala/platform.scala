@@ -1,11 +1,10 @@
 package com.anymindgroup.pubsub
 package http
 
+import sttp.capabilities.zio.ZioStreams
 import sttp.client4.impl.zio.RIOMonadAsyncError
-import sttp.client4.testing.BackendStub
+import sttp.client4.testing.StreamBackendStub
 
 import zio.Task
 
-def platformStub = BackendStub[Task](new RIOMonadAsyncError[Any])
-
-val isNativePlatform: Boolean = true
+def platformStub = StreamBackendStub[Task, ZioStreams](new RIOMonadAsyncError[Any])

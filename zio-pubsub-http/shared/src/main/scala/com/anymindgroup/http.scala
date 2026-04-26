@@ -1,6 +1,7 @@
 package com.anymindgroup.pubsub.http
 
 import com.anymindgroup.gcp.auth.*
+import com.anymindgroup.http.HttpPlatformBackend
 import com.anymindgroup.pubsub.{PubsubConnectionConfig, Serializer, TopicName}
 
 import zio.{Schedule, Scope, ZIO}

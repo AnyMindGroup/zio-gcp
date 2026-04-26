@@ -335,6 +335,11 @@ lazy val zioGcpAuth = crossProject(JVMPlatform, NativePlatform)
       "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
     ),
   )
+  .nativeSettings(
+    nativeConfig ~= { c =>
+      c.withLinkingOptions(c.linkingOptions :+ "-lcurl")
+    }
+  )
 
 lazy val zioGcpStorage = crossProject(JVMPlatform, NativePlatform)
   .in(file("zio-gcp-storage"))
@@ -403,7 +408,10 @@ lazy val tests = crossProject(JVMPlatform, NativePlatform)
   .nativeSettings(
     libraryDependencies ++= Seq(
       "com.github.lolgab" %%% "scala-native-crypto" % scalaNativeCryptoVersion % Test
-    )
+    ),
+    nativeConfig ~= { c =>
+      c.withLinkingOptions(c.linkingOptions :+ "-lcurl")
+    },
   )
   .jvmConfigure(
     _.dependsOn(zioPubsubGoogle)
