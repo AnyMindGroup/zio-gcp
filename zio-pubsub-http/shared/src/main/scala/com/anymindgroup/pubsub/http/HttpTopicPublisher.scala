@@ -77,7 +77,7 @@ object HttpTopicPublisher {
   def make[R, E](
     topicName: TopicName,
     serializer: Serializer[R, E],
-    backend: HttpPlatformBackend,
+    backend: Backend[Task],
     tokenProvider: TokenProvider[Token],
   ): HttpTopicPublisher[R, E] =
     makeFromAuthedBackend(topicName, serializer, toAuthedBackend(tokenProvider, backend))
@@ -85,7 +85,7 @@ object HttpTopicPublisher {
   def makeWithDefaultTokenProvider[R, E](
     topicName: TopicName,
     serializer: Serializer[R, E],
-    backend: HttpPlatformBackend,
+    backend: Backend[Task],
     authConfig: AuthConfig = AuthConfig.default,
   ): ZIO[Scope, TokenProviderException, HttpTopicPublisher[R, E]] =
     TokenProvider

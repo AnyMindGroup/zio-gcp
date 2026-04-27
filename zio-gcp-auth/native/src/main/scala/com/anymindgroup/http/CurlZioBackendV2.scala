@@ -18,6 +18,7 @@ import sttp.model.*
 import sttp.monad.MonadError
 
 import zio.*
+import zio.Ref.Synchronized
 import zio.stream.{Take, ZStream}
 
 // scalafix:off DisableSyntax.null
@@ -39,28 +40,36 @@ private final case class PendingRequest(
 
 private final case class ActiveRequest(
   req: PendingRequest,
-  headersDone: Boolean,
-)
+  headerCode: Option[Long],
+) {
+  def headersDone: Boolean = headerCode.exists(_ >= 200L)
+}
 
 /**
  * Asynchronous sttp backend for Scala Native backed by libcurl multi handles
  * and ZIO. A single background fiber owns the curl event loop; `send` enqueues
  * requests and awaits their results via Promise/Queue.
  */
-class CurlZioBackendV2 private (
+class CurlMultiZioBackend private (
   verbose: Boolean,
   multi: Ptr[CURLM],
   workQueue: Queue[PendingRequest],
 ) extends StreamBackend[Task, ZioStreams] {
+  import CurlMultiZioBackend.curlBackendsCount
+
   override val monad: MonadError[Task] = new RIOMonadAsyncError[Any]()
 
   given MonadError[Task] = monad
 
   override def close(): Task[Unit] =
-    ZIO.attempt {
-      curl_multi_cleanup(multi)
-      // curl_global_cleanup()
-    }.ignore
+    curlBackendsCount.getAndUpdateZIO { i =>
+      val remaining = i - 1
+
+      ZIO.attempt {
+        curl_multi_cleanup(multi)
+        if remaining <= 0 then curl_global_cleanup()
+      }.as(remaining)
+    }.unit
 
   override def send[T](request: GenericRequest[T, ZioStreams & Effect[Task]]): Task[Response[T]] =
     for
@@ -83,112 +92,120 @@ class CurlZioBackendV2 private (
   // ── Background event loop ─────────────────────────────────────────
 
   private[http] def runLoop: Task[Unit] =
-    ZIO
-      .iterate(Map.empty[Ptr[CURL], ActiveRequest])(_ => true) { active =>
-        for
-          // Block on the queue when idle; drain all pending when already active
-          newPendings <-
-            if active.isEmpty
-            then workQueue.take.map(Chunk(_))
-            else workQueue.takeAll
+    ZIO.suspendSucceed {
+      val active = scala.collection.mutable.Map.empty[Ptr[CURL], ActiveRequest]
 
-          _ <- ZIO.foreachDiscard(newPendings)(p => ZIO.attempt(curl_multi_add_handle(multi, p.easy)))
+      ZIO
+        .whileLoop(true) {
+          for
+            // Block on the queue when idle; drain all pending when already active
+            newPendings <-
+              if active.isEmpty
+              then workQueue.takeBetween(1, Int.MaxValue)
+              else workQueue.takeAll
 
-          allActive = active ++ newPendings.map(p => p.easy -> ActiveRequest(p, false))
+            running <- ZIO.attempt:
+                         newPendings.foreach: p =>
+                           curl_multi_add_handle(multi, p.easy)
+                           active.update(p.easy, ActiveRequest(p, None))
 
-          running <- withZone {
-                       val runningHandles = alloc[CInt](1)
-                       val mc             = curl_multi_perform(multi, runningHandles)
-                       if mc != CURLMcode.CURLM_OK then
-                         throw new RuntimeException(s"curl_multi_perform failed: ${mc.int}")
-                       !runningHandles
-                     }
+                         Zone:
+                           val runningHandles = alloc[CInt](1)
+                           val mc             = curl_multi_perform(multi, runningHandles)
+                           if mc != CURLMcode.CURLM_OK then
+                             throw new RuntimeException(s"curl_multi_perform failed: ${mc.int}")
+                           !runningHandles
 
-          // Drain body buffers and detect header arrival for every active handle
-          afterDrain <- ZIO.foldLeft(allActive)(Map.empty[Ptr[CURL], ActiveRequest]) { case (acc, (easy, ar)) =>
-                          for
-                            bodyChunk <- ZIO.attempt(drainBuf(ar.req.bodyBuf))
-                            _         <- ZIO.when(bodyChunk.nonEmpty)(ar.req.bodyQueue.offer(Take.chunk(bodyChunk)))
-                            ar2       <-
-                              if ar.headersDone then ZIO.succeed(ar)
-                              else
-                                withZone {
-                                  val httpCode = alloc[Long](1)
-                                  curl_easy_getinfo(easy, CURLINFO.CURLINFO_RESPONSE_CODE, httpCode)
-                                  !httpCode
-                                }.flatMap { code =>
-                                  if code >= 200L then
-                                    val (statusText, headers) =
-                                      parseHeadersAndStatus(fromCString((!ar.req.headerBuf)._1))
-                                    ar.req.headerPromise
-                                      .succeed(ResponseMetadata(StatusCode(code.toInt), statusText, headers))
-                                      .as(ar.copy(headersDone = true))
-                                  else ZIO.succeed(ar)
-                                }
-                          yield acc + (easy -> ar2)
-                        }
-
-          // Collect handles that curl has finished transferring
-          completed <- withZone {
-                         val msgsLeft = alloc[CInt](1)
-                         var done     = Map.empty[Ptr[CURL], Int]
-                         var msg      = curl_multi_info_read(multi, msgsLeft)
-                         while msg != null do
-                           if (!msg).msg == CURLMSG.CURLMSG_DONE then
-                             done = done + ((!msg).easy_handle -> (!msg).data.result.int)
-                           msg = curl_multi_info_read(multi, msgsLeft)
-                         done
+            // Drain body buffers and detect header arrival for every active handle
+            _ <- ZIO.foreachDiscard(active) { (easy, ar) =>
+                   for
+                     _ <- ZIO.suspendSucceed {
+                            val bodyChunk = drainBuf(ar.req.bodyBuf)
+                            if bodyChunk.nonEmpty then ar.req.bodyQueue.offer(Take.chunk(bodyChunk)) else ZIO.unit
+                          }
+                     _ <-
+                       if ar.headersDone then ZIO.succeed(ar)
+                       else {
+                         Zone {
+                           val httpCode = alloc[Long](1)
+                           val res      = curl_easy_getinfo(easy, CURLINFO.CURLINFO_RESPONSE_CODE, httpCode)
+                           (res, !httpCode)
+                         } match {
+                           case (CURLcode.CURLE_OK, code) if code >= 200L =>
+                             val (statusText, headers) =
+                               parseHeadersAndStatus(fromCString((!ar.req.headerBuf)._1))
+                             ar.req.headerPromise
+                               .succeed(ResponseMetadata(StatusCode(code.toInt), statusText, headers))
+                               .as(active.update(easy, ar.copy(headerCode = Some(code))))
+                           case (CURLcode.CURLE_OK, code) =>
+                             ZIO.succeed(active.update(easy, ar.copy(headerCode = Some(code))))
+                           case (other, _) =>
+                             ZIO.succeed(active.update(easy, ar.copy(headerCode = None)))
+                         }
                        }
+                   yield ()
+                 }
 
-          // Signal completion or failure, then free native resources
-          _ <- ZIO.foreachDiscard(completed) { (easy, resultCode) =>
-                 afterDrain.get(easy) match
-                   case None     => ZIO.unit
-                   case Some(ar) =>
-                     val finalChunk = drainBuf(ar.req.bodyBuf)
-                     for
-                       _ <- ZIO.when(finalChunk.nonEmpty)(ar.req.bodyQueue.offer(Take.chunk(finalChunk)))
-                       _ <-
-                         if resultCode == 0 then ar.req.bodyQueue.offer(Take.end)
-                         else
-                           val codeName =
-                             CURLcode.getName(CURLcode.define(resultCode.toLong)).getOrElse(s"CURLcode_$resultCode")
-                           ar.req.bodyQueue.offer(
-                             Take.fail(new RuntimeException(s"curl transfer failed: $codeName"))
-                           )
-                       _ <- ZIO.unless(ar.headersDone)(
-                              ar.req.headerPromise.fail(
-                                new RuntimeException(
-                                  if resultCode == 0 then "Transfer completed without headers"
-                                  else
-                                    CURLcode
-                                      .getName(CURLcode.define(resultCode.toLong))
-                                      .getOrElse(s"CURLcode_$resultCode")
+            // Signal completion or failure, then free native resources
+            _ <- ZIO.foreachDiscard(
+                   // Collect handles that curl has finished transferring
+                   Zone {
+                     val msgsLeft = alloc[CInt](1)
+                     val done     = scala.collection.mutable.Map.empty[Ptr[CURL], Int]
+                     var msg      = curl_multi_info_read(multi, msgsLeft)
+                     while msg != null do
+                       if (!msg).msg == CURLMSG.CURLMSG_DONE then
+                         done.update((!msg).easy_handle, (!msg).data.result.int)
+                       msg = curl_multi_info_read(multi, msgsLeft)
+                     done
+                   }
+                 ) { (easy, resultCode) =>
+                   active.remove(easy) match
+                     case None     => ZIO.unit
+                     case Some(ar) =>
+                       val finalChunk = drainBuf(ar.req.bodyBuf)
+                       for
+                         _ <- ZIO.when(finalChunk.nonEmpty)(ar.req.bodyQueue.offer(Take.chunk(finalChunk)))
+                         _ <-
+                           if resultCode == 0 then ar.req.bodyQueue.offer(Take.end)
+                           else
+                             val codeName =
+                               CURLcode.getName(CURLcode.define(resultCode.toLong)).getOrElse(s"CURLcode_$resultCode")
+                             ar.req.bodyQueue.offer(
+                               Take.fail(new RuntimeException(s"curl transfer failed: $codeName"))
+                             )
+                         _ <- ZIO.unless(ar.headersDone)(
+                                ar.req.headerPromise.fail(
+                                  new RuntimeException(
+                                    if resultCode == 0 then s"Transfer completed without headers: '${ar.headerCode}'"
+                                    else
+                                      CURLcode
+                                        .getName(CURLcode.define(resultCode.toLong))
+                                        .getOrElse(s"CURLcode_$resultCode")
+                                  )
                                 )
                               )
-                            )
-                       _ <- ZIO.attempt(freeRequest(ar.req))
-                     yield ()
-               }
-
-          nextActive = afterDrain -- completed.keys
-
-          // Short poll to avoid busy-waiting while transfers are still in flight
-          _ <- ZIO.when(running > 0 && nextActive.nonEmpty)(
-                 withZone {
-                   val pc = curl_multi_poll(
-                     multi,
-                     null.asInstanceOf[Ptr[curl_waitfd]],
-                     0.toUInt,
-                     100,
-                     null.asInstanceOf[Ptr[CInt]],
-                   )
-                   if pc != CURLMcode.CURLM_OK then throw new RuntimeException(s"curl_multi_poll failed: ${pc.int}")
+                         _ <- ZIO.attempt(freeRequest(ar.req))
+                       yield ()
                  }
-               )
-        yield nextActive
-      }
-      .unit
+
+            // Short poll to avoid busy-waiting while transfers are still in flight
+            _ <-
+              if running > 0 && active.nonEmpty then
+                ZIO.attempt {
+                  val pc = curl_multi_poll(
+                    multi,
+                    null.asInstanceOf[Ptr[curl_waitfd]],
+                    0.toUInt,
+                    100,
+                    null.asInstanceOf[Ptr[CInt]],
+                  )
+                  if pc != CURLMcode.CURLM_OK then throw new RuntimeException(s"curl_multi_poll failed: ${pc.int}")
+                }
+              else ZIO.unit
+          yield ()
+        }(_ => ())
+    }
 
   // ── Body decoder ──────────────────────────────────────────────────
 
@@ -282,9 +299,9 @@ class CurlZioBackendV2 private (
     bodyBuf: Ptr[FetchBuf],
     headerBuf: Ptr[FetchBuf],
   )(using Zone): Ptr[curl_slist] = {
-    curl_easy_setopt(easy, CURLoption.CURLOPT_WRITEFUNCTION, CurlZioBackendV2.writeCallback)
+    curl_easy_setopt(easy, CURLoption.CURLOPT_WRITEFUNCTION, CurlMultiZioBackend.writeCallback)
     curl_easy_setopt(easy, CURLoption.CURLOPT_WRITEDATA, bodyBuf)
-    curl_easy_setopt(easy, CURLoption.CURLOPT_HEADERFUNCTION, CurlZioBackendV2.writeCallback)
+    curl_easy_setopt(easy, CURLoption.CURLOPT_HEADERFUNCTION, CurlMultiZioBackend.writeCallback)
     curl_easy_setopt(easy, CURLoption.CURLOPT_HEADERDATA, headerBuf)
     curl_easy_setopt(easy, CURLoption.CURLOPT_URL, toCString(request.uri.toString))
     curl_easy_setopt(easy, CURLoption.CURLOPT_TIMEOUT_MS, request.options.readTimeout.toMillis)
@@ -301,6 +318,7 @@ class CurlZioBackendV2 private (
       case _: MultipartBody[?] => reqHeaders += Header.contentType(MediaType.MultipartFormData)
       case _                   =>
     }
+    reqHeaders += Header("Expect", "")
 
     var slist: Ptr[curl_slist] = null.asInstanceOf[Ptr[curl_slist]]
     reqHeaders.foreach { h =>
@@ -314,13 +332,13 @@ class CurlZioBackendV2 private (
 
   private def setRequestBody(easy: Ptr[CURL], body: GenericRequestBody[ZioStreams & Effect[Task]])(using Zone): Unit =
     body match {
-      case StringBody(s, _, _) =>
-        curl_easy_setopt(easy, CURLoption.CURLOPT_POSTFIELDSIZE, s.length.toLong)
-        curl_easy_setopt(easy, CURLoption.CURLOPT_COPYPOSTFIELDS, toCString(s))
-      case ByteArrayBody(b, _) =>
-        val tmp = malloc(b.length.toUInt).asInstanceOf[CString]
-        var i   = 0; while (i < b.length) { !(tmp + i) = b(i); i += 1 }
-        curl_easy_setopt(easy, CURLoption.CURLOPT_POSTFIELDSIZE, b.length.toLong)
+      case b: StringBody =>
+        curl_easy_setopt(easy, CURLoption.CURLOPT_POSTFIELDSIZE, b.s.length.toLong)
+        curl_easy_setopt(easy, CURLoption.CURLOPT_COPYPOSTFIELDS, toCString(b.s))
+      case b: ByteArrayBody =>
+        val tmp = malloc(b.b.length.toUInt).asInstanceOf[CString]
+        var i   = 0; while (i < b.b.length) { !(tmp + i) = b.b(i); i += 1 }
+        curl_easy_setopt(easy, CURLoption.CURLOPT_POSTFIELDSIZE, b.b.length.toLong)
         curl_easy_setopt(easy, CURLoption.CURLOPT_COPYPOSTFIELDS, tmp)
         free(tmp.asInstanceOf[Ptr[Byte]])
       case _ => ()
@@ -361,7 +379,7 @@ class CurlZioBackendV2 private (
   }
 }
 
-object CurlZioBackendV2 {
+object CurlMultiZioBackend {
 
   private val writeCallback: CFuncPtr4[Ptr[Byte], CSize, CSize, Ptr[FetchBuf], CSize] = {
     (ptr: Ptr[Byte], size: CSize, nmemb: CSize, data: Ptr[FetchBuf]) =>
@@ -378,19 +396,28 @@ object CurlZioBackendV2 {
         size * nmemb
   }
 
-  def layer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlZioBackendV2] =
+  def layer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlMultiZioBackend] =
     ZLayer.scoped(scoped(verbose))
 
-  def scoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlZioBackendV2] =
+  private val curlBackendsCount: Synchronized[Int] = zio.Unsafe.unsafe(Ref.Synchronized.unsafe.make(0))
+
+  def scoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlMultiZioBackend] =
     for
+      _ <- curlBackendsCount.getAndUpdateZIO { i =>
+             val inc = i + 1
+             if inc <= 1 then ZIO.attempt(curl_global_init(3)).as(inc) else ZIO.succeed(inc)
+           }
       workQueue <- Queue.unbounded[PendingRequest]
       backend   <- ZIO.acquireRelease(
                    ZIO.attempt {
-                     curl_global_init(3)
                      val multi = curl_multi_init()
                      if multi == null then throw new RuntimeException("curl_multi_init failed")
-                     multi
-                   }.map(multi => CurlZioBackendV2(verbose = verbose, multi = multi, workQueue = workQueue))
+                     CurlMultiZioBackend(
+                       verbose = verbose,
+                       multi = multi,
+                       workQueue = workQueue,
+                     )
+                   }
                  )(_.close().ignore)
       _ <- backend.runLoop.forkScoped
     yield backend

@@ -11,11 +11,11 @@ type HttpPlatformBackend      = sttp.client4.StreamBackend[Task, ZioStreams]
 type HttpPlatformCapabilities = ZioStreams & Effect[Task]
 
 private[http] trait HttpClientBackendPlatformSpecific {
-  def httpBackendLayer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlZioBackendV2] =
-    CurlZioBackendV2.layer(verbose)
+  def httpBackendLayer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlMultiZioBackend] =
+    CurlMultiZioBackend.layer(verbose)
 
-  def httpBackendScoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlZioBackendV2] =
-    CurlZioBackendV2.scoped(verbose)
+  def httpBackendScoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlMultiZioBackend] =
+    CurlMultiZioBackend.scoped(verbose)
 }
 
 class UnresolvedAddressException(underlying: Throwable) extends Throwable(underlying)

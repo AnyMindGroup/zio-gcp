@@ -189,7 +189,7 @@ object HttpSubscriber {
         )
 
   def make(
-    backend: HttpPlatformBackend,
+    backend: Backend[Task],
     tokenProvider: TokenProvider[Token],
     maxMessagesPerPull: Int = defaults.maxMessagesPerPull,
     retrySchedule: Schedule[Any, Throwable, ?] = defaults.retrySchedule,
@@ -203,7 +203,7 @@ object HttpSubscriber {
     )
 
   def makeWithDefaultTokenProvider(
-    backend: HttpPlatformBackend,
+    backend: Backend[Task],
     maxMessagesPerPull: Int = defaults.maxMessagesPerPull,
     retrySchedule: Schedule[Any, Throwable, ?] = defaults.retrySchedule,
     authConfig: AuthConfig = AuthConfig.default,
