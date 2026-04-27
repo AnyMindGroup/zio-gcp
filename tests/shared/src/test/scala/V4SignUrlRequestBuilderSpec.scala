@@ -33,7 +33,7 @@ object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
                                 expiresInSeconds = V4SignatureExpiration.inSeconds(900),
                               )
         expectedPath = "/example-bucket/test/cat_%3F%3D%21%23%24%26%27%28%29%2A%2B%2C%3A%3B%40%5B%5D%22~%20.jpeg"
-        _           <- assertTrue(canonicalRequest.payloadPlain.linesIterator.drop(1).next == expectedPath)
+        _           <- assertTrue(canonicalRequest.payloadPlain.linesIterator.drop(1).next() == expectedPath)
         signedUrl   <- ZIO.fromEither:
                        V4SignUrlRequestBuilder
                          .toSignedUrl(

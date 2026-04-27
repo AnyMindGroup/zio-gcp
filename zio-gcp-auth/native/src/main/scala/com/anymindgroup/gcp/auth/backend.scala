@@ -1,6 +1,6 @@
 package com.anymindgroup.gcp.auth
 
-import com.anymindgroup.http.httpBackendScoped
+import com.anymindgroup.http.*
 import sttp.capabilities.Effect
 import sttp.client4.{Backend, GenericRequest, Response}
 import sttp.monad.MonadError
