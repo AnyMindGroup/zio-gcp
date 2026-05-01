@@ -1,5 +1,18 @@
 {
   "description": "Provides reliable, many-to-many, asynchronous messaging between applications. ",
+  "version": "v1",
+  "discoveryVersion": "v1",
+  "servicePath": "",
+  "revision": "20260403",
+  "id": "pubsub:v1",
+  "name": "pubsub",
+  "documentationLink": "https://cloud.google.com/pubsub/docs",
+  "canonicalName": "Pubsub",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "batchPath": "batch",
   "schemas": {
     "SetIamPolicyRequest": {
       "id": "SetIamPolicyRequest",
@@ -1620,7 +1633,23 @@
       "properties": {}
     }
   },
+  "mtlsRootUrl": "https://pubsub.mtls.googleapis.com/",
   "kind": "discovery#restDescription",
+  "basePath": "",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/pubsub": {
+          "description": "View and manage Pub/Sub topics and subscriptions"
+        }
+      }
+    }
+  },
+  "baseUrl": "https://pubsub.googleapis.com/",
+  "ownerName": "Google",
   "endpoints": [
     {
       "endpointUrl": "https://pubsub.africa-south1.rep.googleapis.com/",
@@ -1853,8 +1882,8 @@
       "description": "Regional Endpoint"
     }
   ],
-  "servicePath": "",
-  "mtlsRootUrl": "https://pubsub.mtls.googleapis.com/",
+  "protocol": "rest",
+  "title": "Cloud Pub/Sub API",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -1932,15 +1961,6 @@
       "location": "query"
     }
   },
-  "basePath": "",
-  "rootUrl": "https://pubsub.googleapis.com/",
-  "ownerName": "Google",
-  "name": "pubsub",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "canonicalName": "Pubsub",
   "resources": {
     "projects": {
       "resources": {
@@ -3401,26 +3421,6 @@
       }
     }
   },
-  "documentationLink": "https://cloud.google.com/pubsub/docs",
-  "revision": "20260403",
-  "id": "pubsub:v1",
-  "title": "Cloud Pub/Sub API",
-  "discoveryVersion": "v1",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/pubsub": {
-          "description": "View and manage Pub/Sub topics and subscriptions"
-        }
-      }
-    }
-  },
-  "batchPath": "batch",
   "ownerDomain": "google.com",
-  "baseUrl": "https://pubsub.googleapis.com/",
-  "protocol": "rest",
-  "version": "v1"
+  "rootUrl": "https://pubsub.googleapis.com/"
 }
