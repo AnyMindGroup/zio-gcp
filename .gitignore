@@ -17,3 +17,4 @@ target/
 metals.sbt
 node_modules
 docs/vitepress/.vitepress/cache
+docs/vitepress/.vitepress/dist
