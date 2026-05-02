@@ -30,4 +30,4 @@ object IamcredentialsV1Spec extends ZIOSpecDefault:
              }
       yield assertCompletes
     }
-  ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvNotSet("CI")
+  ) @@ TestAspect.withLiveSystem @@ TestAspect.ifEnvSet("GCP_TEST_PROJECT")

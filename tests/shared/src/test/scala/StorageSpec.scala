@@ -63,4 +63,4 @@ object StorageSpec extends ZIOSpecDefault:
              }
       yield assertCompletes
     }
-  ) @@ TestAspect.withLiveSystem @@ TestAspect.withLiveClock @@ TestAspect.ifEnvNotSet("CI")
+  ) @@ TestAspect.withLiveSystem @@ TestAspect.withLiveClock @@ TestAspect.ifEnvSet("GCP_TEST_PROJECT")
