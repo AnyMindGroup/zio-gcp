@@ -1,3 +1,6 @@
+// generated via sn-bindgen Scala 3 native binding generator + libclang facade
+// https://github.com/indoorvivants/sn-bindgen
+// this will potentially be moved or generated at build time
 package curl
 
 import _root_.scala.scalanative.*

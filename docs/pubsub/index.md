@@ -2,10 +2,8 @@
 
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub) client providing stream-based, declarative, high-level API with [zio](https://zio.dev) and [zio-streams](https://zio.dev/reference/stream) to help to concentrate on the business logic.
 
-Released for Scala 3 targeting JVM and Native via [scala-native](https://scala-native.org) with exception of some modules due to Java dependencies.   
+Released for Scala 3 targeting JVM and Native via [scala-native](https://scala-native.org) with exception of `zio-pubsub-google` due to Java dependencies.   
 [Scala.js](https://www.scala-js.org) support could be potentially added.  
-
-_Scala 2.13 release will be kept in `v0.2.x` release series in the`series/0.2.x` branch, but not officially maintained. If you still rely on 2.13 release and require updates you may raise PRs targeting the `series/0.2.x` branch or create a fork_.  
 
 ## Modules
 

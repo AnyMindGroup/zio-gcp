@@ -479,3 +479,48 @@ lazy val zioPubsubTestkit =
         "dev.zio" %% "zio-test" % zioVersion.value
       )
     )
+
+lazy val zioPubsubBenchCore = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub-bench/test-core"))
+  .dependsOn(zioPubsub)
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    scalaVersion := scala3Next,
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio-logging" % "2.5.3"
+    ),
+  )
+
+lazy val zioPubsubBenchGoogle = (project in file("zio-pubsub-bench/test-google"))
+  .dependsOn(zioPubsubBenchCore.jvm, zioPubsubBenchRuntime.jvm, zioPubsubGoogle)
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    scalaVersion := scala3Next
+  )
+
+lazy val zioPubsubBenchRuntime = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub-bench/test-runtime"))
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio" %%% "zio" % _zioVersion
+    ),
+    scalaVersion := scala3Next,
+  )
+
+lazy val zioPubsubBenchHttp = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-pubsub-bench/test-http"))
+  .dependsOn(zioPubsubBenchCore, zioPubsubBenchRuntime, zioPubsubHttp)
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    scalaVersion := scala3Next
+  )
+  .nativeSettings(
+    nativeConfig ~= { c =>
+      c.withLinkingOptions(c.linkingOptions :+ "-lcurl").withMultithreading(true)
+    }
+  )
