@@ -55,7 +55,7 @@ val scala3Next = "3.8.3"
 
 val _zioVersion = "2.1.25"
 
-val sttpClient4Version = "4.0.22"
+val sttpClient4Version = "4.0.23"
 
 val jsoniterVersion = "2.38.9"
 
@@ -89,6 +89,7 @@ inThisBuild(
     scalaVersion       := _scala3,
     crossScalaVersions := Seq(_scala3),
     versionScheme      := Some("early-semver"),
+    evictionWarningOptions ~= (_.withConfigurations(List(Compile))),
     ciEnabledBranches  := Seq("master"),
     ciTestJobs         := ciTestJobs.value.map(withTestSetupUpdate),
     ciBuildJobs        := ciBuildJobs.value.map(withBuildSetupUpdate),
@@ -441,7 +442,7 @@ lazy val zioPubsubHttp = crossProject(JVMPlatform, NativePlatform)
   )
   .settings(commonSettings)
 
-val zioSchemaVersion             = "1.8.3"
+val zioSchemaVersion             = "1.8.5"
 lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
   .in(file("zio-pubsub-serde-zio-schema"))
   .settings(moduleName := "zio-pubsub-serde-zio-schema")
@@ -453,7 +454,7 @@ lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
     )
   )
 
-val googleCloudPubsubVersion = "1.150.0"
+val googleCloudPubsubVersion = "1.150.1"
 lazy val zioPubsubGoogle     = (project in file("zio-pubsub-google"))
   .settings(
     moduleName          := "zio-pubsub-google",
