@@ -19,6 +19,13 @@ object TokenProviderSpec extends ZIOSpecDefault {
   val failUserAccount: Credentials.UserAccount = Credentials.UserAccount("token", "fail_user", Config.Secret("123"))
   val testIdToken                              =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkxMjJ9.-fM8Z-u88K5GGomqJxRCilYkjXZusY_Py6kdyzh1EAg"
+  val impersonationUrl: String =
+    "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/example@example-project.iam.gserviceaccount.com:generateAccessToken"
+  val impersonatedCreds: Credentials.ImpersonatedServiceAccount =
+    Credentials.ImpersonatedServiceAccount(
+      serviceAccountImpersonationUrl = impersonationUrl,
+      sourceCredentials = okUserAccount,
+    )
 
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("TokenProviderSpec")(
     test("no token provider") {
@@ -56,6 +63,14 @@ object TokenProviderSpec extends ZIOSpecDefault {
              )
       } yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
+    test("fail on getting id token for impersonated service account as it's not supported (yet)") {
+      for {
+        backend <- ZIO.service[Backend[Task]]
+        _       <- assertZIO(TokenProvider.idTokenProvider("", impersonatedCreds, backend).exit)(
+               failsWithA[TokenProviderException.CredentialsFailure]
+             )
+      } yield assertCompletes
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("request access token from compute metadata server") {
       for {
         backend <- ZIO.service[Backend[Task]]
@@ -73,6 +88,25 @@ object TokenProviderSpec extends ZIOSpecDefault {
         _       <- assertTrue(token.token.token == testIdToken)
       } yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
     },
+    test("request access token using impersonated service account credentials") {
+      for {
+        backend <- ZIO.service[Backend[Task]]
+        tp      <- TokenProvider.accessTokenProvider(impersonatedCreds, backend)
+        token   <- tp.token
+        _       <- assertTrue(token.token.token == "impersonated")
+      } yield assertCompletes
+    }.provideSome[Scope](googleStubBackendLayer()),
+    test("request access token using impersonated service account with delegates") {
+      val credsWithDelegates = impersonatedCreds.copy(
+        delegates = List("delegate@example-project.iam.gserviceaccount.com")
+      )
+      for {
+        backend <- ZIO.service[Backend[Task]]
+        tp      <- TokenProvider.accessTokenProvider(credsWithDelegates, backend)
+        token   <- tp.token
+        _       <- assertTrue(token.token.token == "impersonated")
+      } yield assertCompletes
+    }.provideSome[Scope](googleStubBackendLayer()),
     test("token is refreshed automatically at given expiry stage") {
       checkN(10)(Gen.double(0.1, 0.9)) { expiryPercent =>
         for {
@@ -144,6 +178,18 @@ object TokenProviderSpec extends ZIOSpecDefault {
       }
       .thenRespondAdjust(
         s"""{"access_token":"user","expires_in":$tokenExpirySeconds,"token_type":"Bearer"}"""
+      )
+      .whenRequestMatches { r =>
+        r.method == Method.POST && r.uri.toString() == impersonationUrl && (r.body match {
+          case StringBody(s, _, _) =>
+            s.contains("scope") && r.headers.exists(h =>
+              h.name.equalsIgnoreCase("Authorization") && h.value.startsWith("Bearer ")
+            )
+          case _ => false
+        })
+      }
+      .thenRespondAdjust(
+        s"""{"accessToken":"impersonated","expireTime":"2999-01-01T00:00:00Z"}"""
       )
       .whenRequestMatches { r =>
         r.uri.toString() == "https://oauth2.googleapis.com/token" && (r.body match {
