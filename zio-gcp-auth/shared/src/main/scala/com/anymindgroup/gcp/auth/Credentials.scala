@@ -30,13 +30,29 @@ object Credentials {
   // https://cloud.google.com/compute/docs/metadata/predefined-metadata-keys#instance-metadata
   final case class ComputeServiceAccount(email: String) extends Credentials
 
+  // https://cloud.google.com/iam/docs/reference/credentials/rest/v1/projects.serviceAccounts/generateAccessToken
+  final case class ImpersonatedServiceAccount(
+    serviceAccountImpersonationUrl: String,
+    sourceCredentials: CredentialsKey,
+    delegates: List[String] = List.empty,
+    scopes: List[String] = List("https://www.googleapis.com/auth/cloud-platform"),
+  ) extends Credentials
+
   private enum ApplicationCredentials:
     case authorized_user(refresh_token: String, client_id: String, client_secret: String)
     case service_account(client_email: String, private_key: String)
+    case impersonated_service_account(
+      service_account_impersonation_url: String,
+      source_credentials: ApplicationCredentials,
+      delegates: List[String] = List.empty,
+    )
   private object ApplicationCredentials:
     given JsonValueCodec[ApplicationCredentials] =
       JsonCodecMaker.make:
-        CodecMakerConfig.withRequireDiscriminatorFirst(false).withDiscriminatorFieldName(Some("type"))
+        CodecMakerConfig
+          .withRequireDiscriminatorFirst(false)
+          .withDiscriminatorFieldName(Some("type"))
+          .withAllowRecursiveTypes(true)
 
   private def applicationCredentialsPath: IO[CredentialsException, Option[Path]] =
     ZIO.systemWith { system =>
@@ -76,25 +92,49 @@ object Credentials {
         case _ => ZIO.none
       }
 
-  def applicationCredentials: IO[CredentialsException, Option[CredentialsKey]] = for {
+  private def toCredentials(appCreds: ApplicationCredentials): Either[String, Credentials] =
+    appCreds match {
+      case ApplicationCredentials.authorized_user(refreshToken, clientId, secret) =>
+        Right(Credentials.UserAccount(refreshToken = refreshToken, clientId = clientId, clientSecret = Secret(secret)))
+      case ApplicationCredentials.service_account(email, key) =>
+        Right(Credentials.ServiceAccountKey(email = email, privateKey = Secret(key)))
+      case ApplicationCredentials.impersonated_service_account(url, source, delegates) =>
+        source match {
+          case ApplicationCredentials.authorized_user(refreshToken, clientId, secret) =>
+            Right(
+              Credentials.ImpersonatedServiceAccount(
+                serviceAccountImpersonationUrl = url,
+                sourceCredentials = Credentials.UserAccount(refreshToken, clientId, Secret(secret)),
+                delegates = delegates,
+              )
+            )
+          case ApplicationCredentials.service_account(email, key) =>
+            Right(
+              Credentials.ImpersonatedServiceAccount(
+                serviceAccountImpersonationUrl = url,
+                sourceCredentials = Credentials.ServiceAccountKey(email, Secret(key)),
+                delegates = delegates,
+              )
+            )
+          case _: ApplicationCredentials.impersonated_service_account =>
+            Left("Nested impersonated service account credentials are not supported as source credentials")
+        }
+    }
+
+  def applicationCredentials: IO[CredentialsException, Option[Credentials]] = for {
     path <- applicationCredentialsPath.tapSome { case Some(p) =>
               ZIO.log(s"Attempting to read application credentials from $p")
             }
     creds <- path match
                case Some(p) =>
-                 findApplicationCredentials(p).map:
-                   _.map:
-                     case ApplicationCredentials.authorized_user(refreshToken, clientId, secret) =>
-                       Credentials.UserAccount(
-                         refreshToken = refreshToken,
-                         clientId = clientId,
-                         clientSecret = Secret(secret),
-                       )
-                     case ApplicationCredentials.service_account(email, key) =>
-                       Credentials.ServiceAccountKey(
-                         email = email,
-                         privateKey = Secret(key),
-                       )
+                 findApplicationCredentials(p).flatMap {
+                   case None           => ZIO.none
+                   case Some(appCreds) =>
+                     ZIO
+                       .fromEither(toCredentials(appCreds))
+                       .mapError(msg => CredentialsException.InvalidCredentialsFile(msg))
+                       .map(Some(_))
+                 }
                case None => ZIO.none
   } yield creds
 
@@ -124,7 +164,12 @@ object Credentials {
               ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
             case Some(c: Credentials.ServiceAccountKey) =>
               ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
-            case None =>
+            case Some(c: Credentials.ImpersonatedServiceAccount) =>
+              ZIO
+                .log(s"Found impersonated service account credentials for ${c.serviceAccountImpersonationUrl}")
+                .as(Some(c))
+            case Some(c) => ZIO.some(c)
+            case None    =>
               ZIO.log(s"No credentials were found.").as(None)
           }
       }
@@ -134,7 +179,10 @@ object Credentials {
           ZIO.log(s"Found user credentials with client id ${c.clientId}").as(Some(c))
         case Some(c: Credentials.ServiceAccountKey) =>
           ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
-        case None =>
+        case Some(c: Credentials.ImpersonatedServiceAccount) =>
+          ZIO.log(s"Found impersonated service account credentials for ${c.serviceAccountImpersonationUrl}").as(Some(c))
+        case Some(c) => ZIO.some(c)
+        case None    =>
           ZIO.log(s"No application credentials found.") *>
             computeServiceAccount(backend).tap {
               case Some(Credentials.ComputeServiceAccount(email)) =>

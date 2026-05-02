@@ -70,6 +70,27 @@ object CredentialsSpec extends ZIOSpecDefault {
              })
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
+    test("read impersonated service account credentials from file") {
+      val impersonatedCredsPath =
+        Path.of(resourcesDir.toString(), "impersonated_service_account.json").toAbsolutePath()
+
+      for {
+        _     <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", impersonatedCredsPath.toString())
+        creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
+        _     <- assertTrue(creds match {
+               case Some(
+                     Credentials.ImpersonatedServiceAccount(
+                       "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/example@example-project.iam.gserviceaccount.com:generateAccessToken",
+                       Credentials.UserAccount("refresh_token", "123.apps.googleusercontent.com", _),
+                       Nil,
+                       _,
+                     )
+                   ) =>
+                 true
+               case _ => false
+             })
+      } yield assertCompletes
+    }.provideLayer(defaultTestLayer),
   )
 
   val resourcesDir: Path = Path.of("zio-gcp-auth", "shared", "src", "test", "resources").toAbsolutePath()

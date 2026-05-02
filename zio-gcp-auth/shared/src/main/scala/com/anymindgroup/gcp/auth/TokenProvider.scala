@@ -1,7 +1,16 @@
 package com.anymindgroup.gcp.auth
 
+import java.time.Instant
+
 import com.anymindgroup.gcp.ComputeMetadata
-import com.anymindgroup.gcp.auth.Credentials.{ComputeServiceAccount, ServiceAccountKey, UserAccount}
+import com.anymindgroup.gcp.auth.Credentials.{
+  ComputeServiceAccount,
+  ImpersonatedServiceAccount,
+  ServiceAccountKey,
+  UserAccount,
+}
+import com.github.plokhotnyuk.jsoniter_scala.core.*
+import com.github.plokhotnyuk.jsoniter_scala.macros.*
 import sttp.client4.*
 import sttp.model.*
 
@@ -51,6 +60,58 @@ object TokenProvider {
       .response(asStringAlways)
       .mapResponse(AccessToken.fromJsonString(_))
 
+  private case class GenerateAccessTokenResponse(accessToken: String, expireTime: String)
+  private object GenerateAccessTokenResponse:
+    given JsonValueCodec[GenerateAccessTokenResponse] = JsonCodecMaker.make
+
+    def fromString(json: String): Either[Throwable, AccessToken] =
+      try
+        val r          = readFromString[GenerateAccessTokenResponse](json)
+        val expireTime = Instant.parse(r.expireTime)
+        val now        = Instant.now()
+        val expiresIn  = zio.Duration.fromSeconds(math.max(0L, expireTime.getEpochSecond - now.getEpochSecond))
+        Right(AccessToken(r.accessToken, expiresIn))
+      catch case e: Throwable => Left(e)
+
+  private[auth] def generateAccessTokenReq(
+    impersonationUrl: String,
+    sourceToken: String,
+    scopes: List[String],
+    delegates: List[String],
+  ): Request[Either[Throwable, AccessToken]] = {
+    val scopeValues    = scopes.map(s => s""""$s"""").mkString(",")
+    val delegateValues = delegates.map(d => s""""$d"""").mkString(",")
+    basicRequest
+      .post(uri"$impersonationUrl")
+      .header("Authorization", s"Bearer $sourceToken")
+      .body(s"""{"scope": [$scopeValues], "delegates": [$delegateValues]}""")
+      .header(Header.contentType(MediaType.ApplicationJson), onDuplicate = DuplicateHeaderBehavior.Replace)
+      .response(asStringAlways)
+      .mapResponse(GenerateAccessTokenResponse.fromString(_))
+  }
+
+  private def autoRefreshTokenProvider[T <: Token](
+    requestToken: IO[TokenProviderException, TokenReceipt[T]],
+    refreshRetrySchedule: Schedule[Any, Any, Any],
+    refreshAtExpirationPercent: Double,
+  ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
+    def refreshTokenJob(ref: Ref[TokenReceipt[T]]) =
+      (for {
+        current   <- ref.get
+        _         <- ZIO.sleep(current.token.expiresInOfPercent(refreshAtExpirationPercent))
+        refreshed <- requestToken.retry(refreshRetrySchedule)
+        _         <- ref.update(_ => refreshed)
+      } yield ()).repeat[Any, Long](Schedule.forever)
+
+    for {
+      token <- requestToken
+      ref   <- zio.Ref.make(token)
+      _     <- refreshTokenJob(ref).forkScoped
+    } yield new TokenProvider[T] {
+      override def token: UIO[TokenReceipt[T]] = ref.get
+    }
+  }
+
   private[auth] def autoRefreshTokenProviderByRequest[T <: Token](
     backend: GenericBackend[Task, Any],
     req: Request[Either[Throwable, T]],
@@ -67,21 +128,7 @@ object TokenProvider {
       _   <- ZIO.log(s"Retrieved new token with expiry in ${token.expiresIn.getSeconds()}s")
     } yield TokenReceipt(token, now)
 
-    def refreshTokenJob(ref: Ref[TokenReceipt[T]]) =
-      (for {
-        current   <- ref.get
-        _         <- ZIO.sleep(current.token.expiresInOfPercent(refreshAtExpirationPercent))
-        refreshed <- requestToken.retry(refreshRetrySchedule)
-        _         <- ref.update(_ => refreshed)
-      } yield ()).repeat[Any, Long](Schedule.forever)
-
-    for {
-      token <- requestToken
-      ref   <- zio.Ref.make(token)
-      _     <- refreshTokenJob(ref).forkScoped
-    } yield new TokenProvider[T] {
-      override def token: UIO[TokenReceipt[T]] = ref.get
-    }
+    autoRefreshTokenProvider(requestToken, refreshRetrySchedule, refreshAtExpirationPercent)
   }
 
   def defaultAccessTokenProvider(
@@ -147,6 +194,14 @@ object TokenProvider {
             )
           )
         )
+      case _: ImpersonatedServiceAccount =>
+        ZIO.fail(
+          TokenProviderException.CredentialsFailure(
+            CredentialsException.InvalidCredentialsFile(
+              s"Getting ID token by impersonated service account credentials is not supported."
+            )
+          )
+        )
     }
 
   def accessTokenProvider(
@@ -179,6 +234,37 @@ object TokenProvider {
             )
           )
         )
+      case impersonated: ImpersonatedServiceAccount =>
+        for {
+          sourceProvider <- accessTokenProvider(
+                              impersonated.sourceCredentials,
+                              backend,
+                              refreshRetrySchedule,
+                              refreshAtExpirationPercent,
+                            )
+          provider <- autoRefreshTokenProvider(
+                        requestToken = for {
+                          sourceReceipt <- sourceProvider.token
+                          _             <- ZIO.log("Requesting new impersonated access token...")
+                          token         <- backend
+                                     .send(
+                                       generateAccessTokenReq(
+                                         impersonated.serviceAccountImpersonationUrl,
+                                         sourceReceipt.token.token,
+                                         impersonated.scopes,
+                                         impersonated.delegates,
+                                       )
+                                     )
+                                     .mapError(e => TokenProviderException.Unexpected(e))
+                                     .flatMap(responseToToken)
+                          now <- Clock.instant
+                          _   <-
+                            ZIO.log(s"Retrieved new impersonated token with expiry in ${token.expiresIn.getSeconds()}s")
+                        } yield TokenReceipt(token, now),
+                        refreshRetrySchedule = refreshRetrySchedule,
+                        refreshAtExpirationPercent = refreshAtExpirationPercent,
+                      )
+        } yield provider
     }
 
   def noTokenProvider: TokenProvider[Token] = new TokenProvider[Token] {
