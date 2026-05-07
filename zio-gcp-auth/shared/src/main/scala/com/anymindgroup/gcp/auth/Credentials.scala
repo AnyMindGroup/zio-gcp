@@ -36,7 +36,13 @@ object Credentials {
     sourceCredentials: CredentialsKey,
     delegates: List[String] = List.empty,
     scopes: List[String] = List("https://www.googleapis.com/auth/cloud-platform"),
-  ) extends Credentials
+  ) extends Credentials {
+    def serviceAccountEmail: String =
+      serviceAccountImpersonationUrl.split("serviceAccounts/") match {
+        case Array(_, v) => v.split(":").headOption.getOrElse("")
+        case _           => ""
+      }
+  }
 
   private enum ApplicationCredentials:
     case authorized_user(refresh_token: String, client_id: String, client_secret: String)
@@ -166,7 +172,7 @@ object Credentials {
               ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
             case Some(c: Credentials.ImpersonatedServiceAccount) =>
               ZIO
-                .log(s"Found impersonated service account credentials for ${c.serviceAccountImpersonationUrl}")
+                .log(s"Found impersonated service account credentials for ${c.serviceAccountEmail}")
                 .as(Some(c))
             case Some(c) => ZIO.some(c)
             case None    =>
@@ -180,7 +186,7 @@ object Credentials {
         case Some(c: Credentials.ServiceAccountKey) =>
           ZIO.log(s"Found service account credentials for ${c.email}").as(Some(c))
         case Some(c: Credentials.ImpersonatedServiceAccount) =>
-          ZIO.log(s"Found impersonated service account credentials for ${c.serviceAccountImpersonationUrl}").as(Some(c))
+          ZIO.log(s"Found impersonated service account credentials for ${c.serviceAccountEmail}").as(Some(c))
         case Some(c) => ZIO.some(c)
         case None    =>
           ZIO.log(s"No application credentials found.") *>

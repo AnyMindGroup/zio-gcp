@@ -89,6 +89,11 @@ object CredentialsSpec extends ZIOSpecDefault {
                  true
                case _ => false
              })
+        _ <- assertTrue(
+               creds.get
+                 .asInstanceOf[Credentials.ImpersonatedServiceAccount]
+                 .serviceAccountEmail == "example@example-project.iam.gserviceaccount.com"
+             )
       } yield assertCompletes
     }.provideLayer(defaultTestLayer),
   )
