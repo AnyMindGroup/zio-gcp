@@ -9,6 +9,7 @@ Currently supported credentials and tokens:
 | --- | --- | --- |
 | [Service account](https://cloud.google.com/docs/authentication#service-accounts) (via [compute metadata](https://cloud.google.com/compute/docs/metadata/overview)) | ✅ | ✅ |
 | [User credentials](https://cloud.google.com/docs/authentication/application-default-credentials#personal) | ✅ | ❌ |
+| [Impersonated service account](https://cloud.google.com/iam/docs/impersonating-service-accounts) | ✅ | ❌ |
 | Service account (via private key) | ❌ | ❌ |
 
 ## Getting Started
