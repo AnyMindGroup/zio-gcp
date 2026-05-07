@@ -1,9 +1,6 @@
 {
-  "ownerDomain": "google.com",
-  "documentationLink": "https://cloud.google.com/bigquery/",
   "description": "A data platform for customers to create, manage, share and query data.",
-  "basePath": "/bigquery/v2/",
-  "rootUrl": "https://bigquery.googleapis.com/",
+  "mtlsRootUrl": "https://bigquery.mtls.googleapis.com/",
   "resources": {
     "datasets": {
       "methods": {
@@ -2150,9 +2147,6 @@
       }
     }
   },
-  "servicePath": "bigquery/v2/",
-  "kind": "discovery#restDescription",
-  "revision": "20260408",
   "endpoints": [
     {
       "description": "Regional Endpoint",
@@ -2275,42 +2269,12 @@
       "location": "us-west8"
     }
   ],
-  "ownerName": "Google",
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "protocol": "rest",
-  "baseUrl": "https://bigquery.googleapis.com/bigquery/v2/",
+  "rootUrl": "https://bigquery.googleapis.com/",
+  "version": "v2",
   "discoveryVersion": "v1",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/bigquery": {
-          "description": "View and manage your data in Google BigQuery and see the email address for your Google Account"
-        },
-        "https://www.googleapis.com/auth/bigquery.insertdata": {
-          "description": "Insert data into Google BigQuery"
-        },
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/cloud-platform.read-only": {
-          "description": "View your data across Google Cloud services and see the email address of your Google Account"
-        },
-        "https://www.googleapis.com/auth/devstorage.full_control": {
-          "description": "Manage your data and permissions in Cloud Storage and see the email address for your Google Account"
-        },
-        "https://www.googleapis.com/auth/devstorage.read_only": {
-          "description": "View your data in Google Cloud Storage"
-        },
-        "https://www.googleapis.com/auth/devstorage.read_write": {
-          "description": "Manage your data in Cloud Storage and see the email address of your Google Account"
-        }
-      }
-    }
-  },
-  "mtlsRootUrl": "https://bigquery.mtls.googleapis.com/",
+  "servicePath": "bigquery/v2/",
+  "kind": "discovery#restDescription",
+  "baseUrl": "https://bigquery.googleapis.com/bigquery/v2/",
   "parameters": {
     "$.xgafv": {
       "description": "V1 error format.",
@@ -2388,12 +2352,8 @@
       "type": "string"
     }
   },
-  "name": "bigquery",
-  "version": "v2",
-  "id": "bigquery:v2",
   "canonicalName": "Bigquery",
-  "batchPath": "batch/bigquery/v2",
-  "title": "BigQuery API",
+  "documentationLink": "https://cloud.google.com/bigquery/",
   "fullyEncodeReservedExpansion": true,
   "schemas": {
     "AggregateClassificationMetrics": {
@@ -11667,5 +11627,45 @@
       },
       "type": "object"
     }
-  }
+  },
+  "basePath": "/bigquery/v2/",
+  "title": "BigQuery API",
+  "protocol": "rest",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/bigquery": {
+          "description": "View and manage your data in Google BigQuery and see the email address for your Google Account"
+        },
+        "https://www.googleapis.com/auth/bigquery.insertdata": {
+          "description": "Insert data into Google BigQuery"
+        },
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/cloud-platform.read-only": {
+          "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        },
+        "https://www.googleapis.com/auth/devstorage.full_control": {
+          "description": "Manage your data and permissions in Cloud Storage and see the email address for your Google Account"
+        },
+        "https://www.googleapis.com/auth/devstorage.read_only": {
+          "description": "View your data in Google Cloud Storage"
+        },
+        "https://www.googleapis.com/auth/devstorage.read_write": {
+          "description": "Manage your data in Cloud Storage and see the email address of your Google Account"
+        }
+      }
+    }
+  },
+  "ownerDomain": "google.com",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
+  },
+  "name": "bigquery",
+  "id": "bigquery:v2",
+  "ownerName": "Google",
+  "revision": "20260328",
+  "batchPath": "batch/bigquery/v2"
 }
