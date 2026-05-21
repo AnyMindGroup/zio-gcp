@@ -1,17 +1,17 @@
 {
+  "canonicalName": "Aiplatform",
+  "baseUrl": "https://aiplatform.googleapis.com/",
+  "kind": "discovery#restDescription",
+  "rootUrl": "https://aiplatform.googleapis.com/",
   "documentationLink": "https://cloud.google.com/vertex-ai/",
-  "auth": {
-    "oauth2": {
-      "scopes": {
-        "https://www.googleapis.com/auth/cloud-platform": {
-          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
-        },
-        "https://www.googleapis.com/auth/cloud-platform.read-only": {
-          "description": "View your data across Google Cloud services and see the email address of your Google Account"
-        }
-      }
-    }
+  "revision": "20260515",
+  "description": "Build, scale, govern, and optimize sophisticated agents and models.",
+  "ownerDomain": "google.com",
+  "icons": {
+    "x16": "http://www.google.com/images/icons/product/search-16.gif",
+    "x32": "http://www.google.com/images/icons/product/search-32.gif"
   },
+  "title": "Agent Platform API",
   "endpoints": [
     {
       "endpointUrl": "https://africa-south1-aiplatform.googleapis.com/",
@@ -249,9 +249,7 @@
       "description": "Regional Endpoint"
     }
   ],
-  "fullyEncodeReservedExpansion": true,
-  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
-  "batchPath": "batch",
+  "id": "aiplatform:v1",
   "parameters": {
     "access_token": {
       "type": "string",
@@ -329,8 +327,26 @@
       "location": "query"
     }
   },
-  "revision": "20260509",
+  "batchPath": "batch",
+  "name": "aiplatform",
   "version_module": true,
+  "basePath": "",
+  "discoveryVersion": "v1",
+  "version": "v1",
+  "protocol": "rest",
+  "servicePath": "",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud-platform": {
+          "description": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+        },
+        "https://www.googleapis.com/auth/cloud-platform.read-only": {
+          "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        }
+      }
+    }
+  },
   "schemas": {
     "GoogleCloudLocationListLocationsResponse": {
       "id": "GoogleCloudLocationListLocationsResponse",
@@ -33745,12 +33761,9 @@
       }
     }
   },
-  "basePath": "",
-  "discoveryVersion": "v1",
-  "baseUrl": "https://aiplatform.googleapis.com/",
-  "kind": "discovery#restDescription",
-  "description": "Build, scale, govern, and optimize sophisticated agents and models.",
-  "canonicalName": "Aiplatform",
+  "mtlsRootUrl": "https://aiplatform.mtls.googleapis.com/",
+  "fullyEncodeReservedExpansion": true,
+  "ownerName": "Google",
   "resources": {
     "operations": {
       "methods": {
@@ -65763,18 +65776,5 @@
         }
       }
     }
-  },
-  "icons": {
-    "x16": "http://www.google.com/images/icons/product/search-16.gif",
-    "x32": "http://www.google.com/images/icons/product/search-32.gif"
-  },
-  "name": "aiplatform",
-  "ownerDomain": "google.com",
-  "version": "v1",
-  "id": "aiplatform:v1",
-  "ownerName": "Google",
-  "servicePath": "",
-  "rootUrl": "https://aiplatform.googleapis.com/",
-  "title": "Agent Platform API",
-  "protocol": "rest"
+  }
 }
