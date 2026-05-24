@@ -2,7 +2,7 @@ name: Update Google API Discovery Specs
 
 on:
   schedule:
-    - cron: '23 5 * * *'
+    - cron: '23 5 * * 0'
   workflow_dispatch: {}
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
           local file="codegen/src/main/resources/${name}_${version}.json"
           local tmp
           tmp=$(mktemp)
-          if curl -sf "$url" | jq . > "$tmp" && [ -s "$tmp" ]; then
+          if curl -sf "$url" | jq -S . > "$tmp" && [ -s "$tmp" ]; then
             mv "$tmp" "$file"
             echo "Updated $file"
           else
