@@ -59,7 +59,7 @@ val sttpClient4Version = "4.0.25"
 
 val jsoniterVersion = "2.38.14"
 
-val codegenVersion = "0.0.14"
+val codegenVersion = "0.0.15"
 
 val scalaNativeCryptoVersion = "0.3.0"
 
