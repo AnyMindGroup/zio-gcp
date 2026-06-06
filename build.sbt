@@ -295,6 +295,8 @@ lazy val root =
       zioGcpStorage.native,
       zioGcpSheets.jvm,
       zioGcpSheets.native,
+      zioGcpAiplatform.jvm,
+      zioGcpAiplatform.native,
       zioPubsub.jvm,
       zioPubsub.native,
       zioPubsubHttp.jvm,
@@ -370,6 +372,29 @@ lazy val zioGcpSheets = crossProject(JVMPlatform, NativePlatform)
   .settings(
     libraryDependencies ++= Seq(
       "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal"
+    )
+  )
+
+lazy val zioGcpAiplatform = crossProject(JVMPlatform, NativePlatform)
+  .in(file("zio-gcp-aiplatform"))
+  .settings(moduleName := "zio-gcp-aiplatform")
+  .settings(commonSettings)
+  .dependsOn(zioGcpAuth)
+  .dependsOn(
+    gcpClientsCrossProjects
+      .filter(_.projects.exists { case (_, p) =>
+        Set("zio-gcp-aiplatform-v1").exists(p.id.startsWith(_))
+      })
+      .map(p => new CrossClasspathDependency(p, p.configuration)) *
+  )
+  .settings(
+    libraryDependencies ++= Seq(
+      "dev.zio"                               %%% "zio-schema"              % zioSchemaVersion,
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % "compile-internal",
+      "dev.zio"                               %%% "zio-schema-derivation"   % zioSchemaVersion % Test,
+      "dev.zio"                               %%% "zio-test"                % zioVersion.value % Test,
+      "dev.zio"                               %%% "zio-test-sbt"            % zioVersion.value % Test,
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % Test,
     )
   )
 
