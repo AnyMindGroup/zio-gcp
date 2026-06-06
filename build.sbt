@@ -389,12 +389,12 @@ lazy val zioGcpAiplatform = crossProject(JVMPlatform, NativePlatform)
   )
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio"                               %%% "zio-schema"              % zioSchemaVersion,
-      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % "compile-internal",
-      "dev.zio"                               %%% "zio-schema-derivation"   % zioSchemaVersion % Test,
-      "dev.zio"                               %%% "zio-test"                % zioVersion.value % Test,
-      "dev.zio"                               %%% "zio-test-sbt"            % zioVersion.value % Test,
-      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % Test,
+      "dev.zio"                               %%% "zio-schema"            % zioSchemaVersion,
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion  % "compile-internal",
+      "dev.zio"                               %%% "zio-schema-derivation" % zioSchemaVersion % Test,
+      "dev.zio"                               %%% "zio-test"              % zioVersion.value % Test,
+      "dev.zio"                               %%% "zio-test-sbt"          % zioVersion.value % Test,
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion  % Test,
     )
   )
 

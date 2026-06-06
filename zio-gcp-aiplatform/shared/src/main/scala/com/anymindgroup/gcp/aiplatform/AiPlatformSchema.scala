@@ -106,7 +106,7 @@ object AiPlatformSchema {
         case Schema.Primitive(StandardType.IntType, _)    => GoogleCloudAiplatformV1Schema.Type.NUMBER
         case Schema.Primitive(StandardType.ShortType, _)  => GoogleCloudAiplatformV1Schema.Type.NUMBER
         case Schema.Primitive(StandardType.LongType, _)   => GoogleCloudAiplatformV1Schema.Type.NUMBER
-        case _ => GoogleCloudAiplatformV1Schema.Type.TYPE_UNSPECIFIED
+        case _                                            => GoogleCloudAiplatformV1Schema.Type.TYPE_UNSPECIFIED
     }.toSet
 
     if types == Set(GoogleCloudAiplatformV1Schema.Type.STRING) then
