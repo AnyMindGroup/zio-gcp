@@ -5,8 +5,6 @@ import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
 
 object express_vertex_ai_from_text extends ZIOAppDefault:
-  case class Joke(setup: String, punchline: String) derives Schema
-  given JsonValueCodec[Joke] = JsonCodecMaker.make
   def run = for
     authedBackend <- defaultAccessTokenBackend()
     express        = Express(
@@ -23,3 +21,6 @@ object express_vertex_ai_from_text extends ZIOAppDefault:
     joke <- express.generateStructuredFromText[Joke]("Tell me a joke")
     _    <- ZIO.logInfo("Joke: " + joke.setup + " \u2014 " + joke.punchline)
   yield ()
+
+  case class Joke(setup: String, punchline: String) derives Schema
+  given JsonValueCodec[Joke] = JsonCodecMaker.make
