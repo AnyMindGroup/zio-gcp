@@ -2,8 +2,10 @@ package com.anymindgroup.gcp.aiplatform
 
 import com.anymindgroup.gcp.aiplatform.v1.resources.projects.locations.publishers
 import com.anymindgroup.gcp.aiplatform.v1.schemas.{
+  GoogleCloudAiplatformV1Content,
   GoogleCloudAiplatformV1GenerateContentRequest,
   GoogleCloudAiplatformV1GenerationConfig,
+  GoogleCloudAiplatformV1Part,
 }
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import sttp.client4.Backend
@@ -18,7 +20,7 @@ class Express(
   defaultPublishersId: String,
   defaultModelsId: String,
 ) {
-  def generateContentString(
+  def generateText(
     req: GoogleCloudAiplatformV1GenerateContentRequest,
     projectsId: String = defaultProjectsId,
     locationsId: String = defaultLocationsId,
@@ -48,7 +50,51 @@ class Express(
     }
   }
 
-  def generateContent[R](
+  def generateTextFromText(
+    text: String,
+    projectsId: String = defaultProjectsId,
+    locationsId: String = defaultLocationsId,
+    publishersId: String = defaultPublishersId,
+    modelsId: String = defaultModelsId,
+  ): Task[String] =
+    generateText(
+      GoogleCloudAiplatformV1GenerateContentRequest(
+        contents = Chunk(
+          GoogleCloudAiplatformV1Content(
+            parts = Chunk(GoogleCloudAiplatformV1Part(text = Some(text))),
+            role = Some("user"),
+          )
+        )
+      ),
+      projectsId,
+      locationsId,
+      publishersId,
+      modelsId,
+    )
+
+  def generateStructuredFromText[R](
+    text: String,
+    projectsId: String = defaultProjectsId,
+    locationsId: String = defaultLocationsId,
+    publishersId: String = defaultPublishersId,
+    modelsId: String = defaultModelsId,
+  )(using schema: Schema[R], c: JsonValueCodec[R]): Task[R] =
+    generateStructured[R](
+      GoogleCloudAiplatformV1GenerateContentRequest(
+        contents = Chunk(
+          GoogleCloudAiplatformV1Content(
+            parts = Chunk(GoogleCloudAiplatformV1Part(text = Some(text))),
+            role = Some("user"),
+          )
+        )
+      ),
+      projectsId,
+      locationsId,
+      publishersId,
+      modelsId,
+    )
+
+  def generateStructured[R](
     req: GoogleCloudAiplatformV1GenerateContentRequest,
     projectsId: String = defaultProjectsId,
     locationsId: String = defaultLocationsId,
@@ -68,7 +114,7 @@ class Express(
       )
     )
 
-    generateContentString(updatedReq, projectsId, locationsId, publishersId, modelsId)
+    generateText(updatedReq, projectsId, locationsId, publishersId, modelsId)
       .flatMap(text => ZIO.attempt(readFromArray[R](text.getBytes("UTF-8"))))
   }
 }
