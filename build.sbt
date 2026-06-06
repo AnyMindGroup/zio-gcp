@@ -409,9 +409,9 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
     crossScalaVersions := Seq(scala3Next),
     fork               := true,
     libraryDependencies ++= Seq(
-      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % "compile-internal",
-      "dev.zio"                               %%% "zio-schema-derivation"   % zioSchemaVersion,
-      "dev.zio"                               %%% "zio-json"                % "0.9.1",
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
+      "dev.zio"                               %%% "zio-schema-derivation" % zioSchemaVersion,
+      "dev.zio"                               %%% "zio-json"              % "0.9.1",
     ),
   )
   .jvmConfigure(

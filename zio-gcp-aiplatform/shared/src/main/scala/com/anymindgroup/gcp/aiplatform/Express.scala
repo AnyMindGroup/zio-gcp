@@ -7,9 +7,9 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
 }
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import sttp.client4.Backend
-import zio.{Task, ZIO}
+
 import zio.schema.Schema
-import zio.Chunk
+import zio.{Chunk, Task, ZIO}
 
 class Express(
   backend: Backend[Task],
