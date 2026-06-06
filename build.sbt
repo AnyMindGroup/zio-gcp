@@ -400,7 +400,7 @@ lazy val zioGcpAiplatform = crossProject(JVMPlatform, NativePlatform)
 
 lazy val examples = crossProject(JVMPlatform, NativePlatform)
   .in(file("examples"))
-  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets, zioPubsubHttp)
+  .dependsOn(zioGcpAuth, zioGcpStorage, zioGcpSheets, zioGcpAiplatform, zioPubsubHttp)
   .dependsOn(gcpClientsCrossProjects.map(p => new CrossClasspathDependency(p, p.configuration)) *)
   .settings(noPublishSettings)
   .settings(
@@ -409,8 +409,9 @@ lazy val examples = crossProject(JVMPlatform, NativePlatform)
     crossScalaVersions := Seq(scala3Next),
     fork               := true,
     libraryDependencies ++= Seq(
-      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros" % jsoniterVersion % "compile-internal",
-      "dev.zio"                               %%% "zio-json"              % "0.9.1",
+      "com.github.plokhotnyuk.jsoniter-scala" %%% "jsoniter-scala-macros"   % jsoniterVersion % "compile-internal",
+      "dev.zio"                               %%% "zio-schema-derivation"   % zioSchemaVersion,
+      "dev.zio"                               %%% "zio-json"                % "0.9.1",
     ),
   )
   .jvmConfigure(
