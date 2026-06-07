@@ -1,22 +1,22 @@
 import zio.*, zio.schema.*, com.anymindgroup.gcp.auth.defaultAccessTokenBackend
-import com.anymindgroup.gcp.aiplatform.Express
+import com.anymindgroup.gcp.aiplatform.ExpressModelClient
 import com.github.plokhotnyuk.jsoniter_scala as json
 
 object express_vertex_ai_from_text extends ZIOAppDefault:
   def run = for
     authedBackend <- defaultAccessTokenBackend()
-    express        = Express(
+    express        = ExpressModelClient(
                 backend = authedBackend,
-                defaultProjectsId = "my-gcp-project",
-                defaultLocationsId = "global",
-                defaultPublishersId = "google",
-                defaultModelsId = "gemini-3.5-flash",
+                projectsId = "my-gcp-project",
+                locationsId = "global",
+                publishersId = "google",
+                modelsId = "gemini-3.5-flash",
               )
 
-    txt <- express.generateTextFromText("hello how are you doing?")
+    txt <- express.generateText("hello how are you doing?")
     _   <- ZIO.logInfo("Text response: " + txt)
 
-    joke <- express.generateStructuredFromText[Joke]("Tell me a joke")
+    joke <- express.generate[Joke]("Tell me a joke")
     _    <- ZIO.logInfo("Joke: " + joke.setup + " \u2014 " + joke.punchline)
   yield ()
 
