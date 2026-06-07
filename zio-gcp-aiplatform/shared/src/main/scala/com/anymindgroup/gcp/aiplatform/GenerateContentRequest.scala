@@ -56,3 +56,15 @@ object GenerateContentRequest {
       ),
     )
 }
+
+extension (r: GoogleCloudAiplatformV1GenerateContentRequest)
+  def withSystemInstructions(
+    systemInstructions: String
+  ): GoogleCloudAiplatformV1GenerateContentRequest = r.copy(
+    systemInstruction = Some(
+      GoogleCloudAiplatformV1Content(
+        parts = Chunk(GoogleCloudAiplatformV1Part(text = Some(systemInstructions))),
+        role = Some("user"),
+      )
+    )
+  )

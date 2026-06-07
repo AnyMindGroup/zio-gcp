@@ -22,13 +22,10 @@ object express_vertex_ai_request extends ZIOAppDefault:
               )
             ),
             responseSchema = Schema[Joke],
-          )
-
-    txt <- express.generateText(msg)
-    _   <- ZIO.logInfo("Text response: " + txt)
+          ).withSystemInstructions("just reply to the question")
 
     joke <- express.generate[Joke](msg)
-    _    <- ZIO.logInfo("Joke: " + joke.setup + " \u2014 " + joke.punchline)
+    _     = println("Joke: " + joke.setup + " \u2014 " + joke.punchline)
   yield ()
 
   case class Joke(setup: String, punchline: String) derives Schema

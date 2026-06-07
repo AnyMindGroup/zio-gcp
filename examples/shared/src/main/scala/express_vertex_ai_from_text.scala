@@ -14,10 +14,10 @@ object express_vertex_ai_from_text extends ZIOAppDefault:
               )
 
     txt <- express.generateText("hello how are you doing?")
-    _   <- ZIO.logInfo("Text response: " + txt)
+    _    = println("Text response: " + txt)
 
     joke <- express.generate[Joke]("Tell me a joke")
-    _    <- ZIO.logInfo("Joke: " + joke.setup + " \u2014 " + joke.punchline)
+    _     = println("Joke: " + joke.setup + " \u2014 " + joke.punchline)
   yield ()
 
   case class Joke(setup: String, punchline: String) derives Schema
