@@ -2,7 +2,7 @@
 
 Client for [Google Cloud Vertex AI API](https://cloud.google.com/vertex-ai/docs/reference/rest).
 
-The `zio-gcp-aiplatform` module provides an `ExpressModelClient` convenience layer built on top of the generated API client, with integrated support for [ZIO Schema](https://zio.dev/zio-schema/). You can define case classes with `derives Schema` to use as structured response schemas (enforcing JSON output shape) or as function parameter/return types in function calling — schemas are automatically converted to Vertex AI's `GoogleCloudAiplatformV1Schema` format.
+The `zio-gcp-aiplatform` module provides an `ExpressModelClient` convenience layer built on top of the generated API client, with integrated support for [ZIO Schema](https://zio.dev/zio-schema/) and [function-calling](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/tools/function-calling) tools. You can define case classes with `derives Schema` to use as structured response schemas (enforcing JSON output shape) or as function parameter/return types in function calling — schemas are automatically converted to [OpenAPI schema](https://spec.openapis.org/oas/v3.0.3#schema) format for the Vertex AI API.
 
 ## Getting Started
 
