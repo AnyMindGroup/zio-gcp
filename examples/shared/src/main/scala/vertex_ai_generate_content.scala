@@ -9,7 +9,7 @@ object vertex_ai_generate_content extends ZIOAppDefault:
                 projectsId = "my-gcp-project",
                 locationsId = endpoint.location,
                 publishersId = "google",
-                modelsId = "gemini-2.5-flash",
+                modelsId = "gemini-3.5-flash",
                 request = GoogleCloudAiplatformV1GenerateContentRequest(
                   contents = Chunk(
                     GoogleCloudAiplatformV1Content(

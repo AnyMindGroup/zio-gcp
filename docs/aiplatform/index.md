@@ -14,6 +14,14 @@ libraryDependencies ++= Seq(
 
 ## Usage examples
 
-#### Generate content via Vertex AI API:
+#### Generate text via the Express client (text-only input):
+
+<<< @/../examples/shared/src/main/scala/express_vertex_ai_from_text.scala{scala}
+
+#### Generate structured output via the Express client (request construction):
+
+<<< @/../examples/shared/src/main/scala/express_vertex_ai_request.scala{scala}
+
+#### Generate content via the raw API client:
 
 <<< @/../examples/shared/src/main/scala/vertex_ai_generate_content.scala{scala}
