@@ -2,10 +2,12 @@ package com.anymindgroup.gcp.aiplatform
 
 import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1Content,
+  GoogleCloudAiplatformV1FunctionDeclaration,
   GoogleCloudAiplatformV1GenerateContentRequest,
   GoogleCloudAiplatformV1GenerationConfig,
   GoogleCloudAiplatformV1Part,
   GoogleCloudAiplatformV1Schema,
+  GoogleCloudAiplatformV1Tool,
 }
 
 import zio.Chunk
@@ -68,3 +70,32 @@ extension (r: GoogleCloudAiplatformV1GenerateContentRequest)
       )
     )
   )
+
+  def withFunctions(
+    functions: Map[String, FunctionDeclaration[?, ?]]
+  ): GoogleCloudAiplatformV1GenerateContentRequest =
+    val funcTools = GoogleCloudAiplatformV1Tool(
+      functionDeclarations = Some(Chunk.fromIterable(functions.map { case (name, fn) =>
+        GoogleCloudAiplatformV1FunctionDeclaration(
+          name = name,
+          description = fn.description,
+          parameters = Some(fn.inputSchema),
+          response = Some(fn.outputSchema),
+        )
+      }))
+    )
+
+    r.copy(tools =
+      Some(
+        r.tools match
+          case None        => Chunk(funcTools)
+          case Some(tools) =>
+            tools.map(tool =>
+              tool.copy(
+                functionDeclarations =
+                  // ensure functions with the same name are filtered out to to prevent from conflicts
+                  tool.functionDeclarations.map(_.filterNot(f => functions.keySet.contains(f.name)))
+              )
+            ) :+ funcTools
+      )
+    )
