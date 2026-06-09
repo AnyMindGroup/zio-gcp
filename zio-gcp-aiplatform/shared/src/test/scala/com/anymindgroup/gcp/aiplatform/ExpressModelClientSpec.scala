@@ -4,8 +4,8 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.*
 import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.JsonCodecMaker
-import sttp.client4.testing.{BackendStub, ResponseStub}
 import sttp.client4.impl.zio.RIOMonadAsyncError
+import sttp.client4.testing.{BackendStub, ResponseStub}
 import sttp.client4.{Backend, StringBody}
 import sttp.model.StatusCode
 
