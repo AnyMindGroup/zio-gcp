@@ -75,7 +75,8 @@ extension (r: GoogleCloudAiplatformV1GenerateContentRequest)
     functions: Map[String, FunctionDeclaration[?, ?]]
   ): GoogleCloudAiplatformV1GenerateContentRequest =
     val funcTools = GoogleCloudAiplatformV1Tool(
-      functionDeclarations = Some(Chunk.fromIterable(functions.map { case (name, fn) =>
+      // sort by function name to keep the emitted declarations deterministic across runs
+      functionDeclarations = Some(Chunk.fromIterable(functions.toSeq.sortBy(_._1).map { case (name, fn) =>
         GoogleCloudAiplatformV1FunctionDeclaration(
           name = name,
           description = fn.description,
@@ -93,7 +94,7 @@ extension (r: GoogleCloudAiplatformV1GenerateContentRequest)
             tools.map(tool =>
               tool.copy(
                 functionDeclarations =
-                  // ensure functions with the same name are filtered out to to prevent from conflicts
+                  // ensure functions with the same name are filtered out to prevent conflicts
                   tool.functionDeclarations.map(_.filterNot(f => functions.keySet.contains(f.name)))
               )
             ) :+ funcTools
