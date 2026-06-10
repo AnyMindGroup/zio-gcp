@@ -42,8 +42,8 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
       )
     ).toJsonString
 
-  // builds a response with one candidate holding one function call part per provided call.
-  // a thoughtSignature must be present for the client to pick up the function call.
+  // builds a response with one candidate holding one function call part per provided call,
+  // each carrying a thought signature that the client echoes back to the model.
   private def functionCallResponse(calls: (String, Json, String)*): String =
     GoogleCloudAiplatformV1GenerateContentResponse(
       candidates = Some(
@@ -57,6 +57,27 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
                     thoughtSignature = Some(signature),
                   )
                 }),
+                role = Some("model"),
+              )
+            )
+          )
+        )
+      )
+    ).toJsonString
+
+  // builds a response with a single function call part that carries no thought signature
+  private def functionCallResponseWithoutSignature(name: String, args: Json): String =
+    GoogleCloudAiplatformV1GenerateContentResponse(
+      candidates = Some(
+        Chunk(
+          GoogleCloudAiplatformV1Candidate(
+            content = Some(
+              GoogleCloudAiplatformV1Content(
+                parts = Chunk(
+                  GoogleCloudAiplatformV1Part(
+                    functionCall = Some(GoogleCloudAiplatformV1FunctionCall(name = Some(name), args = Some(args)))
+                  )
+                ),
                 role = Some("model"),
               )
             )
@@ -196,7 +217,33 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
                       )
                     )
         error <- client(stubBackend(responses, requests)).send(GenerateContentRequest("hi"), functions).flip
-      } yield assertTrue(error.getMessage == "Unknown function: unknown_fn")
+      } yield assertTrue(
+        error == FunctionCallException.UnknownFunction("unknown_fn"),
+        error.getMessage == "Unknown function: unknown_fn",
+      )
+    },
+    test("send executes a function call that carries no thought signature") {
+      for {
+        requests <- Ref.make(Chunk.empty[String])
+        fnInputs <- Ref.make(Chunk.empty[City])
+        responses = Chunk(
+                      functionCallResponseWithoutSignature("get_weather", Json.writeToJson(City("Tokyo"))),
+                      textResponse("It is sunny."),
+                    )
+        functions = Map(
+                      "get_weather" -> FunctionDeclaration(
+                        function = (c: City) => fnInputs.update(_ :+ c).as(WeatherResult(22, "celsius", "Sunny")),
+                        description = None,
+                      )
+                    )
+        res          <- client(stubBackend(responses, requests)).send(GenerateContentRequest("weather?"), functions)
+        sentRequests <- requests.get
+        calledWith   <- fnInputs.get
+      } yield assertTrue(
+        res.text == "It is sunny.",
+        calledWith == Chunk(City("Tokyo")),
+        sentRequests.size == 2,
+      )
     },
     test("send executes multiple function calls returned in a single turn") {
       for {

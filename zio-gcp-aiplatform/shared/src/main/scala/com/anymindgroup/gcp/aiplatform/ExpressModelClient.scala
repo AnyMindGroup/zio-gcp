@@ -9,12 +9,19 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1GenerateContentResponse,
   GoogleCloudAiplatformV1Part,
 }
-import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import sttp.client4.Backend
 
 import zio.schema.Schema
 import zio.{Chunk, Task, ZIO}
+
+sealed abstract class FunctionCallException(message: String) extends Throwable(message)
+object FunctionCallException {
+  final case class UnknownFunction(name: String) extends FunctionCallException(s"Unknown function: $name")
+  final case class MissingArguments(name: String)
+      extends FunctionCallException(s"Missing arguments for function call: $name")
+  case object MissingFunctionName extends FunctionCallException("Received a function call without a name")
+}
 
 // express client with fixed location and model for generating content
 class ExpressModelClient(
@@ -50,8 +57,8 @@ class ExpressModelClient(
       fnCall: GoogleCloudAiplatformV1FunctionCall,
     ): Task[GoogleCloudAiplatformV1Content] =
       for
-        fn     <- ZIO.fromEither(functions.get(fnName).toRight(Throwable(s"Unknown function: $fnName")))
-        input   = fnCall.args.getOrElse(Json.codec.nullValue)
+        fn     <- ZIO.fromEither(functions.get(fnName).toRight(FunctionCallException.UnknownFunction(fnName)))
+        input  <- ZIO.fromOption(fnCall.args).orElseFail(FunctionCallException.MissingArguments(fnName))
         output <- fn(input)
       yield GoogleCloudAiplatformV1Content(
         parts = Chunk(
@@ -71,36 +78,25 @@ class ExpressModelClient(
       val req = baseReqWithFunctions.copy(contents = contents)
       send(req).flatMap { resp =>
         val fnCalls = resp.candidates
-          .to(Chunk)
-          .flatMap(_.flatMap(_.content.to(Chunk)))
-          .flatMap: content =>
-            content.parts.collect:
-              case GoogleCloudAiplatformV1Part(
-                    _,
-                    _,
-                    _,
-                    Some(fn @ GoogleCloudAiplatformV1FunctionCall(_, Some(name), _, _)),
-                    _,
-                    _,
-                    _,
-                    _,
-                    _,
-                    Some(thoughtSignature),
-                    _,
-                  ) =>
-                (thoughtSignature, name, fn)
+          .getOrElse(Chunk.empty)
+          .flatMap(_.content.to(Chunk))
+          .flatMap(_.parts)
+          .flatMap(part => part.functionCall.map((part, _)))
 
         if fnCalls.isEmpty then ZIO.succeed(resp)
         else
           ZIO
-            .foreachPar(fnCalls) { (thoughtSignature, name, fn) =>
-              processFnCall(name, fn).map { fnRespContent =>
-                // echo back the function call with its thoughtSignature
+            .foreachPar(fnCalls) { (part, fnCall) =>
+              for
+                name          <- ZIO.fromOption(fnCall.name).orElseFail(FunctionCallException.MissingFunctionName)
+                fnRespContent <- processFnCall(name, fnCall)
+              yield {
+                // echo back the function call with its thought signature (if present)
                 val modelFnContent = GoogleCloudAiplatformV1Content(
                   parts = Chunk(
                     GoogleCloudAiplatformV1Part(
-                      functionCall = Some(fn),
-                      thoughtSignature = Some(thoughtSignature),
+                      functionCall = Some(fnCall),
+                      thoughtSignature = part.thoughtSignature,
                     )
                   ),
                   role = Some("model"),
