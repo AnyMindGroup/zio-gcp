@@ -28,7 +28,7 @@ libraryDependencies ++= Seq(
 
 <<< @/../examples/shared/src/main/scala/express_vertex_ai_custom_req.scala{scala}
 
-####  Generate structured output with a custom request and functions:
+#### Generate structured output with a custom request and functions:
 
 <<< @/../examples/shared/src/main/scala/express_vertex_ai_function_calling.scala{scala}
 
