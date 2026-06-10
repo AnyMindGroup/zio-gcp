@@ -8,7 +8,7 @@ object express_vertex_ai_function_calling extends ZIOAppDefault:
     authedBackend <- defaultAccessTokenBackend()
     express        = ExpressModelClient(
                 backend = authedBackend,
-                projectsId = "anychat-staging",
+                projectsId = "my-gcp-project",
                 locationsId = "global",
                 publishersId = "google",
                 modelsId = "gemini-3.5-flash",
