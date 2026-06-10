@@ -14,24 +14,9 @@ libraryDependencies ++= Seq(
 )
 ```
 
-## Express client usage examples
+## Usage
 
-#### Simple text generation:
-
-<<< @/../examples/shared/src/main/scala/express_vertex_ai_text.scala{scala}
-
-#### Generate structured output from text:
-
-<<< @/../examples/shared/src/main/scala/express_vertex_ai_schema.scala{scala}
-
-#### Generate structured output with a custom request:
-
-<<< @/../examples/shared/src/main/scala/express_vertex_ai_custom_req.scala{scala}
-
-#### Generate structured output with a custom request and functions:
-
-<<< @/../examples/shared/src/main/scala/express_vertex_ai_function_calling.scala{scala}
-
-#### Generate content via the raw API client:
-
-<<< @/../examples/shared/src/main/scala/vertex_ai_generate_content.scala{scala}
+- [Text generation](./text-generation) — plain text in, plain text out.
+- [Structured responses with ZIO Schema](./structured-responses) — decode the model output into your own types.
+- [Function calling](./function-calling) — let the model call your functions.
+- [Raw API client](./raw-client) — use the generated Vertex AI client directly.

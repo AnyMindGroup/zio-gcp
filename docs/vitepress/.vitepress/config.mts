@@ -49,7 +49,16 @@ export default defineConfig({
               ]
             },
             { text: 'Storage', link: '/storage/' },
-            { text: 'AI platform', link: '/aiplatform/' },
+            {
+              text: 'AI platform', link: '/aiplatform/',
+              items: [
+                { text: 'Overview', link: '/aiplatform/' },
+                { text: 'Text generation', link: '/aiplatform/text-generation' },
+                { text: 'Structured responses', link: '/aiplatform/structured-responses' },
+                { text: 'Function calling', link: '/aiplatform/function-calling' },
+                { text: 'Raw API client', link: '/aiplatform/raw-client' },
+              ]
+            },
             { text: 'Sheets', link: '/sheets/' },
             { text: 'BigQuery', link: '/bigquery/' },
           ]
