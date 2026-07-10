@@ -57,7 +57,7 @@ val _zioVersion = "2.1.26"
 
 val sttpClient4Version = "4.0.26"
 
-val jsoniterVersion = "2.38.17"
+val jsoniterVersion = "2.39.1"
 
 val codegenVersion = "0.0.15"
 
