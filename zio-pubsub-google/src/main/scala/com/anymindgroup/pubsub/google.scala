@@ -30,11 +30,13 @@ private def acquireBackgroundReource[R <: BackgroundResource](
 def createEmulatorSettings(
   config: PubsubConnectionConfig.Emulator
 ): RIO[Scope, (TransportChannelProvider, CredentialsProvider)] = for {
-  channel <- acquireBackgroundReource(ZIO.attempt {
-               val channel: ManagedChannel =
-                 ManagedChannelBuilder.forTarget(s"${config.host}:${config.port}").usePlaintext().build()
-               GrpcTransportChannel.create(channel)
-             })
+  channel <- acquireBackgroundReource(
+               ZIO.attempt {
+                 val channel: ManagedChannel =
+                   ManagedChannelBuilder.forTarget(s"${config.host}:${config.port}").usePlaintext().build()
+                 GrpcTransportChannel.create(channel)
+               }
+             )
   channelProvider    <- ZIO.attempt(FixedTransportChannelProvider.create(channel))
   credentialsProvider = NoCredentialsProvider.create
 } yield (channelProvider, credentialsProvider)
