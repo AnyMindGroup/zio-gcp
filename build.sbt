@@ -55,9 +55,9 @@ val scala3Next = "3.8.4"
 
 val _zioVersion = "2.1.26"
 
-val sttpClient4Version = "4.0.25"
+val sttpClient4Version = "4.0.26"
 
-val jsoniterVersion = "2.38.14"
+val jsoniterVersion = "2.38.17"
 
 val codegenVersion = "0.0.15"
 
@@ -480,7 +480,7 @@ lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
     )
   )
 
-val googleCloudPubsubVersion = "1.151.0"
+val googleCloudPubsubVersion = "1.152.0"
 lazy val zioPubsubGoogle     = (project in file("zio-pubsub-google"))
   .settings(
     moduleName          := "zio-pubsub-google",
