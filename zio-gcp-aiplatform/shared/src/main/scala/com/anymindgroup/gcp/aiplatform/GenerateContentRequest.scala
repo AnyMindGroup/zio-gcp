@@ -7,7 +7,7 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1GenerationConfig,
   GoogleCloudAiplatformV1Part,
   GoogleCloudAiplatformV1Schema,
-  GoogleCloudAiplatformV1Tool
+  GoogleCloudAiplatformV1Tool,
 }
 
 import zio.Chunk

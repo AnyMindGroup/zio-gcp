@@ -7,7 +7,7 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1FunctionResponse,
   GoogleCloudAiplatformV1GenerateContentRequest,
   GoogleCloudAiplatformV1GenerateContentResponse,
-  GoogleCloudAiplatformV1Part
+  GoogleCloudAiplatformV1Part,
 }
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import sttp.client4.Backend
