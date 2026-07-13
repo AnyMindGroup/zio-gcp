@@ -27,11 +27,11 @@ object express_vertex_ai_function_calling extends ZIOAppDefault:
     res <- express.send(
              baseRequest = msg,
              functions = Map(
-                "get_weather" -> FunctionDeclaration(
-                  function =
-                    (city: City) => ZIO.succeed(WeatherResult(temperature = 22, unit = "celsius", conditions = "Sunny")),
-                  description = Some("Get the current weather for a given city"),
-                )
+               "get_weather" -> FunctionDeclaration(
+                 function =
+                   (city: City) => ZIO.succeed(WeatherResult(temperature = 22, unit = "celsius", conditions = "Sunny")),
+                 description = Some("Get the current weather for a given city"),
+               )
              ),
            )
     _ = println(s"Result: $res")
