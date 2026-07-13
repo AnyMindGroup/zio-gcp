@@ -1,5 +1,8 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.schema.Schema
+import zio.{Chunk, Task, ZIO}
+
 import com.anymindgroup.gcp.aiplatform.v1.resources.projects.locations.publishers
 import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1Content,
@@ -11,9 +14,6 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
 }
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import sttp.client4.Backend
-
-import zio.schema.Schema
-import zio.{Chunk, Task, ZIO}
 
 sealed abstract class FunctionCallException(message: String) extends Throwable(message)
 object FunctionCallException {

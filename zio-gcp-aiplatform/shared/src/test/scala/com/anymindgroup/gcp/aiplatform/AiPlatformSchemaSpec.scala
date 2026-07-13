@@ -1,11 +1,11 @@
 package com.anymindgroup.gcp.aiplatform
 
-import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Schema
-import com.anymindgroup.jsoniter.Json.*
-
 import zio.Chunk
 import zio.schema.*
 import zio.test.*
+
+import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Schema
+import com.anymindgroup.jsoniter.Json.*
 
 object AiPlatformSchemaSpec extends ZIOSpecDefault {
   import AiPlatformSchema.propsJsonCodec

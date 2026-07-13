@@ -3,6 +3,9 @@ package com.anymindgroup.pubsub.http
 import java.util.Base64
 import java.util.Base64.Decoder
 
+import zio.stream.ZStream
+import zio.{Cause, Chunk, NonEmptyChunk, Queue, Schedule, Scope, Task, UIO, ZIO}
+
 import com.anymindgroup.gcp.auth.{
   AuthedBackend,
   Token,
@@ -16,9 +19,6 @@ import com.anymindgroup.gcp.pubsub.v1.schemas as s
 import com.anymindgroup.http.*
 import com.anymindgroup.pubsub.*
 import sttp.client4.*
-
-import zio.stream.ZStream
-import zio.{Cause, Chunk, NonEmptyChunk, Queue, Schedule, Scope, Task, UIO, ZIO}
 
 class HttpSubscriber private[http] (
   backend: Backend[Task],

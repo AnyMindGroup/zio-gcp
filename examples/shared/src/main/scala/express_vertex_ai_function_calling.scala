@@ -1,6 +1,9 @@
-import zio.*, zio.schema.*, com.anymindgroup.gcp.auth.defaultAccessTokenBackend
-import com.anymindgroup.gcp.aiplatform.v1.schemas.*
+import zio.*
+import zio.schema.*
+
 import com.anymindgroup.gcp.aiplatform.*
+import com.anymindgroup.gcp.aiplatform.v1.schemas.*
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 import com.github.plokhotnyuk.jsoniter_scala as json
 
 object express_vertex_ai_function_calling extends ZIOAppDefault:

@@ -3543,8 +3543,8 @@ object aliases:
     extension (v: va_list) inline def value: unsafe.CVarArgList = v
 
 object structs:
-  import _root_.curl.enumerations.*
   import _root_.curl.aliases.*
+  import _root_.curl.enumerations.*
 
   opaque type CURLMsg = CStruct3[CURLMSG, Ptr[CURL], CURLMsg_Data]
 
@@ -4553,8 +4553,8 @@ object structs:
 
 @extern
 private[curl] object extern_functions:
-  import _root_.curl.enumerations.*
   import _root_.curl.aliases.*
+  import _root_.curl.enumerations.*
   import _root_.curl.structs.*
   def Wcurl_easy_getinfo_err_curl_certinfo(): Unit = extern
 
@@ -5068,58 +5068,16 @@ private[curl] object extern_functions:
   ): CURLcode = extern
 
 object functions:
-  import _root_.curl.enumerations.*
   import _root_.curl.aliases.*
+  import _root_.curl.enumerations.*
   export extern_functions.*
 
 object types:
-  export _root_.curl.structs.*
   export _root_.curl.aliases.*
   export _root_.curl.enumerations.*
+  export _root_.curl.structs.*
 
 object all:
-  export _root_.curl.enumerations.{
-    CURLFORMcode,
-    CURLHcode,
-    CURLINFO,
-    CURLMSG,
-    CURLMcode,
-    CURLMinfo_offt,
-    CURLMoption,
-    CURLSHcode,
-    CURLSHoption,
-    CURLSTScode,
-    CURLUPart,
-    CURLUcode,
-    CURL_NETRC_OPTION,
-    CURL_TLSAUTH,
-    CURLcode,
-    CURLformoption,
-    CURLoption,
-    CURLproxycode,
-    CURLsslset,
-    CURLversion,
-    curl_TimeCond,
-    curl_closepolicy,
-    curl_easytype,
-    curl_ftpauth,
-    curl_ftpccc,
-    curl_ftpcreatedir,
-    curl_ftpmethod,
-    curl_infotype,
-    curl_khmatch,
-    curl_khstat,
-    curl_khtype,
-    curl_lock_access,
-    curl_lock_data,
-    curl_proxytype,
-    curl_sslbackend,
-    curl_usessl,
-    curlfiletype,
-    curliocmd,
-    curlioerr,
-    curlsocktype,
-  }
   export _root_.curl.aliases.{
     CURL,
     CURLM,
@@ -5220,30 +5178,47 @@ object all:
     time_t,
     va_list,
   }
-  export _root_.curl.structs.{
-    CURLMsg,
-    CURLU,
-    Curl_URL,
-    curl_blob,
-    curl_certinfo,
-    curl_easyoption,
-    curl_fileinfo,
-    curl_forms,
-    curl_header,
-    curl_hstsentry,
-    curl_httppost,
-    curl_index,
-    curl_khkey,
-    curl_mime,
-    curl_mimepart,
-    curl_pushheaders,
-    curl_slist,
-    curl_sockaddr,
-    curl_ssl_backend,
-    curl_tlssessioninfo,
-    curl_version_info_data,
-    curl_waitfd,
-    curl_ws_frame,
+  export _root_.curl.enumerations.{
+    CURLFORMcode,
+    CURLHcode,
+    CURLINFO,
+    CURLMSG,
+    CURLMcode,
+    CURLMinfo_offt,
+    CURLMoption,
+    CURLSHcode,
+    CURLSHoption,
+    CURLSTScode,
+    CURLUPart,
+    CURLUcode,
+    CURL_NETRC_OPTION,
+    CURL_TLSAUTH,
+    CURLcode,
+    CURLformoption,
+    CURLoption,
+    CURLproxycode,
+    CURLsslset,
+    CURLversion,
+    curl_TimeCond,
+    curl_closepolicy,
+    curl_easytype,
+    curl_ftpauth,
+    curl_ftpccc,
+    curl_ftpcreatedir,
+    curl_ftpmethod,
+    curl_infotype,
+    curl_khmatch,
+    curl_khstat,
+    curl_khtype,
+    curl_lock_access,
+    curl_lock_data,
+    curl_proxytype,
+    curl_sslbackend,
+    curl_usessl,
+    curlfiletype,
+    curliocmd,
+    curlioerr,
+    curlsocktype,
   }
   export _root_.curl.functions.{
     Wcurl_easy_getinfo_err_curl_certinfo,
@@ -5398,4 +5373,29 @@ object all:
     curl_ws_recv,
     curl_ws_send,
     curl_ws_start_frame,
+  }
+  export _root_.curl.structs.{
+    CURLMsg,
+    CURLU,
+    Curl_URL,
+    curl_blob,
+    curl_certinfo,
+    curl_easyoption,
+    curl_fileinfo,
+    curl_forms,
+    curl_header,
+    curl_hstsentry,
+    curl_httppost,
+    curl_index,
+    curl_khkey,
+    curl_mime,
+    curl_mimepart,
+    curl_pushheaders,
+    curl_slist,
+    curl_sockaddr,
+    curl_ssl_backend,
+    curl_tlssessioninfo,
+    curl_version_info_data,
+    curl_waitfd,
+    curl_ws_frame,
   }

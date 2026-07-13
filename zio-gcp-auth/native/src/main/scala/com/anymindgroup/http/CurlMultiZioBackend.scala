@@ -7,6 +7,10 @@ import scala.scalanative.libc.string.memcpy
 import scala.scalanative.unsafe.*
 import scala.scalanative.unsigned.*
 
+import zio.*
+import zio.Ref.Synchronized
+import zio.stream.{Take, ZStream}
+
 import curl.all.*
 import sttp.capabilities.Effect
 import sttp.capabilities.zio.ZioStreams
@@ -16,14 +20,6 @@ import sttp.client4.internal.{BodyFromResponseAs, SttpFile}
 import sttp.client4.ws.{GotAWebSocketException, NotAWebSocketException}
 import sttp.model.*
 import sttp.monad.MonadError
-
-import zio.*
-import zio.Ref.Synchronized
-import zio.stream.{Take, ZStream}
-
-// scalafix:off DisableSyntax.null
-// scalafix:off DisableSyntax.throw
-// scalafix:off DisableSyntax.return
 
 // Dynamic grow buffer: (data_ptr: CString, filled_size: CSize)
 private type FetchBuf = CStruct2[CString, CSize]

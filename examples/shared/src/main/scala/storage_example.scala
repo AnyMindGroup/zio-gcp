@@ -1,5 +1,10 @@
-import zio.*, com.anymindgroup.gcp.*, storage.*, auth.defaultAccessTokenBackend
-import v1.resources.Objects, sttp.model.{Header, MediaType, Method}
+import zio.*
+
+import com.anymindgroup.gcp.*
+import storage.*
+import auth.defaultAccessTokenBackend
+import v1.resources.Objects
+import sttp.model.{Header, MediaType, Method}
 
 object storage_example extends ZIOAppDefault:
   def run =

@@ -1,5 +1,9 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.schema.*
+import zio.test.*
+import zio.{Chunk, Ref, Task, ZIO}
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.*
 import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.*
@@ -8,10 +12,6 @@ import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.{BackendStub, ResponseStub}
 import sttp.client4.{Backend, StringBody}
 import sttp.model.StatusCode
-
-import zio.schema.*
-import zio.test.*
-import zio.{Chunk, Ref, Task, ZIO}
 
 object ExpressModelClientSpec extends ZIOSpecDefault {
 

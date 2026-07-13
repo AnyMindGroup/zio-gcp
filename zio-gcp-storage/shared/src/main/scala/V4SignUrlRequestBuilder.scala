@@ -5,12 +5,12 @@ import java.nio.charset.StandardCharsets
 import java.util.Base64
 import java.util.Base64.Encoder
 
+import zio.{Clock, Task, ZIO}
+
 import com.anymindgroup.gcp.iamcredentials.v1.resources.projects.ServiceAccounts
 import com.anymindgroup.gcp.iamcredentials.v1.schemas.SignBlobRequest
 import sttp.client4.Request
 import sttp.model.{MediaType, Method, QueryParams, Uri}
-
-import zio.{Clock, Task, ZIO}
 
 class V4SignUrlRequestBuilder private (
   canonicalRequestBuilder: V4CanonicalRequestBuilder,

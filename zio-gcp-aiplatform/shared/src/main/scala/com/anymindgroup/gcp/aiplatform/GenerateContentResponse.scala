@@ -1,9 +1,9 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.Chunk
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1GenerateContentResponse
 import com.github.plokhotnyuk.jsoniter_scala.core.*
-
-import zio.Chunk
 
 extension (r: GoogleCloudAiplatformV1GenerateContentResponse)
   def textCandidates: Chunk[String] = r.candidates

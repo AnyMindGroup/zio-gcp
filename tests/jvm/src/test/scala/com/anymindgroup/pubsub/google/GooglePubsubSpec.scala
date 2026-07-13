@@ -1,9 +1,9 @@
 package com.anymindgroup.pubsub.google
 
-import com.anymindgroup.pubsub.Serde
-
 import zio.Scope
 import zio.test.*
+
+import com.anymindgroup.pubsub.Serde
 
 object GooglePubsubSpec extends ZIOSpecDefault {
   override def spec: Spec[Scope, Any] = suite("GooglePubsubSpec")(

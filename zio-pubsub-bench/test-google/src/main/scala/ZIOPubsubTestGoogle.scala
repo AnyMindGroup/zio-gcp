@@ -1,3 +1,6 @@
+import zio.ZIO.logInfo
+import zio.{ZIO, ZLayer}
+
 import com.anymindgroup.pubsub.*
 import com.anymindgroup.pubsub.google.{createClient, makeStreamingPullSubscriber, makeTopicPublisher}
 import com.google.cloud.pubsub.v1.{
@@ -7,9 +10,6 @@ import com.google.cloud.pubsub.v1.{
   TopicAdminSettings,
 }
 import com.google.pubsub.v1.Subscription as GSubscription
-
-import zio.ZIO.logInfo
-import zio.{ZIO, ZLayer}
 
 object ZIOPubsubTestGoogle extends ZIOPubsubTestApp with ZIOPubsubTestRuntime:
 

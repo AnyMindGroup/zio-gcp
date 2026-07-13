@@ -1,6 +1,9 @@
 package com.anymindgroup.pubsub
 package google
 
+import zio.*
+import zio.Console.printLine
+
 import com.google.cloud.pubsub.v1.{
   SubscriptionAdminClient,
   SubscriptionAdminSettings,
@@ -8,9 +11,6 @@ import com.google.cloud.pubsub.v1.{
   TopicAdminSettings,
 }
 import com.google.pubsub.v1.Subscription as GSubscription
-
-import zio.*
-import zio.Console.printLine
 
 // Test for manual execution to run against an actual Pub/Sub in the cloud
 //

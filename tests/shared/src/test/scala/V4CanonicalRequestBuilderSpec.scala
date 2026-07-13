@@ -2,10 +2,10 @@ package com.anymindgroup.gcp.storage
 
 import java.time.Instant
 
-import sttp.model.{MediaType, Method}
-
 import zio.ZIO
 import zio.test.{ZIOSpecDefault, *}
+
+import sttp.model.{MediaType, Method}
 
 object V4CanonicalRequestBuilderSpec extends ZIOSpecDefault:
   override def spec: Spec[Any, Any] = suite("V4CanonicalRequestBuilderSpec")(

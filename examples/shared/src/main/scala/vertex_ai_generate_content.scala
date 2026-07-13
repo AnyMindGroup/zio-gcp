@@ -1,5 +1,10 @@
-import zio.*, com.anymindgroup.gcp.*, auth.defaultAccessTokenBackend
-import aiplatform.v1.*, aiplatform.v1.resources.*, aiplatform.v1.schemas.*
+import zio.*
+
+import com.anymindgroup.gcp.*
+import auth.defaultAccessTokenBackend
+import aiplatform.v1.*
+import aiplatform.v1.resources.*
+import aiplatform.v1.schemas.*
 
 object vertex_ai_generate_content extends ZIOAppDefault:
   def run = for

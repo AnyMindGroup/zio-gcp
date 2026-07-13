@@ -1,5 +1,8 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.Chunk
+import zio.schema.Schema
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1Content,
   GoogleCloudAiplatformV1FunctionDeclaration,
@@ -9,9 +12,6 @@ import com.anymindgroup.gcp.aiplatform.v1.schemas.{
   GoogleCloudAiplatformV1Schema,
   GoogleCloudAiplatformV1Tool,
 }
-
-import zio.Chunk
-import zio.schema.Schema
 
 object GenerateContentRequest {
   def apply(text: String): GoogleCloudAiplatformV1GenerateContentRequest =

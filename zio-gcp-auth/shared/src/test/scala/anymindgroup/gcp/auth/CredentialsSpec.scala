@@ -2,15 +2,15 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
+import zio.test.*
+import zio.test.Assertion.*
+import zio.{Task, ZIO, ZLayer, ZLogger}
+
 import com.anymindgroup.http.httpBackendLayer
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
 import sttp.model.*
-
-import zio.test.*
-import zio.test.Assertion.*
-import zio.{Task, ZIO, ZLayer, ZLogger}
 
 object CredentialsSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment, Any] = suite("CredentialsSpec")(

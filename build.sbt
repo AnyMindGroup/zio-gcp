@@ -1,10 +1,12 @@
-import scala.collection.mutable.ListBuffer
-import scalanativecrossproject.NativePlatform
-import sbtcrossproject.{JVMPlatform, CrossProject, CrossClasspathDependency}
-import zio.sbt.githubactions.{Job, Step, ActionRef}
 import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
 import scala.sys.process._
+
 import zio.json.ast.Json
+import zio.sbt.githubactions.{ActionRef, Job, Step}
+
+import scalanativecrossproject.NativePlatform
+import sbtcrossproject.{CrossClasspathDependency, CrossProject, JVMPlatform}
 
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
@@ -137,10 +139,7 @@ lazy val commonSettings = List(
   javacOptions ++= Seq("-source", "21"),
   Compile / scalacOptions ++= Seq("-source:future", "-rewrite", "-Wunused:imports"),
   Compile / scalacOptions --= sys.env.get("CI").fold(Seq("-Werror"))(_ => Nil),
-  Test / scalafixConfig := Some(new File(".scalafix_test.conf")),
   Test / scalacOptions --= Seq("-Werror"),
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision, // use Scalafix compatible version
 )
 
 val noPublishSettings = List(
@@ -286,8 +285,26 @@ def codegenTask(
   }
 }
 
+// zio-sbt-ecosystem's built-in `lint` command also runs `scalafix --check`, which this project no longer uses
+// (import organization is handled by scalafmt instead). Override it to only run the scalafmt checks.
+lazy val lintCommand: Command =
+  Command.command(
+    "lint",
+    "Verifies that all source files are properly formatted.",
+    "Verifies that all source files are properly formatted.",
+  ) { state =>
+    List(
+      "set welcomeBannerEnabled := false",
+      "enableStrictCompile",
+      "+scalafmtSbtCheck",
+      "+scalafmtCheckAll",
+      "disableStrictCompile",
+    ) ::: state
+  }
+
 lazy val root =
   (project in file("."))
+    .settings(commands := commands.value.filterNot(_.nameOption.contains("lint")) :+ lintCommand)
     .aggregate(
       zioGcpAuth.jvm,
       zioGcpAuth.native,

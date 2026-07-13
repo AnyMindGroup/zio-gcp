@@ -4,10 +4,10 @@ import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.Base64
 
+import zio.Duration
+
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
-
-import zio.Duration
 
 sealed trait Token {
   def token: String
@@ -29,9 +29,7 @@ object AccessToken {
   private given JsonValueCodec[Duration] = new JsonValueCodec[Duration] {
     def decodeValue(in: JsonReader, default: Duration): Duration = Duration.fromSeconds(in.readLong())
     def encodeValue(x: Duration, out: JsonWriter): Unit          = out.writeVal(x.getSeconds())
-    // scalafix:off DisableSyntax.null
-    val nullValue: Duration = null.asInstanceOf[Duration]
-    // scalafix:on DisableSyntax.null
+    val nullValue: Duration                                      = null.asInstanceOf[Duration]
   }
 
   private given jsonCodec(using JsonValueCodec[Duration]): JsonValueCodec[AccessToken] =

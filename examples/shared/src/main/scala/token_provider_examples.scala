@@ -1,4 +1,8 @@
-import zio.*, zio.Console.*, com.anymindgroup.gcp.auth.*, com.anymindgroup.http.*
+import zio.*
+import zio.Console.*
+
+import com.anymindgroup.gcp.auth.*
+import com.anymindgroup.http.*
 
 object AccessTokenByUser extends ZIOAppDefault:
   def run =

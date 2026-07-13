@@ -1,6 +1,10 @@
 package pubsub
-import com.anymindgroup.pubsub.*, google.*
-import zio.stream.*, zio.*, zio.ZIO.*
+import zio.*
+import zio.ZIO.*
+import zio.stream.*
+
+import com.anymindgroup.pubsub.*
+import google.*
 
 object SamplesPublisherGoogle extends ZIOAppDefault:
   def run = makeTopicPublisher(

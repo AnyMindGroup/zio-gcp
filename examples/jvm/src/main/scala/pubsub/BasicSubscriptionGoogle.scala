@@ -1,6 +1,9 @@
 package pubsub
-import com.anymindgroup.pubsub.*, google.*
-import zio.*, zio.ZIO.*
+import zio.*
+import zio.ZIO.*
+
+import com.anymindgroup.pubsub.*
+import google.*
 
 object BasicSubscriptionGoogle extends ZIOAppDefault:
   def run = makeStreamingPullSubscriber(

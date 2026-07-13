@@ -2,14 +2,14 @@ package com.anymindgroup.gcp.auth
 
 import java.time.Duration
 
+import zio.test.*
+import zio.test.Assertion.*
+import zio.{Config, Ref, Schedule, Scope, Task, ULayer, ZIO, ZLayer, ZLogger}
+
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
 import sttp.model.*
-
-import zio.test.*
-import zio.test.Assertion.*
-import zio.{Config, Ref, Schedule, Scope, Task, ULayer, ZIO, ZLayer, ZLogger}
 
 object TokenProviderSpec extends ZIOSpecDefault {
 

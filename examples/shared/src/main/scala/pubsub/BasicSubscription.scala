@@ -1,5 +1,8 @@
 package pubsub
-import com.anymindgroup.pubsub.*, zio.*, zio.stream.ZStream
+import zio.*
+import zio.stream.ZStream
+
+import com.anymindgroup.pubsub.*
 
 object BasicSubscription extends ZIOAppDefault:
   def run =

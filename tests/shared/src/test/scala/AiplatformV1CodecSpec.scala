@@ -1,12 +1,12 @@
 package com.anymindgroup.gcp.aiplatform.v1
 
+import zio.*
+import zio.test.*
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1FunctionCall
 import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.{readFromString, *}
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
-
-import zio.*
-import zio.test.*
 
 object AiplatformV1CodecSpec extends ZIOSpecDefault:
   def spec = suite("AiplatformV1CodecSpec")(
