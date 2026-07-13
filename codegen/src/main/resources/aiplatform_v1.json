@@ -34707,7 +34707,7 @@
       }
     }
   },
-  "revision": "20260627",
+  "revision": "20260703",
   "rootUrl": "https://aiplatform.googleapis.com/",
   "schemas": {
     "CloudAiLargeModelsVisionGenerateVideoExperiments": {
