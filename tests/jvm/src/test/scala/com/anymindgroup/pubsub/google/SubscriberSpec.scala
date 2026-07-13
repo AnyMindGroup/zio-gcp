@@ -4,14 +4,14 @@ import java.time.Instant
 
 import scala.jdk.CollectionConverters.*
 
+import zio.Scope
+import zio.test.*
+import zio.test.Assertion.*
+
 import com.anymindgroup.pubsub.*
 import com.anymindgroup.pubsub.google.Subscriber as GSubscriber
 import com.google.protobuf.Timestamp
 import com.google.pubsub.v1.{PubsubMessage, ReceivedMessage as GReceivedMessage}
-
-import zio.Scope
-import zio.test.*
-import zio.test.Assertion.*
 
 object SubscriberSpec extends ZIOSpecDefault {
 

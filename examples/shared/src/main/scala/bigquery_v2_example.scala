@@ -1,4 +1,6 @@
-import zio.*, zio.ZIO.{logError, logInfo}
+import zio.*
+import zio.ZIO.{logError, logInfo}
+
 import com.anymindgroup.gcp.bigquery.v2.resources.*
 import com.anymindgroup.gcp.bigquery.v2.schemas.*
 import com.github.plokhotnyuk.jsoniter_scala.core.JsonValueCodec

@@ -3,14 +3,14 @@ package google
 
 import java.util.concurrent.TimeUnit
 
+import zio.stream.ZStream
+import zio.{Clock, RIO, Schedule, Scope, Task, ZIO}
+
 import com.google.api.gax.core.{BackgroundResource, CredentialsProvider, FixedExecutorProvider, NoCredentialsProvider}
 import com.google.api.gax.grpc.GrpcTransportChannel
 import com.google.api.gax.rpc.{ClientSettings, FixedTransportChannelProvider, StubSettings, TransportChannelProvider}
 import com.google.pubsub.v1.ReceivedMessage as GReceivedMessage
 import io.grpc.{ManagedChannel, ManagedChannelBuilder}
-
-import zio.stream.ZStream
-import zio.{Clock, RIO, Schedule, Scope, Task, ZIO}
 
 private[google] type GoogleReceipt = (GReceivedMessage, AckReply)
 private[google] type GoogleStream  = ZStream[Any, Throwable, GoogleReceipt]

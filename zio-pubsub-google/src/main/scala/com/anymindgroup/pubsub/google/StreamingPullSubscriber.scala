@@ -4,6 +4,9 @@ import java.util as ju
 
 import scala.jdk.CollectionConverters.*
 
+import zio.stream.{ZStream, ZStreamAspect}
+import zio.{Cause, Chunk, Promise, Queue, RIO, Schedule, Scope, Task, UIO, ZIO, ZIOAspect, durationInt}
+
 import com.anymindgroup.pubsub.{AckReply, PubsubConnectionConfig, SubscriptionName}
 import com.google.api.gax.rpc.{BidiStream as GBidiStream, ClientStream}
 import com.google.cloud.pubsub.v1.stub.{GrpcSubscriberStub, SubscriberStubSettings}
@@ -14,9 +17,6 @@ import com.google.pubsub.v1.{
   StreamingPullResponse,
   SubscriptionName as GSubscriptionName,
 }
-
-import zio.stream.{ZStream, ZStreamAspect}
-import zio.{Cause, Chunk, Promise, Queue, RIO, Schedule, Scope, Task, UIO, ZIO, ZIOAspect, durationInt}
 
 private[pubsub] object StreamingPullSubscriber {
   val defaultRetrySchedule: Schedule[Any, Throwable, Any] = {

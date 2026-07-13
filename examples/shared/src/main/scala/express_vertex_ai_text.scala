@@ -1,5 +1,7 @@
-import zio.*, com.anymindgroup.gcp.auth.defaultAccessTokenBackend
+import zio.*
+
 import com.anymindgroup.gcp.aiplatform.ExpressModelClient
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 
 object express_vertex_ai_text extends ZIOAppDefault:
   def run = for

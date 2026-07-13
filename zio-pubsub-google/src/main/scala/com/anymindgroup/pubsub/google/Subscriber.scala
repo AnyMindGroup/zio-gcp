@@ -5,10 +5,10 @@ import java.time.Instant
 
 import scala.jdk.CollectionConverters.*
 
-import com.google.pubsub.v1.ReceivedMessage as GReceivedMessage
-
 import zio.stream.ZStream
 import zio.{Chunk, RIO, Schedule, Scope, ZIO, ZLayer}
+
+import com.google.pubsub.v1.ReceivedMessage as GReceivedMessage
 
 object Subscriber {
   type StreamAckDeadlineSeconds = Int

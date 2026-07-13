@@ -1,11 +1,11 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.schema.Schema
+import zio.{Task, ZIO}
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Schema
 import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.*
-
-import zio.schema.Schema
-import zio.{Task, ZIO}
 
 // functionDeclaration parameters schema should be of type OBJECT.
 // Learn more: https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling

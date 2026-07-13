@@ -1,8 +1,8 @@
 package com.anymindgroup.pubsub.http
 
-import com.anymindgroup.gcp.auth.TokenProvider
-
 import zio.Schedule
+
+import com.anymindgroup.gcp.auth.TokenProvider
 
 case class AuthConfig(
   lookupComputeMetadataFirst: Boolean,

@@ -1,8 +1,9 @@
 package pubsub
-import com.anymindgroup.gcp.pubsub.v1.*
-import com.anymindgroup.pubsub.*, http.*
-
 import zio.*
+
+import com.anymindgroup.gcp.pubsub.v1.*
+import com.anymindgroup.pubsub.*
+import http.*
 
 object ExamplesAdminSetup extends ZIOAppDefault:
   // topics

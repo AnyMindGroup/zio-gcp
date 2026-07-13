@@ -1,13 +1,13 @@
 package com.anymindgroup.gcp.aiplatform
 
+import zio.Chunk
+import zio.schema.Schema.{Case, Field}
+import zio.schema.{Schema, StandardType}
+
 import com.anymindgroup.gcp.aiplatform.v1.schemas.GoogleCloudAiplatformV1Schema
 import com.anymindgroup.jsoniter.Json
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
-
-import zio.Chunk
-import zio.schema.Schema.{Case, Field}
-import zio.schema.{Schema, StandardType}
 
 object AiPlatformSchema {
   given propsJsonCodec: JsonValueCodec[Map[String, GoogleCloudAiplatformV1Schema]] = JsonCodecMaker.make

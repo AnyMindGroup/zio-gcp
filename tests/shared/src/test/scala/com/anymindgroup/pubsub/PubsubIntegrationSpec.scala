@@ -1,11 +1,11 @@
 package com.anymindgroup.pubsub
 
-import com.anymindgroup.pubsub.OrderingKey
-import com.anymindgroup.pubsub.PubsubTestSupport.topicWithSubscriptionGen
-
 import zio.stream.ZSink
 import zio.test.*
 import zio.{Chunk, NonEmptyChunk, RIO, Scope, ZIO, durationInt}
+
+import com.anymindgroup.pubsub.OrderingKey
+import com.anymindgroup.pubsub.PubsubTestSupport.topicWithSubscriptionGen
 
 // integration tests that need to run agains an emulator
 object PubsubIntegrationSpec {

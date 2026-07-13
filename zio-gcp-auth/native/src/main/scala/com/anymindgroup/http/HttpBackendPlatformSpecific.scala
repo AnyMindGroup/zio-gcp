@@ -2,10 +2,10 @@ package com.anymindgroup.http
 
 import scala.annotation.tailrec
 
+import zio.{Cause, Scope, Task, ZIO, ZLayer}
+
 import sttp.capabilities.Effect
 import sttp.capabilities.zio.ZioStreams
-
-import zio.{Cause, Scope, Task, ZIO, ZLayer}
 
 type HttpPlatformBackend      = sttp.client4.StreamBackend[Task, ZioStreams]
 type HttpPlatformCapabilities = ZioStreams & Effect[Task]

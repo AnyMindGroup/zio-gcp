@@ -2,14 +2,14 @@ package com.anymindgroup.gcp.auth
 
 import java.nio.file.Path
 
+import zio.Config.Secret
+import zio.{IO, Task, ZIO}
+
 import com.anymindgroup.gcp.ComputeMetadata
 import com.anymindgroup.http.UnresolvedAddressException
 import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
 import sttp.client4.*
-
-import zio.Config.Secret
-import zio.{IO, Task, ZIO}
 
 sealed abstract class CredentialsException(cause: Throwable) extends Throwable(cause)
 object CredentialsException {

@@ -1,6 +1,9 @@
 package pubsub
-import com.anymindgroup.pubsub.*, http.*
-import zio.*, zio.ZIO.*
+import zio.*
+import zio.ZIO.*
+
+import com.anymindgroup.pubsub.*
+import http.*
 
 object BasicPublish extends ZIOAppDefault:
   def run =

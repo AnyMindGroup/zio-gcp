@@ -2,13 +2,13 @@ package com.anymindgroup.pubsub
 
 import java.util.Base64
 
+import zio.test.Gen
+import zio.{Chunk, RIO, Task, ZIO, ZLayer, durationInt}
+
 import com.anymindgroup.gcp.pubsub.v1.resources.projects as p
 import com.anymindgroup.gcp.pubsub.v1.schemas as s
 import com.anymindgroup.pubsub.http.{EmulatorBackend, HttpSubscriber}
 import sttp.client4.Backend
-
-import zio.test.Gen
-import zio.{Chunk, RIO, Task, ZIO, ZLayer, durationInt}
 
 object PubsubTestSupport {
   def emulatorConnectionConfig(

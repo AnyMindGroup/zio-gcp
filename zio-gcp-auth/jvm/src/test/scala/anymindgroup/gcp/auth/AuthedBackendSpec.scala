@@ -2,13 +2,13 @@ package com.anymindgroup.gcp.auth
 
 import java.time.Instant
 
+import zio.test.{TestEnvironment, ZIOSpecDefault, *}
+import zio.{Duration, Scope, Task, ZIO}
+
 import sttp.capabilities.zio.ZioStreams
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.WebSocketStreamBackendStub
 import sttp.client4.{UriContext, basicRequest}
-
-import zio.test.{TestEnvironment, ZIOSpecDefault, *}
-import zio.{Duration, Scope, Task, ZIO}
 
 object AuthedBackendSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("AuthedBackendSpec") {

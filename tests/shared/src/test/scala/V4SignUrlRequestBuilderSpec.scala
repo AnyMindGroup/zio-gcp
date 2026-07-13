@@ -2,10 +2,10 @@ package com.anymindgroup.gcp.storage
 
 import java.time.Instant
 
-import sttp.model.Method
-
 import zio.ZIO
 import zio.test.{ZIOSpecDefault, *}
+
+import sttp.model.Method
 
 object V4SignUrlRequestBuilderSpec extends ZIOSpecDefault:
 

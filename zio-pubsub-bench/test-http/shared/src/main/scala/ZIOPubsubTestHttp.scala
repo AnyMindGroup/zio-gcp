@@ -1,11 +1,12 @@
+import zio.ZIO.logInfo
+import zio.{Task, ZIO, ZLayer}
+
+import com.anymindgroup.gcp.auth.AuthedBackend
 import com.anymindgroup.gcp.pubsub.v1.*
 import com.anymindgroup.pubsub.*
 import com.anymindgroup.pubsub.http.{makeAuthedBackend, makeSubscriber, makeTopicPublisher}
-import sttp.client4.ResponseException.UnexpectedStatusCode
 import sttp.client4.Backend
-import zio.ZIO.logInfo
-import com.anymindgroup.gcp.auth.AuthedBackend
-import zio.{ZIO, ZLayer, Task}
+import sttp.client4.ResponseException.UnexpectedStatusCode
 
 object ZIOPubsubTestHttp extends ZIOPubsubTestApp with ZIOPubsubTestRuntime:
   private def pubLayer =

@@ -3,6 +3,8 @@ package com.anymindgroup.pubsub.http
 import java.util.Base64
 import java.util.Base64.Encoder
 
+import zio.{Chunk, NonEmptyChunk, RIO, Scope, Task, ZIO}
+
 import com.anymindgroup.gcp.auth.{
   AuthedBackend,
   Token,
@@ -16,8 +18,6 @@ import com.anymindgroup.gcp.pubsub.v1.schemas as s
 import com.anymindgroup.http.*
 import com.anymindgroup.pubsub.*
 import sttp.client4.Backend
-
-import zio.{Chunk, NonEmptyChunk, RIO, Scope, Task, ZIO}
 
 class HttpTopicPublisher[R, E] private[http] (
   serializer: Serializer[R, E],

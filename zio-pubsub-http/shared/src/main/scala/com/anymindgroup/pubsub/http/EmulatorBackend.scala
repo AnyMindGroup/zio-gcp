@@ -1,13 +1,13 @@
 package com.anymindgroup.pubsub.http
 
+import zio.{Scope, Task, ZIO}
+
 import com.anymindgroup.gcp.auth.AuthedBackend
 import com.anymindgroup.http.*
 import com.anymindgroup.pubsub.PubsubConnectionConfig
 import sttp.capabilities.Effect
 import sttp.client4.{Backend, GenericRequest, Response}
 import sttp.monad.MonadError
-
-import zio.{Scope, Task, ZIO}
 
 trait EmulatorBackend extends AuthedBackend
 

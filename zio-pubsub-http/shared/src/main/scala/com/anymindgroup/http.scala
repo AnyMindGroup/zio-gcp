@@ -1,10 +1,10 @@
 package com.anymindgroup.pubsub.http
 
+import zio.{Schedule, Scope, Task, ZIO}
+
 import com.anymindgroup.gcp.auth.*
 import com.anymindgroup.pubsub.{PubsubConnectionConfig, Serializer, TopicName}
 import sttp.client4.Backend
-
-import zio.{Schedule, Scope, Task, ZIO}
 
 // http backend with authentication
 // e.g. for usage with Pub/Sub Admin API

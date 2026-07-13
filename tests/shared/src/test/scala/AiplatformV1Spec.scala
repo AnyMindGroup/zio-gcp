@@ -1,10 +1,10 @@
 package com.anymindgroup.gcp.aiplatform.v1
 
-import com.anymindgroup.gcp.aiplatform.v1.schemas.*
-import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
-
 import zio.*
 import zio.test.*
+
+import com.anymindgroup.gcp.aiplatform.v1.schemas.*
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
 
 object AiplatformV1Spec extends ZIOSpecDefault:
   def spec = suite("AiplatformV1Spec")(

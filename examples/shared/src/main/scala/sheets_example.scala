@@ -1,4 +1,6 @@
-import zio.*, zio.ZIO.{logInfo, logError}
+import zio.*
+import zio.ZIO.{logError, logInfo}
+
 import com.anymindgroup.gcp.sheets.toWriteValueRange
 import com.anymindgroup.gcp.sheets.v4.resources.*
 import com.anymindgroup.gcp.sheets.v4.schemas.{Spreadsheet, SpreadsheetProperties}

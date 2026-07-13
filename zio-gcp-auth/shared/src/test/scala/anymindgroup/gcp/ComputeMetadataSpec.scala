@@ -1,13 +1,13 @@
 package com.anymindgroup.gcp.auth
 
+import zio.test.*
+import zio.{Task, ZIO, ZLayer, ZLogger}
+
 import com.anymindgroup.gcp.ComputeMetadata
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
 import sttp.client4.testing.*
 import sttp.model.*
-
-import zio.test.*
-import zio.{Task, ZIO, ZLayer, ZLogger}
 
 object ComputeMetadataSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment, Any] = suite("ComputeMetadataSpec")(

@@ -1,10 +1,10 @@
 package com.anymindgroup.pubsub
 package http
 
-import com.anymindgroup.gcp.pubsub.v1.*
-
 import zio.*
 import zio.Console.printLine
+
+import com.anymindgroup.gcp.pubsub.v1.*
 
 // Test for manual execution to run against an actual Pub/Sub in the cloud
 //

@@ -1,11 +1,11 @@
 package com.anymindgroup.gcp.auth
 
+import zio.*
+
 import com.anymindgroup.http.httpBackendScoped
 import sttp.capabilities.Effect
 import sttp.client4.{Backend, GenericRequest, Response}
 import sttp.monad.MonadError
-
-import zio.*
 
 trait AuthedBackend extends Backend[Task]
 

@@ -1,5 +1,8 @@
 package pubsub
-import com.anymindgroup.pubsub.*, zio.*, zio.json.*
+import zio.*
+import zio.json.*
+
+import com.anymindgroup.pubsub.*
 
 object CustomDataTypeSerdeExampleA:
   // given data structure with a json codec like

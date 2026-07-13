@@ -3,11 +3,11 @@ package google
 
 import scala.jdk.CollectionConverters.*
 
+import zio.{Chunk, NonEmptyChunk, RIO, Scope, ZIO}
+
 import com.google.cloud.pubsub.v1.stub.{GrpcPublisherStub, PublisherStubSettings}
 import com.google.protobuf.ByteString
 import com.google.pubsub.v1.{PublishRequest, PubsubMessage as GPubsubMessage}
-
-import zio.{Chunk, NonEmptyChunk, RIO, Scope, ZIO}
 
 class GoogleTopicPublisher[R, E] private[pubsub] (
   publisher: GrpcPublisherStub,

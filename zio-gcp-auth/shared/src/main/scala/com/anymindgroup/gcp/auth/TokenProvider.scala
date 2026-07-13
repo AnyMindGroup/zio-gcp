@@ -2,6 +2,8 @@ package com.anymindgroup.gcp.auth
 
 import java.time.Instant
 
+import zio.*
+
 import com.anymindgroup.gcp.ComputeMetadata
 import com.anymindgroup.gcp.auth.Credentials.{
   ComputeServiceAccount,
@@ -13,8 +15,6 @@ import com.github.plokhotnyuk.jsoniter_scala.core.*
 import com.github.plokhotnyuk.jsoniter_scala.macros.*
 import sttp.client4.*
 import sttp.model.*
-
-import zio.*
 
 sealed abstract class TokenProviderException(cause: Throwable) extends Throwable(cause)
 object TokenProviderException {

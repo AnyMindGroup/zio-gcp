@@ -3,13 +3,13 @@ package v1
 
 import java.nio.charset.StandardCharsets
 
-import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
-import sttp.client4.{Response, quick}
-import sttp.model.{Header, MediaType, Method}
-
 import zio.*
 import zio.Console.{printError, printLine}
 import zio.test.*
+
+import com.anymindgroup.gcp.auth.defaultAccessTokenBackend
+import sttp.client4.{Response, quick}
+import sttp.model.{Header, MediaType, Method}
 
 // test for manual execution
 object StorageSpec extends ZIOSpecDefault:

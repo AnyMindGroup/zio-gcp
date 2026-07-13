@@ -1,11 +1,9 @@
 package com.anymindgroup.pubsub.google
 
-import java.util as ju
 import java.util.concurrent.atomic.AtomicReference
+import java.util as ju
 
 import scala.jdk.CollectionConverters.*
-
-import com.google.pubsub.v1.{ReceivedMessage, StreamingPullRequest, StreamingPullResponse}
 
 import zio.test.Assertion.*
 import zio.test.{
@@ -22,6 +20,8 @@ import zio.test.{
   check,
 }
 import zio.{Promise, Queue, Random, Ref, Schedule, Scope, ZIO, durationInt}
+
+import com.google.pubsub.v1.{ReceivedMessage, StreamingPullRequest, StreamingPullResponse}
 object StreamingPullSubscriberSpec extends ZIOSpecDefault {
 
   trait TestBidiStream[A, B] extends BidiStream[A, B] {

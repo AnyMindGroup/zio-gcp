@@ -1,12 +1,12 @@
 package com.anymindgroup.pubsub
 package http
 
+import zio.test.*
+import zio.{Ref, Schedule, Scope, ZIO}
+
 import com.anymindgroup.gcp.auth.{AuthedBackend, TokenProvider}
 import sttp.client4.testing.ResponseStub
 import sttp.model.StatusCode
-
-import zio.test.*
-import zio.{Ref, Schedule, Scope, ZIO}
 
 object HttpPubsubSpec extends ZIOSpecDefault {
   override def spec: Spec[Scope, Any] =

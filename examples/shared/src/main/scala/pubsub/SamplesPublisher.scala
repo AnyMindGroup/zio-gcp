@@ -1,5 +1,9 @@
 package pubsub
-import com.anymindgroup.pubsub.*, zio.stream.*, zio.*, zio.ZIO.*
+import zio.*
+import zio.ZIO.*
+import zio.stream.*
+
+import com.anymindgroup.pubsub.*
 
 object SamplesPublisher extends ZIOAppDefault:
   def run =
