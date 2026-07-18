@@ -5,7 +5,7 @@ addSbtPlugin("dev.zio" % "zio-sbt-ecosystem" % zioSbtVersion)
 
 addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.12")
 
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
 
 addSbtPlugin("com.github.sbt" % "sbt-dynver" % "5.1.1")
 
