@@ -1798,7 +1798,7 @@
       }
     }
   },
-  "revision": "20260716",
+  "revision": "20260721",
   "rootUrl": "https://pubsub.googleapis.com/",
   "schemas": {
     "AIInference": {
