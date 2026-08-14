@@ -63,7 +63,7 @@ val jsoniterVersion = "2.40.1"
 
 val codegenVersion = "0.0.15"
 
-val scalaNativeCryptoVersion = "0.3.0"
+val scalaNativeCryptoVersion = "0.4.0"
 
 inThisBuild(
   List(
