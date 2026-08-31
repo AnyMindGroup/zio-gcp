@@ -28,7 +28,7 @@ jobs:
     continue-on-error: true
     steps:
     - name: Git Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
       with:
         fetch-depth: '0'
     - name: Install libuv
@@ -39,18 +39,18 @@ jobs:
         apps: sbt
         jvm: temurin:21
     - name: Cache Dependencies
-      uses: coursier/cache-action@v8
+      uses: coursier/cache-action@v8.1.1
     - name: Check all code compiles
       run: sbt buildCodegenBin +Test/compile
     - name: Check artifacts build process
-      run: sbt +publishLocal
+      run: sbt --no-colors +publishLocal
   lint:
     name: Lint
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
     - name: Git Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
       with:
         fetch-depth: '0'
     - name: Install libuv
@@ -61,9 +61,9 @@ jobs:
         apps: sbt
         jvm: temurin:21
     - name: Cache Dependencies
-      uses: coursier/cache-action@v8
+      uses: coursier/cache-action@v8.1.1
     - name: Check if the site workflow is up to date
-      run: sbt ciCheckGithubWorkflow
+      run: sbt --no-colors ciCheckGithubWorkflow
     - name: Lint
       run: sbt buildCodegenBin lint
   test:
@@ -84,9 +84,9 @@ jobs:
         apps: sbt
         jvm: temurin:21
     - name: Cache Dependencies
-      uses: coursier/cache-action@v8
+      uses: coursier/cache-action@v8.1.1
     - name: Git Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
       with:
         fetch-depth: '0'
     - name: Start up pubsub emulator
@@ -101,7 +101,11 @@ jobs:
     - lint
     - test
     - build
+    if: always()
     steps:
+    - name: Report Failed CI
+      if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+      run: 'echo "ci failed: one or more required jobs did not succeed"; exit 1'
     - name: Report Successful CI
       run: echo "ci passed"
   release:
@@ -110,10 +114,10 @@ jobs:
     continue-on-error: false
     needs:
     - ci
-    if: ${{ ((github.event_name == 'release') && (github.event.action == 'published')) || (github.event_name == 'workflow_dispatch') }}
+    if: ${{ (((github.event_name == 'release') && (github.event.action == 'published')) || (github.event_name == 'workflow_dispatch')) || ((github.event_name == 'push') && (github.ref == format('refs/heads/{0}', github.event.repository.default_branch))) }}
     steps:
     - name: Git Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
       with:
         fetch-depth: '0'
     - name: Install libuv
@@ -124,7 +128,7 @@ jobs:
         apps: sbt
         jvm: temurin:21
     - name: Cache Dependencies
-      uses: coursier/cache-action@v8
+      uses: coursier/cache-action@v8.1.1
     - name: Release
       run: |-
         echo "$PGP_SECRET" | base64 -d -i - > /tmp/signing-key.gpg
