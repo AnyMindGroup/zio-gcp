@@ -12,6 +12,25 @@ Currently supported credentials and tokens:
 | [Impersonated service account](https://cloud.google.com/iam/docs/impersonating-service-accounts) | ✅ | ❌ |
 | Service account (via private key) | ❌ | ❌ |
 
+## Overriding the metadata server address
+
+By default the compute metadata server is looked up at `metadata.google.internal`, which resolves
+on a Google Cloud VM and nowhere else. Set `GCE_METADATA_HOST` to send those requests somewhere
+else — a [metadata server emulator](https://github.com/salrashid123/gce_metadata_server) in a dev
+container, a test double, or the `169.254.169.254` address when DNS is unavailable:
+
+```sh
+export GCE_METADATA_HOST=127.0.0.1:8080
+```
+
+The value is an authority — `host` or `host:port` — and takes no scheme. This is the same variable
+Google's own client libraries read, so an environment already set up for one of those needs no
+further configuration here.
+
+With it set, `TokenProvider.defaultAccessTokenProvider` finds compute credentials off Google Cloud
+exactly as it would on a VM, which means local runs need neither a service account key nor
+`gcloud auth application-default login`.
+
 ## Getting Started
 
 To get started with sbt, add the dependency to your project in `build.sbt`
