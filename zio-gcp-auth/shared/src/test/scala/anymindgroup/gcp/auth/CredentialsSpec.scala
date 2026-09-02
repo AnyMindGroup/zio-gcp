@@ -6,6 +6,7 @@ import zio.test.*
 import zio.test.Assertion.*
 import zio.{Task, ZIO, ZLayer, ZLogger}
 
+import com.anymindgroup.gcp.ComputeMetadata
 import com.anymindgroup.http.httpBackendLayer
 import sttp.client4.*
 import sttp.client4.impl.zio.RIOMonadAsyncError
@@ -14,13 +15,20 @@ import sttp.model.*
 
 object CredentialsSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment, Any] = suite("CredentialsSpec")(
+    // Runs against a real backend, so with no credentials file it falls through
+    // to an actual request to the metadata server. "None" is therefore only the
+    // right answer where there is no metadata server to reach: true of CI and of
+    // any machine off GCE, false on GCE and false where `GCE_METADATA_HOST`
+    // points at an emulator. That was already so before the variable was
+    // honoured; the guard states the precondition instead of leaving the result
+    // to depend on the ambient environment without saying so.
     test("return none if no credentials were found") {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
         creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_)).exit
         _     <- assert(creds)(succeeds(isNone))
       } yield assertCompletes
-    }.provideLayer(defaultTestLayer),
+    }.provideLayer(defaultTestLayer) @@ TestAspect.ifEnvNotSet("GCE_METADATA_HOST"),
     test("read credentials from internal google meta server") {
       for {
         _     <- TestSystem.putProperty("user.home", "non_existing")
@@ -104,7 +112,10 @@ object CredentialsSpec extends ZIOSpecDefault {
     BackendStub[Task](new RIOMonadAsyncError[Any])
       .whenRequestMatches(r =>
         r.method != Method.GET ||
-        !r.uri.host.contains("metadata.google.internal") ||
+        // Against `ComputeMetadata`'s own host rather than the literal default:
+        // `GCE_METADATA_HOST` moves it, and this stub stands in for whatever
+        // host the library is pointed at.
+        r.uri.host != ComputeMetadata.baseUri.host ||
         !r.headers.exists(h => h.name.equalsIgnoreCase("Metadata-Flavor") && h.value.equalsIgnoreCase("Google"))
       )
       .thenRespondServerError()
