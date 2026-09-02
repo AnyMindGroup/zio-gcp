@@ -56,6 +56,62 @@ object AiPlatformSchemaSpec extends ZIOSpecDefault {
              )
       yield assertCompletes
     },
+    test("marks every non-optional field required, and no optional one") {
+      case class TestRequired(
+        propStr: String,
+        propStrOpt: Option[String],
+        propInt: Int,
+        propList: List[String],
+        propListOpt: Option[List[String]],
+      ) derives Schema
+
+      val res = AiPlatformSchema.toGoogleCloudAiplatformV1Schema(Schema[TestRequired])
+
+      // Requiredness has to agree with the nullability emitted for the same
+      // field: a field is required exactly when its own schema is not nullable.
+      val props    = res.properties.map(_.readAsUnsafe[Map[String, GoogleCloudAiplatformV1Schema]]).getOrElse(Map.empty)
+      val nullable = props.collect { case (name, s) if s.nullable.contains(true) => name }.toSet
+
+      assertTrue(
+        res.required.map(_.toSet) == Some(Set("propStr", "propInt", "propList")),
+        res.required.map(_.toSet).exists(r => r.intersect(nullable).isEmpty),
+        nullable == Set("propStrOpt", "propListOpt"),
+      )
+    },
+    test("marks a nested object's own fields required") {
+      // The nested object is where it counts. An outer `required` naming the
+      // list does not oblige the model to fill in anything *inside* the list's
+      // elements.
+      case class TestNestedItem(itemStr: String, itemInt: Int, itemStrOpt: Option[String]) derives Schema
+      case class TestNestedOuter(items: List[TestNestedItem], outerOpt: Option[String]) derives Schema
+
+      val res   = AiPlatformSchema.toGoogleCloudAiplatformV1Schema(Schema[TestNestedOuter])
+      val props = res.properties.map(_.readAsUnsafe[Map[String, GoogleCloudAiplatformV1Schema]]).getOrElse(Map.empty)
+      val item  = props.get("items").flatMap(_.items)
+
+      assertTrue(
+        res.required.map(_.toSet) == Some(Set("items")),
+        item.flatMap(_.required.map(_.toSet)) == Some(Set("itemStr", "itemInt")),
+      )
+    },
+    test("omits required entirely when every field is optional") {
+      case class AllOptional(a: Option[String], b: Option[Int]) derives Schema
+
+      assertTrue(AiPlatformSchema.toGoogleCloudAiplatformV1Schema(Schema[AllOptional]).required.isEmpty)
+    },
+    test("orders properties by declaration, not by the properties map") {
+      // `properties` is a Map, so its iteration order is hash-derived and says
+      // nothing about the case class. More than four fields, to be past the
+      // point where Scala's small-map implementations happen to preserve
+      // insertion order.
+      case class Ordered(zebra: String, apple: String, mango: String, kiwi: String, banana: String) derives Schema
+
+      val res = AiPlatformSchema.toGoogleCloudAiplatformV1Schema(Schema[Ordered])
+
+      assertTrue(
+        res.propertyOrdering == Some(Chunk("zebra", "apple", "mango", "kiwi", "banana"))
+      )
+    },
     test("map ZIO Schema to CloudAiplatformV1Schema (array)") {
       case class TestCaseClassArrays(
         arrayStr: List[String],

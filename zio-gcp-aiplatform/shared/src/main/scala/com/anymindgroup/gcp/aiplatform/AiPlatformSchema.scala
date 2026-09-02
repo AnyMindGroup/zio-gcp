@@ -86,17 +86,42 @@ object AiPlatformSchema {
     case _ =>
       GoogleCloudAiplatformV1Schema(`type` = Some(GoogleCloudAiplatformV1Schema.Type.TYPE_UNSPECIFIED))
 
-  private def fromFields(fields: Seq[Field[?, ?]]): GoogleCloudAiplatformV1Schema =
+  /**
+   * An object's fields, carrying the two pieces of field metadata Gemini acts
+   * on that a bare `Map[name, schema]` cannot express.
+   *
+   * ==required==
+   * Gemini reads an object with no `required` as one where nothing has to be
+   * filled in, and answers accordingly: an empty array for a list, absent
+   * fields elsewhere, and — where it does answer — occasionally two values run
+   * together into whichever single field it chose to fill. `nullable: false` is
+   * not a substitute, because it forbids a null *value* rather than an absent
+   * key.
+   *
+   * Requiredness is read back off the rendered field schema rather than off the
+   * `Field`, so it cannot disagree with the `nullable` this same function
+   * emitted, and `Optional` nested under `Lazy` or `Transform` needs no
+   * separate unwrapping: a field is required exactly when its own schema did
+   * not come back nullable.
+   *
+   * ==propertyOrdering==
+   * Fixes the order the model emits properties in. Without it the order is
+   * whatever `properties` iterates in, and that is a `Map` — hash-ordered, so
+   * the same case class can present its fields to the model in a different
+   * order for no reason the author can see. Declaration order is the one order
+   * they did choose.
+   */
+  private def fromFields(fields: Seq[Field[?, ?]]): GoogleCloudAiplatformV1Schema = {
+    val properties = fields.map(f => f.fieldName -> toGoogleCloudAiplatformV1Schema(f.schema))
+    val required   = properties.collect { case (name, schema) if !schema.nullable.contains(true) => name }
+
     GoogleCloudAiplatformV1Schema(
       `type` = Some(GoogleCloudAiplatformV1Schema.Type.OBJECT),
-      properties = Some(
-        Json.writeToJson(
-          fields.map { f =>
-            f.fieldName -> toGoogleCloudAiplatformV1Schema(f.schema)
-          }.toMap
-        )
-      ),
+      properties = Some(Json.writeToJson(properties.toMap)),
+      required = Option.when(required.nonEmpty)(required.to(Chunk)),
+      propertyOrdering = Option.when(properties.nonEmpty)(properties.map(_._1).to(Chunk)),
     )
+  }
 
   private def fromEnum(cases: Seq[Case[?, ?]]): GoogleCloudAiplatformV1Schema =
     val types = cases.map {
