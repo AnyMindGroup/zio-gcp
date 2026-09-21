@@ -43,11 +43,11 @@ def updatedBuildSetupStep(step: Step) = step match {
       )
     )
   case s: Step.SingleStep if s.name == "Test" =>
-    List(s.copy(run = Some("sbt buildCodegenBin +test")))
+    List(s.copy(run = Some("sbt +test")))
   case s: Step.SingleStep if s.name == "Check all code compiles" =>
-    List(s.copy(run = Some("sbt buildCodegenBin +Test/compile")))
+    List(s.copy(run = Some("sbt +Test/compile")))
   case s: Step.SingleStep if s.name == "Lint" =>
-    List(s.copy(run = Some("sbt buildCodegenBin lint")))
+    List(s.copy(run = Some("sbt lint")))
   case s => List(s)
 }
 
@@ -120,7 +120,7 @@ inThisBuild(
                   """|echo "$PGP_SECRET" | base64 -d -i - > /tmp/signing-key.gpg
                      |echo "$PGP_PASSPHRASE" | gpg --pinentry-mode loopback --passphrase-fd 0 --import /tmp/signing-key.gpg
                      |(echo "$PGP_PASSPHRASE"; echo; echo) | gpg --command-fd 0 --pinentry-mode loopback --change-passphrase $(gpg --list-secret-keys --with-colons 2> /dev/null | grep '^sec:' | cut --delimiter ':' --fields 5 | tail -n 1)
-                     |sbt 'buildCodegenBin; publishSigned; sonaRelease'""".stripMargin
+                     |sbt 'publishSigned; sonaRelease'""".stripMargin
                 ),
                 env = env,
               )
@@ -222,7 +222,7 @@ lazy val cliBinFile: File = {
 }
 
 lazy val buildCodegenBin = taskKey[File]("")
-buildCodegenBin := Def.uncached {
+LocalRootProject / buildCodegenBin := Def.uncached {
   val built = (codegen / Compile / nativeLinkReleaseFast).value
   IO.copyFile(fileConverter.value.toPath(built).toFile, cliBinFile)
   cliBinFile
@@ -236,52 +236,46 @@ def codegenTask(
   arrayType: String,
 ) = Def.task[Seq[File]] {
   val logger        = streams.value.log
-  val codegenBin    = cliBinFile
+  val codegenBin    = (LocalRootProject / buildCodegenBin).value
   val outDir        = (Compile / sourceManaged).value
   val targetBasePkg = s"${organization.value}.gcp.$apiName.$apiVersion"
   val outPkgDir     = outDir / targetBasePkg.split('.').mkString(java.io.File.separator)
 
-  if (!codegenBin.exists()) {
-    throw new InterruptedException(
-      s"Command line binary ${codegenBin.getPath()} was not found. Run 'sbt buildCodegenBin' first."
-    )
-  } else {
-    @tailrec
-    def listFilesRec(dir: List[File], res: List[File]): List[File] =
-      dir match {
-        case x :: xs =>
-          val (dirs, files) = IO.listFiles(x).toList.partition(_.isDirectory())
-          listFilesRec(dirs ::: xs, files ::: res)
-        case Nil => res
-      }
-
-    if (outPkgDir.exists() && outPkgDir.listFiles().nonEmpty) {
-      logger.info(s"Skipping code generation. $apiName client sources found in ${outPkgDir.getPath()}.")
-      listFilesRec(List(outPkgDir), Nil)
-    } else {
-      import sys.process.*
-
-      logger.info(s"Generating Google client sources")
-
-      val errs = ListBuffer.empty[String]
-      List(
-        s"${codegenBin.getPath()}",
-        s"-out-dir=$outDir",
-        s"-out-pkg=$targetBasePkg",
-        s"-specs=codegen/src/main/resources/${apiName}_${apiVersion}.json",
-        s"-http-source=$httpSource",
-        s"-json-codec=$jsonCodec",
-        s"-array-type=$arrayType",
-        s"-jsoniter-json-type=_root_.com.anymindgroup.jsoniter.Json",
-      ).mkString(" ") ! ProcessLogger(i => logger.debug(i), e => errs += e) match {
-        case 0 => ()
-        case c => throw new InterruptedException(s"Failure on code generation:\n${errs.mkString("\n")}")
-      }
-
-      val files = listFilesRec(List(outPkgDir), Nil)
-      logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
-      files
+  @tailrec
+  def listFilesRec(dir: List[File], res: List[File]): List[File] =
+    dir match {
+      case x :: xs =>
+        val (dirs, files) = IO.listFiles(x).toList.partition(_.isDirectory())
+        listFilesRec(dirs ::: xs, files ::: res)
+      case Nil => res
     }
+
+  if (outPkgDir.exists() && outPkgDir.listFiles().nonEmpty) {
+    logger.info(s"Skipping code generation. $apiName client sources found in ${outPkgDir.getPath()}.")
+    listFilesRec(List(outPkgDir), Nil)
+  } else {
+    import sys.process.*
+
+    logger.info(s"Generating Google client sources")
+
+    val errs = ListBuffer.empty[String]
+    List(
+      s"${codegenBin.getPath()}",
+      s"-out-dir=$outDir",
+      s"-out-pkg=$targetBasePkg",
+      s"-specs=codegen/src/main/resources/${apiName}_${apiVersion}.json",
+      s"-http-source=$httpSource",
+      s"-json-codec=$jsonCodec",
+      s"-array-type=$arrayType",
+      s"-jsoniter-json-type=_root_.com.anymindgroup.jsoniter.Json",
+    ).mkString(" ") ! ProcessLogger(i => logger.debug(i), e => errs += e) match {
+      case 0 => ()
+      case c => throw new InterruptedException(s"Failure on code generation:\n${errs.mkString("\n")}")
+    }
+
+    val files = listFilesRec(List(outPkgDir), Nil)
+    logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
+    files
   }
 }
 
