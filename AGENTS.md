@@ -9,7 +9,7 @@ This project is built using [SBT](https://www.scala-sbt.org/).
 To compile the project, run the following command:
 
 ```sh
-sbt buildCodegenBin compile
+sbt compile
 ```
 
-This will run the code generator first, then compile the generated sources.
+The code generator binary is built automatically as a dependency of the modules that need it.
