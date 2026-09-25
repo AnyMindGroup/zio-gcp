@@ -53,7 +53,7 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.8"
 
-val scala3Next = "3.8.4"
+val scala3Next = "3.9.0"
 
 val _zioVersion = "2.1.26"
 
