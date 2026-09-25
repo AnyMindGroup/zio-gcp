@@ -53,7 +53,7 @@ def updatedBuildSetupStep(step: Step) = step match {
 
 val _scala3 = "3.3.8"
 
-val scala3Next = "3.8.4"
+val scala3Next = "3.9.0"
 
 val _zioVersion = "2.1.26"
 
@@ -491,7 +491,7 @@ lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
     )
   )
 
-val googleCloudPubsubVersion = "1.155.0"
+val googleCloudPubsubVersion = "1.156.0"
 lazy val zioPubsubGoogle     = (project in file("zio-pubsub-google"))
   .settings(
     moduleName          := "zio-pubsub-google",
