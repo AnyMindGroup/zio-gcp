@@ -39,7 +39,7 @@ jobs:
         app_id: ${{ secrets.APP_ID }}
         app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
     - name: Git Checkout
-      uses: actions/checkout@v7
+      uses: actions/checkout@v7.0.1
       with:
         ref: ${{ github.head_ref }}
         fetch-depth: '0'
