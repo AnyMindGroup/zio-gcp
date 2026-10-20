@@ -32,7 +32,7 @@ object AccessToken {
     val nullValue: Duration                                      = null.asInstanceOf[Duration]
   }
 
-  private given jsonCodec(using JsonValueCodec[Duration]): JsonValueCodec[AccessToken] =
+  private given jsonCodec: (JsonValueCodec[Duration]) => JsonValueCodec[AccessToken] =
     JsonCodecMaker.make(CodecMakerConfig.withFieldNameMapper {
       case "token"     => "access_token"
       case "expiresIn" => "expires_in"

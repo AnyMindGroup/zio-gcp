@@ -88,7 +88,7 @@ private[storage] class V4CanonicalRequestBuilder(
                       |$signedHeadersString
                       |UNSIGNED-PAYLOAD""".stripMargin
 
-    for {
+    for
       payloadHash <- try {
                        Right {
                          val sha256Digest = MessageDigest.getInstance("SHA-256")
@@ -98,7 +98,7 @@ private[storage] class V4CanonicalRequestBuilder(
                      } catch {
                        case e: Throwable => Left(e)
                      }
-    } yield V4CanonicalRequest(
+    yield V4CanonicalRequest(
       payloadPlain = payload,
       // https://cloud.google.com/storage/docs/authentication/signatures#string-to-sign-example
       stringToSign = s"""|${signAlgorithm.toString()}

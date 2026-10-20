@@ -68,10 +68,10 @@ object PubsubTestSupport {
       )
       .unit
 
-  def topicExists(topicName: TopicName): RIO[Backend[Task], Boolean] = for {
+  def topicExists(topicName: TopicName): RIO[Backend[Task], Boolean] = for
     topicAdmin <- ZIO.service[Backend[Task]]
     res        <- topicAdmin.send(p.Topics.get(projectsId = topicName.projectId, topicsId = topicName.topic))
-  } yield res.body.isRight
+  yield res.body.isRight
 
   def publishEvent[E](
     event: E,
@@ -108,34 +108,34 @@ object PubsubTestSupport {
       }
     )
 
-  def topicNameGen(projectId: String): Gen[Any, TopicName] = for {
+  def topicNameGen(projectId: String): Gen[Any, TopicName] = for
     topic <- Gen.alphaNumericStringBounded(10, 10).map("topic_" + _)
-  } yield TopicName(projectId = projectId, topic = topic)
+  yield TopicName(projectId = projectId, topic = topic)
 
-  val subscriptionNameGen: Gen[Any, SubscriptionName] = for {
+  val subscriptionNameGen: Gen[Any, SubscriptionName] = for
     projectId      <- Gen.alphaNumericString
     subscriptionId <- Gen.alphaNumericStringBounded(10, 10).map("sub_" + _)
-  } yield SubscriptionName(projectId = projectId, subscription = subscriptionId)
+  yield SubscriptionName(projectId = projectId, subscription = subscriptionId)
 
-  def topicWithSubscriptionGen(projectId: String): Gen[Any, (TopicName, SubscriptionName)] = for {
+  def topicWithSubscriptionGen(projectId: String): Gen[Any, (TopicName, SubscriptionName)] = for
     topicName        <- topicNameGen(projectId)
     subscriptionName <- subscriptionNameGen
-  } yield (topicName, subscriptionName)
+  yield (topicName, subscriptionName)
 
   def someTopicWithSubscriptionName(projectId: String): ZIO[Any, Nothing, (TopicName, SubscriptionName)] =
     topicWithSubscriptionGen(projectId).runHead.map(_.get)
 
   def findSubscription(
     subscription: SubscriptionName
-  ): RIO[Backend[Task], Option[s.Subscription]] = for {
+  ): RIO[Backend[Task], Option[s.Subscription]] = for
     client <- ZIO.service[Backend[Task]]
     result <-
       client.send(p.Subscriptions.get(projectsId = subscription.projectId, subscriptionsId = subscription.subscription))
-  } yield result.body.toOption
+  yield result.body.toOption
 
   val encodingGen: Gen[Any, Encoding] = Gen.fromIterable(List(Encoding.Binary, Encoding.Json))
 
-  def subscriptionsConfigsGen(topicName: TopicName): Gen[PubsubConnectionConfig.Emulator, Subscription] = (for {
+  def subscriptionsConfigsGen(topicName: TopicName): Gen[PubsubConnectionConfig.Emulator, Subscription] = (for
     filter <- Gen
                 .option[Any, SubscriberFilter](
                   Gen.mapOf(Gen.alphaNumericString, Gen.alphaNumericString).map(SubscriberFilter.matchingAttributes(_))
@@ -143,7 +143,7 @@ object PubsubTestSupport {
     enableOrdering <- Gen.boolean
     expiration     <- Gen.option(Gen.finiteDuration(24.hours, 30.days))
     name           <- subscriptionNameGen
-  } yield Subscription(
+  yield Subscription(
     topicName = topicName,
     name = name,
     filter = filter,
