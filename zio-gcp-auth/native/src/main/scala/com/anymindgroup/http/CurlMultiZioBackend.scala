@@ -395,7 +395,8 @@ object CurlMultiZioBackend {
   def layer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlMultiZioBackend] =
     ZLayer.scoped(scoped(verbose))
 
-  private val curlBackendsCount: Synchronized[Int] = zio.Unsafe.unsafe(unsafe => Ref.Synchronized.unsafe.make(0)(using unsafe))
+  private val curlBackendsCount: Synchronized[Int] =
+    zio.Unsafe.unsafe(unsafe => Ref.Synchronized.unsafe.make(0)(using unsafe))
 
   def scoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlMultiZioBackend] =
     for

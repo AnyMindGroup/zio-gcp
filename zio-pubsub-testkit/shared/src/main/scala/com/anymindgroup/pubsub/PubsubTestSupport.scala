@@ -108,8 +108,8 @@ object PubsubTestSupport {
       }
     )
 
-  def topicNameGen(projectId: String): Gen[Any, TopicName] = for
-    topic <- Gen.alphaNumericStringBounded(10, 10).map("topic_" + _)
+  def topicNameGen(projectId: String): Gen[Any, TopicName] = for topic <-
+      Gen.alphaNumericStringBounded(10, 10).map("topic_" + _)
   yield TopicName(projectId = projectId, topic = topic)
 
   val subscriptionNameGen: Gen[Any, SubscriptionName] = for

@@ -88,16 +88,15 @@ private[storage] class V4CanonicalRequestBuilder(
                       |$signedHeadersString
                       |UNSIGNED-PAYLOAD""".stripMargin
 
-    for
-      payloadHash <- try {
-                       Right {
-                         val sha256Digest = MessageDigest.getInstance("SHA-256")
-                         val hashBytes    = sha256Digest.digest(payload.getBytes(StandardCharsets.UTF_8))
-                         hashBytes.map("%02x".format(_)).mkString
+    for payloadHash <- try {
+                         Right {
+                           val sha256Digest = MessageDigest.getInstance("SHA-256")
+                           val hashBytes    = sha256Digest.digest(payload.getBytes(StandardCharsets.UTF_8))
+                           hashBytes.map("%02x".format(_)).mkString
+                         }
+                       } catch {
+                         case e: Throwable => Left(e)
                        }
-                     } catch {
-                       case e: Throwable => Left(e)
-                     }
     yield V4CanonicalRequest(
       payloadPlain = payload,
       // https://cloud.google.com/storage/docs/authentication/signatures#string-to-sign-example

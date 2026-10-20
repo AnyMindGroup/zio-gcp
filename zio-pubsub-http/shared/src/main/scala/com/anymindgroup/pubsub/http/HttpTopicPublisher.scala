@@ -44,16 +44,15 @@ class HttpTopicPublisher[R, E] private[http] (
   override def publish(event: PublishMessage[E]): ZIO[R, Throwable, MessageId] =
     publish(NonEmptyChunk.single(event)).map(_.head)
 
-  private def toRequestBody(events: NonEmptyChunk[PublishMessage[E]]) = for
-    messages <- ZIO.foreach(events) { event =>
-                  for
-                    data <- serializer.serialize(event.data).map(c => base64Encoder.encodeToString(c.toArray))
-                  yield s.PubsubMessage(
-                    data = Some(data),
-                    orderingKey = event.orderingKey.map(_.value),
-                    attributes = if event.attributes.nonEmpty then Some(event.attributes) else None,
-                  )
-                }
+  private def toRequestBody(events: NonEmptyChunk[PublishMessage[E]]) = for messages <-
+      ZIO.foreach(events) { event =>
+        for data <- serializer.serialize(event.data).map(c => base64Encoder.encodeToString(c.toArray))
+        yield s.PubsubMessage(
+          data = Some(data),
+          orderingKey = event.orderingKey.map(_.value),
+          attributes = if event.attributes.nonEmpty then Some(event.attributes) else None,
+        )
+      }
   yield p.Topics.publish(
     projectsId = topic.projectId,
     topicsId = topic.topic,
