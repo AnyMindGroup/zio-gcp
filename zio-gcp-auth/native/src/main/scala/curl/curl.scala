@@ -4447,7 +4447,7 @@ object structs:
       def align(offset: Int, alignment: Int) = {
         val alignmentMask = alignment - 1
         val padding       =
-          if ((offset & alignmentMask) == 0) 0
+          if (offset & alignmentMask) == 0 then 0
           else alignment - (offset & alignmentMask)
         offset + padding
       }

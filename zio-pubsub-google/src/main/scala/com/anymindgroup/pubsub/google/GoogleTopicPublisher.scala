@@ -15,7 +15,7 @@ class GoogleTopicPublisher[R, E] private[pubsub] (
   serde: Serializer[R, E],
 ) extends Publisher[R, E] {
   override def publish(messages: NonEmptyChunk[PublishMessage[E]]): RIO[R, NonEmptyChunk[MessageId]] =
-    for {
+    for
       gMessages <- ZIO.foreach(messages)(toPubsubMessage(_)).map(_.toChunk.asJava)
       response  <- ZIO.fromFutureJava(
                     publisher
@@ -31,7 +31,7 @@ class GoogleTopicPublisher[R, E] private[pubsub] (
       ids <- NonEmptyChunk.fromChunk(Chunk.fromJavaIterable(response.getMessageIdsList()).map(MessageId(_))) match
                case None        => ZIO.dieMessage("Unexpected response with no message ids")
                case Some(value) => ZIO.succeed(value)
-    } yield ids
+    yield ids
 
   override def publish(event: PublishMessage[E]): ZIO[R, Throwable, MessageId] =
     publish(NonEmptyChunk(event)).map(_.head)

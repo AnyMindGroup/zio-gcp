@@ -95,7 +95,7 @@ private[pubsub] object StreamingPullSubscriber {
     initBidiStream: Task[BidiStream[StreamingPullRequest, StreamingPullResponse]],
     ackQueue: Queue[(String, Boolean)],
     retrySchedule: Schedule[Any, Throwable, ?],
-  ): ZStream[Any, Throwable, (GReceivedMessage, AckReply)] = (for {
+  ): ZStream[Any, Throwable, (GReceivedMessage, AckReply)] = (for
     bidiStream <- ZStream.fromZIO(initBidiStream)
     stream      = makeServerStream(bidiStream).map { message =>
                val ackReply = new AckReply {
@@ -113,26 +113,26 @@ private[pubsub] object StreamingPullSubscriber {
     ackStreamFailed <- ZStream.fromZIO(Promise.make[Throwable, Nothing])
     _               <-
       ZStream.scopedWith { scope =>
-        for {
+        for
           _ <-
             scope.addFinalizerExit { _ =>
-              for {
+              for
                 // cancel receiving stream before processing the rest of the queue
                 _ <- ZIO.succeed(bidiStream.cancel())
                 _ <- processAckQueue(ackQueue, bidiStream, None)
-              } yield ()
+              yield ()
             }
           _ <- ackStream.channel.drain.runIn(scope).catchAllCause(ackStreamFailed.failCause(_)).forkIn(scope)
-        } yield ()
+        yield ()
       }
     s <- stream.interruptWhen(ackStreamFailed)
-  } yield s).retry(retrySchedule)
+  yield s).retry(retrySchedule)
 
   private[pubsub] def initGrpcBidiStream(
     subscriber: GrpcSubscriberStub,
     subscriptionId: GSubscriptionName,
     streamAckDeadlineSeconds: Int,
-  ): Task[BidiStream[StreamingPullRequest, StreamingPullResponse]] = for {
+  ): Task[BidiStream[StreamingPullRequest, StreamingPullResponse]] = for
     _          <- ZIO.log(s"Initializing subscription bidi stream...")
     bidiStream <- ZIO.attempt {
                     val gBidiStream = subscriber.streamingPullCallable().call()
@@ -145,7 +145,7 @@ private[pubsub] object StreamingPullSubscriber {
                     BidiStream.fromGrpcBidiStream(gBidiStream)
                   }
     _ <- ZIO.log(s"Subscription bidi stream initialized")
-  } yield bidiStream
+  yield bidiStream
 
   private def getAckDeadlineSeconds(
     connection: PubsubConnectionConfig,
@@ -160,7 +160,7 @@ private[pubsub] object StreamingPullSubscriber {
     subscriptionName: SubscriptionName,
     retrySchedule: Schedule[Any, Throwable, ?],
     connection: PubsubConnectionConfig,
-  ): RIO[Scope, GoogleStream] = for {
+  ): RIO[Scope, GoogleStream] = for
     subscriptionId     <- ZIO.succeed(GSubscriptionName.of(subscriptionName.projectId, subscriptionName.subscription))
     ackDeadlineSeconds <- getAckDeadlineSeconds(connection, subscriptionId)
     subscriber         <- createStub(connection, SubscriberStubSettings.newBuilder, GrpcSubscriberStub.create(_))
@@ -174,7 +174,7 @@ private[pubsub] object StreamingPullSubscriber {
         "subscription_name"         -> subscriptionName.fullName,
         "subscription_ack_deadline" -> s"${ackDeadlineSeconds}s",
       )
-  } yield stream
+  yield stream
 }
 
 // interface for com.google.api.gax.rpc.BidiStream without implementations of com.google.api.gax.rpc.ServerStream to be enable to reproduce behaviour in tests
