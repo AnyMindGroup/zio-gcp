@@ -51,7 +51,7 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-val _scala3 = "3.3.8"
+val _scala3 = "3.3.9"
 
 val scala3Next = "3.9.0"
 
