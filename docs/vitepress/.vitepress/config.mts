@@ -61,6 +61,7 @@ export default defineConfig({
             },
             { text: 'Sheets', link: '/sheets/' },
             { text: 'BigQuery', link: '/bigquery/' },
+            { text: 'Cloud KMS', link: '/cloudkms/' },
           ]
         },
       ]

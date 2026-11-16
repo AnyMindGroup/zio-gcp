@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   // generated clients
   "com.anymindgroup" %% "zio-gcp-aiplatform-v1" % "@VERSION@",
   "com.anymindgroup" %% "zio-gcp-bigquery-v2" % "@VERSION@",
+  "com.anymindgroup" %% "zio-gcp-cloudkms-v1" % "@VERSION@",
   "com.anymindgroup" %% "zio-gcp-pubsub-v1" % "@VERSION@",
   "com.anymindgroup" %% "zio-gcp-storage-v1" % "@VERSION@",
   "com.anymindgroup" %% "zio-gcp-iamcredentials-v1" % "@VERSION@",

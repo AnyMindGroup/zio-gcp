@@ -39,6 +39,7 @@ jobs:
 
         update_spec aiplatform v1
         update_spec bigquery v2
+        update_spec cloudkms v1
         update_spec iamcredentials v1
         update_spec pubsub v1
         update_spec sheets v4
@@ -59,7 +60,7 @@ jobs:
           if ! gh pr view "$BRANCH" --json number -q .number 2>/dev/null; then
             gh pr create \
               --title "Update Google API discovery specs" \
-              --body "$(printf 'Automated daily update of Google API discovery documents.\n\nUpdated specs:\n- aiplatform v1\n- bigquery v2\n- iamcredentials v1\n- pubsub v1\n- sheets v4\n- storage v1')" \
+              --body "$(printf 'Automated daily update of Google API discovery documents.\n\nUpdated specs:\n- aiplatform v1\n- bigquery v2\n- cloudkms v1\n- iamcredentials v1\n- pubsub v1\n- sheets v4\n- storage v1')" \
               --head "$BRANCH" \
               --base master
           fi
