@@ -10,6 +10,12 @@
         },
         "https://www.googleapis.com/auth/cloud-platform.read-only": {
           "description": "View your data across Google Cloud services and see the email address of your Google Account"
+        },
+        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite": {
+          "description": "View your Agentspace chat history, including uploaded files and generated reports and visualizations, and interact with the Agentspace assistant on your behalf. Also view the artifacts you access through NotebookLM Enterprise."
+        },
+        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite": {
+          "description": "Interact with Discovery Engine API products, such as Agentspace, Vertex AI Search, or NotebookLM Enterprise, on your behalf. It will also allow the app to view all data that you have access to when you use or interact with a Discovery Engine API product."
         }
       }
     }
@@ -537,7 +543,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -701,7 +709,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -1036,7 +1046,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -1202,7 +1214,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -1364,7 +1378,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -1731,7 +1747,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -1893,7 +1911,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -2059,7 +2079,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -2465,7 +2487,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -2605,7 +2629,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "listWait": {
@@ -2741,7 +2767,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "listWait": {
@@ -2881,7 +2909,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "listWait": {
@@ -3017,7 +3047,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "listWait": {
@@ -3185,7 +3217,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -3347,7 +3381,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -3509,7 +3545,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -3673,7 +3711,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -3837,7 +3877,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -4001,7 +4043,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -4311,7 +4355,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -4473,7 +4519,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -4639,7 +4687,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -4803,7 +4853,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -4967,7 +5019,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -5129,7 +5183,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -5293,7 +5349,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -5457,7 +5515,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -5623,7 +5683,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -5785,7 +5847,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -5949,7 +6013,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -6113,7 +6179,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -6277,7 +6345,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -6441,7 +6511,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -6603,7 +6675,9 @@
           },
           "scopes": [
             "https://www.googleapis.com/auth/aiplatform",
-            "https://www.googleapis.com/auth/cloud-platform"
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
           ]
         },
         "list": {
@@ -6761,7 +6835,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -6925,7 +7001,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -8416,7 +8494,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -8740,7 +8820,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -9363,7 +9445,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -9639,7 +9723,9 @@
                               },
                               "scopes": [
                                 "https://www.googleapis.com/auth/aiplatform",
-                                "https://www.googleapis.com/auth/cloud-platform"
+                                "https://www.googleapis.com/auth/cloud-platform",
+                                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                               ]
                             },
                             "list": {
@@ -9801,7 +9887,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -10168,7 +10256,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -10411,7 +10501,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -10763,7 +10855,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -11887,7 +11981,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -13157,7 +13253,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "listWait": {
@@ -13293,7 +13391,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "listWait": {
@@ -14168,7 +14268,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "listWait": {
@@ -14304,7 +14406,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "listWait": {
@@ -15446,7 +15550,9 @@
                               },
                               "scopes": [
                                 "https://www.googleapis.com/auth/aiplatform",
-                                "https://www.googleapis.com/auth/cloud-platform"
+                                "https://www.googleapis.com/auth/cloud-platform",
+                                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                               ]
                             },
                             "list": {
@@ -15608,7 +15714,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -15770,7 +15878,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -16089,7 +16199,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -16560,7 +16672,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -16941,7 +17055,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -17600,7 +17716,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -17832,7 +17950,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -18364,7 +18484,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -18845,7 +18967,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -19265,7 +19389,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -19530,7 +19656,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -19752,7 +19880,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -20161,7 +20291,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -20925,7 +21057,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -21194,7 +21328,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -21744,7 +21880,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -22032,6 +22170,34 @@
                     "https://www.googleapis.com/auth/cloud-platform"
                   ]
                 },
+                "setDefault": {
+                  "description": "Sets the default NotebookRuntimeTemplate for a Location.",
+                  "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/notebookRuntimeTemplates:setDefault",
+                  "httpMethod": "POST",
+                  "id": "aiplatform.projects.locations.notebookRuntimeTemplates.setDefault",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "parameters": {
+                    "parent": {
+                      "description": "Required. The resource name of the Location to set the default NotebookRuntimeTemplate. Format: `projects/{project}/locations/{location}`",
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "path": "v1/{+parent}/notebookRuntimeTemplates:setDefault",
+                  "request": {
+                    "$ref": "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateRequest"
+                  },
+                  "response": {
+                    "$ref": "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateResponse"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                },
                 "setIamPolicy": {
                   "description": "Sets the access control policy on the specified resource. Replaces any existing policy. Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED` errors.",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/notebookRuntimeTemplates/{notebookRuntimeTemplatesId}:setIamPolicy",
@@ -22169,7 +22335,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -22549,7 +22717,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -22929,7 +23099,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -23091,7 +23263,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -23436,7 +23610,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -23821,7 +23997,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -23909,8 +24087,208 @@
             },
             "publishers": {
               "resources": {
+                "files": {
+                  "methods": {
+                    "delete": {
+                      "description": "Deletes the given file. Returns the deleted file's ID rather than an empty body. See `DeleteFileResponse`.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/files/{filesId}",
+                      "httpMethod": "DELETE",
+                      "id": "aiplatform.projects.locations.publishers.files.delete",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the file to delete. Format: `projects/{project}/locations/{location}/publishers/{publisher}/files/{file}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/publishers/[^/]+/files/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}",
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1DeleteFileResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    },
+                    "download": {
+                      "description": "Downloads the contents of the given file. Only files marked `downloadable` can be retrieved this way; user-uploaded files are not downloadable.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/files/{filesId}/content",
+                      "httpMethod": "GET",
+                      "id": "aiplatform.projects.locations.publishers.files.download",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the file to download. Format: `projects/{project}/locations/{location}/publishers/{publisher}/files/{file}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/publishers/[^/]+/files/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}/content",
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1DownloadFileResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "supportsMediaDownload": true,
+                      "useMediaDownloadService": true
+                    },
+                    "get": {
+                      "description": "Gets the metadata for the given file.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/files/{filesId}",
+                      "httpMethod": "GET",
+                      "id": "aiplatform.projects.locations.publishers.files.get",
+                      "parameterOrder": [
+                        "name"
+                      ],
+                      "parameters": {
+                        "name": {
+                          "description": "Required. The name of the file to get. Format: `projects/{project}/locations/{location}/publishers/{publisher}/files/{file}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/publishers/[^/]+/files/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+name}",
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1ClaudeFile"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    },
+                    "list": {
+                      "description": "Lists the files owned by the requesting project and location. Supports two mutually exclusive modes: paginated listing via an opaque `page` cursor, or batch fetch by `ids`. See `ListFilesRequest`.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/files",
+                      "httpMethod": "GET",
+                      "id": "aiplatform.projects.locations.publishers.files.list",
+                      "parameterOrder": [
+                        "parent",
+                        "publishersId"
+                      ],
+                      "parameters": {
+                        "limit": {
+                          "description": "Optional. The number of files to return per page. Defaults to 20 if unset, maximum 1000. Mutually exclusive with `ids`.",
+                          "format": "int32",
+                          "location": "query",
+                          "type": "integer"
+                        },
+                        "page": {
+                          "description": "Optional. Opaque pagination cursor. Pass the previous response's `next_page` to fetch the next page. Mutually exclusive with `ids`.",
+                          "location": "query",
+                          "type": "string"
+                        },
+                        "parent": {
+                          "description": "Required. The location to list files under. Format: `projects/{project}/locations/{location}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "publishersId": {
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+parent}/publishers/{publishersId}/files",
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1ListFilesResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ]
+                    },
+                    "upload": {
+                      "description": "Uploads a file that can be referenced by ID from subsequent Claude model requests.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/files",
+                      "httpMethod": "POST",
+                      "id": "aiplatform.projects.locations.publishers.files.upload",
+                      "mediaUpload": {
+                        "accept": [
+                          "*/*"
+                        ],
+                        "maxSize": "524288000",
+                        "protocols": {
+                          "simple": {
+                            "multipart": true,
+                            "path": "/upload/v1/{+parent}/publishers/{publishersId}/files"
+                          }
+                        }
+                      },
+                      "parameterOrder": [
+                        "parent",
+                        "publishersId"
+                      ],
+                      "parameters": {
+                        "parent": {
+                          "description": "Required. The location to create the file under. Format: `projects/{project}/locations/{location}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        },
+                        "publishersId": {
+                          "location": "path",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+parent}/publishers/{publishersId}/files",
+                      "request": {
+                        "$ref": "GoogleCloudAiplatformV1CreateFileRequest"
+                      },
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1ClaudeFile"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/cloud-platform"
+                      ],
+                      "supportsMediaUpload": true
+                    }
+                  }
+                },
                 "models": {
                   "methods": {
+                    "batchEmbedContents": {
+                      "description": "Generates embeddings directly from multiple contents.",
+                      "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/models/{modelsId}:batchEmbedContents",
+                      "httpMethod": "POST",
+                      "id": "aiplatform.projects.locations.publishers.models.batchEmbedContents",
+                      "parameterOrder": [
+                        "model"
+                      ],
+                      "parameters": {
+                        "model": {
+                          "description": "Required. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}`",
+                          "location": "path",
+                          "pattern": "^projects/[^/]+/locations/[^/]+/publishers/[^/]+/models/[^/]+$",
+                          "required": true,
+                          "type": "string"
+                        }
+                      },
+                      "path": "v1/{+model}:batchEmbedContents",
+                      "request": {
+                        "$ref": "GoogleCloudAiplatformV1BatchEmbedContentsRequest"
+                      },
+                      "response": {
+                        "$ref": "GoogleCloudAiplatformV1BatchEmbedContentsResponse"
+                      },
+                      "scopes": [
+                        "https://www.googleapis.com/auth/aiplatform",
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/cloud-platform.read-only"
+                      ]
+                    },
                     "computeTokens": {
                       "description": "Return a list of tokens based on the input text.",
                       "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/publishers/{publishersId}/models/{modelsId}:computeTokens",
@@ -24649,7 +25027,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -24936,7 +25316,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -25102,7 +25484,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -25968,7 +26352,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -26200,7 +26586,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -26515,7 +26903,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "wait": {
@@ -26753,7 +27143,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "wait": {
@@ -27131,7 +27523,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "wait": {
@@ -27519,7 +27913,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -27901,7 +28297,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -28225,7 +28623,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -28576,7 +28976,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -28740,7 +29142,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -29065,7 +29469,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -29373,7 +29779,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -29819,7 +30227,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -29985,7 +30395,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -30629,7 +31041,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -31020,7 +31434,9 @@
                               },
                               "scopes": [
                                 "https://www.googleapis.com/auth/aiplatform",
-                                "https://www.googleapis.com/auth/cloud-platform"
+                                "https://www.googleapis.com/auth/cloud-platform",
+                                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                               ]
                             },
                             "list": {
@@ -31452,7 +31868,9 @@
                                   },
                                   "scopes": [
                                     "https://www.googleapis.com/auth/aiplatform",
-                                    "https://www.googleapis.com/auth/cloud-platform"
+                                    "https://www.googleapis.com/auth/cloud-platform",
+                                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                                   ]
                                 },
                                 "list": {
@@ -31618,7 +32036,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -31937,7 +32357,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -32258,7 +32680,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -32698,7 +33122,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -32860,7 +33286,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -33026,7 +33454,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -33489,7 +33919,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -33651,7 +34083,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -33966,7 +34400,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "wait": {
@@ -34204,7 +34640,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "wait": {
@@ -34582,7 +35020,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "wait": {
@@ -34699,7 +35139,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -34865,7 +35307,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35029,7 +35473,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35193,7 +35639,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35357,7 +35805,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35521,7 +35971,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35685,7 +36137,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -35847,7 +36301,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -36013,7 +36469,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -36179,7 +36637,9 @@
                   },
                   "scopes": [
                     "https://www.googleapis.com/auth/aiplatform",
-                    "https://www.googleapis.com/auth/cloud-platform"
+                    "https://www.googleapis.com/auth/cloud-platform",
+                    "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                    "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                   ]
                 },
                 "list": {
@@ -36341,7 +36801,9 @@
                       },
                       "scopes": [
                         "https://www.googleapis.com/auth/aiplatform",
-                        "https://www.googleapis.com/auth/cloud-platform"
+                        "https://www.googleapis.com/auth/cloud-platform",
+                        "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                        "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                       ]
                     },
                     "list": {
@@ -36503,7 +36965,9 @@
                           },
                           "scopes": [
                             "https://www.googleapis.com/auth/aiplatform",
-                            "https://www.googleapis.com/auth/cloud-platform"
+                            "https://www.googleapis.com/auth/cloud-platform",
+                            "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                            "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
                           ]
                         },
                         "list": {
@@ -36669,7 +37133,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -36833,7 +37299,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -36997,7 +37465,9 @@
               },
               "scopes": [
                 "https://www.googleapis.com/auth/aiplatform",
-                "https://www.googleapis.com/auth/cloud-platform"
+                "https://www.googleapis.com/auth/cloud-platform",
+                "https://www.googleapis.com/auth/discoveryengine.assist.readwrite",
+                "https://www.googleapis.com/auth/discoveryengine.serving.readwrite"
               ]
             },
             "list": {
@@ -37145,7 +37615,7 @@
       }
     }
   },
-  "revision": "20261012",
+  "revision": "20261107",
   "rootUrl": "https://aiplatform.googleapis.com/",
   "schemas": {
     "CloudAiLargeModelsVisionExperimentsResponse": {
@@ -37263,6 +37733,10 @@
           "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsOutpaintConfig",
           "description": "Config for Outpainting task."
         },
+        "perfEstimationConfig": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfig",
+          "description": "Optional. Omni Perf 3D estimation configuration."
+        },
         "proEdit": {
           "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsProEditConfig",
           "description": "Configuration for Pro Edit."
@@ -37328,6 +37802,37 @@
       },
       "type": "object"
     },
+    "CloudAiLargeModelsVisionGenerateVideoExperimentsBoundingBox": {
+      "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsBoundingBox",
+      "properties": {
+        "bottom": {
+          "description": "The bottom coordinate (exclusive) of the bounding box.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "frameIndex": {
+          "description": "The frame index of the bounding box.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "left": {
+          "description": "The left coordinate of the bounding box.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "right": {
+          "description": "The right coordinate (exclusive) of the bounding box.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "top": {
+          "description": "The top coordinate of the bounding box.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
     "CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig": {
       "description": "Configuration for color alignment.",
       "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig",
@@ -37380,7 +37885,7 @@
           "type": "string"
         },
         "weight": {
-          "description": "The blending scale/weight of the LoRA adapter. Must be in the range (0.0, 1.0]. Default is 1.0.",
+          "description": "The blending scale/weight of the LoRA adapter. Must be in the range (0.0, 2.0]. Default is 1.0.",
           "format": "float",
           "type": "number"
         }
@@ -37456,6 +37961,53 @@
       },
       "type": "object"
     },
+    "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfig": {
+      "description": "Configuration for Omni Perf 3D estimation.",
+      "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfig",
+      "properties": {
+        "exportUsd": {
+          "description": "Optional. Whether to export the USD file.",
+          "type": "boolean"
+        },
+        "sourceBoundingBox": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsBoundingBox",
+          "description": "Required. The bounding box of the object in the source video."
+        },
+        "sourceVideo": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoRequestVideo",
+          "description": "Required. The source video for the 3D estimation."
+        },
+        "targetCharacterReferences": {
+          "description": "Optional. The character reference images/videos.",
+          "items": {
+            "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfigCharacterReference"
+          },
+          "type": "array"
+        },
+        "temporalSmoothness": {
+          "description": "Optional. How much to temporally smooth the 3D fitting optimization (the fitting server's `temporal_weight`). Must be finite and >= 0. Defaults to the fitting server's default (10) if unset.",
+          "format": "float",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfigCharacterReference": {
+      "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsPerfEstimationConfigCharacterReference",
+      "properties": {
+        "boundingBox": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoExperimentsBoundingBox",
+          "description": "Required. The bounding box of the character in the reference image/video."
+        },
+        "referenceImage": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoRequestImage"
+        },
+        "referenceVideo": {
+          "$ref": "CloudAiLargeModelsVisionGenerateVideoRequestVideo"
+        }
+      },
+      "type": "object"
+    },
     "CloudAiLargeModelsVisionGenerateVideoExperimentsProEditConfig": {
       "description": "Configuration for Pro Edit.",
       "id": "CloudAiLargeModelsVisionGenerateVideoExperimentsProEditConfig",
@@ -37505,6 +38057,11 @@
             "\"8K UDiT, downsampled 2x in the decoder."
           ],
           "type": "string"
+        },
+        "steps": {
+          "description": "Number of diffusion denoising steps (1 or 2).",
+          "format": "int32",
+          "type": "integer"
         },
         "tileSmoothing": {
           "description": "Smooths the seams between the tiles the model upscales separately.",
@@ -38336,11 +38893,13 @@
           "description": "Programming language of the `code`.",
           "enum": [
             "LANGUAGE_UNSPECIFIED",
-            "PYTHON"
+            "PYTHON",
+            "BASH"
           ],
           "enumDescriptions": [
             "Unspecified language. This value should not be used.",
-            "Python >= 3.10, with numpy and simpy available."
+            "Python >= 3.10, with numpy and simpy available.",
+            "Bash. Only available for Gemini 3.0 model or above."
           ],
           "type": "string"
         }
@@ -38379,11 +38938,13 @@
           "description": "Programming language of the `code`.",
           "enum": [
             "LANGUAGE_UNSPECIFIED",
-            "PYTHON"
+            "PYTHON",
+            "BASH"
           ],
           "enumDescriptions": [
             "Unspecified language. This value should not be used.",
-            "Python >= 3.10, with numpy and simpy available."
+            "Python >= 3.10, with numpy and simpy available.",
+            "Bash. Only available for Gemini 3.0 model or above."
           ],
           "type": "string"
         }
@@ -38406,6 +38967,10 @@
       "description": "Code execution result step.",
       "id": "GenaiVertexV1CodeExecutionResultStep",
       "properties": {
+        "content": {
+          "$ref": "GenaiVertexV1ContentList",
+          "description": "Multimodal output of the code execution."
+        },
         "isError": {
           "description": "Whether the code execution resulted in an error.",
           "type": "boolean"
@@ -38740,12 +39305,32 @@
           "enum": [
             "TYPE_UNSPECIFIED",
             "TYPE_PDF",
-            "TYPE_CSV"
+            "TYPE_CSV",
+            "TYPE_PPTX",
+            "TYPE_PPT",
+            "TYPE_ODP",
+            "TYPE_DOCX",
+            "TYPE_DOC",
+            "TYPE_DOTX",
+            "TYPE_ODT",
+            "TYPE_XLSX",
+            "TYPE_XLS",
+            "TYPE_ODS"
           ],
           "enumDescriptions": [
             "",
             "PDF document format",
-            "CSV document format"
+            "CSV document format",
+            "PPTX presentation format",
+            "PPT presentation format",
+            "ODP presentation format",
+            "DOCX document format",
+            "DOC document format",
+            "DOTX document template format",
+            "ODT document format",
+            "XLSX spreadsheet format",
+            "XLS spreadsheet format",
+            "ODS spreadsheet format"
           ],
           "type": "string"
         },
@@ -38930,7 +39515,7 @@
         },
         "parameters": {
           "$ref": "GenaiVertexV1Value",
-          "description": "The JSON Schema for the function's parameters."
+          "description": "The JSON Schema for the function's parameters. Supports a subset of JSON Schema. `minLength`, `maxLength`, `minProperties`, `maxProperties`, `uniqueItems`, `contains`, `minContains`, and `maxContains` are ignored and not enforced."
         }
       },
       "type": "object"
@@ -39685,7 +40270,8 @@
             "FAILED",
             "CANCELLED",
             "INCOMPLETE",
-            "QUEUED"
+            "QUEUED",
+            "REQUIRES_CONTINUATION"
           ],
           "enumDescriptions": [
             "Default value. This value is unused.",
@@ -39695,7 +40281,8 @@
             "The interaction failed.",
             "The interaction was cancelled.",
             "The interaction is completed, but contains incomplete results (e.g. hitting max_tokens).",
-            "The interaction is queued, waiting for processing (e.g. waiting for off-peak capacity)."
+            "The interaction is queued, waiting for processing (e.g. waiting for off-peak capacity).",
+            "The interaction requires at least one more request for it to be completed. The next request should set the continuation_token to the one returned by this request."
           ],
           "readOnly": true,
           "type": "string"
@@ -39777,7 +40364,8 @@
             "FAILED",
             "CANCELLED",
             "INCOMPLETE",
-            "QUEUED"
+            "QUEUED",
+            "REQUIRES_CONTINUATION"
           ],
           "enumDescriptions": [
             "Default value. This value is unused.",
@@ -39787,7 +40375,8 @@
             "The interaction failed.",
             "The interaction was cancelled.",
             "The interaction is completed, but contains incomplete results (e.g. hitting max_tokens).",
-            "The interaction is queued, waiting for processing (e.g. waiting for off-peak capacity)."
+            "The interaction is queued, waiting for processing (e.g. waiting for off-peak capacity).",
+            "The interaction requires at least one more request for it to be completed. The next request should set the continuation_token to the one returned by this request."
           ],
           "type": "string"
         },
@@ -39853,6 +40442,11 @@
             "$ref": "GenaiVertexV1InteractionUsageGroundingToolCount"
           },
           "type": "array"
+        },
+        "initialInputTokens": {
+          "description": "Number of input tokens used in the first turn of this interaction.",
+          "format": "int32",
+          "type": "integer"
         },
         "inputTokensByModality": {
           "description": "A breakdown of input token usage by modality.",
@@ -40567,6 +41161,17 @@
       },
       "type": "object"
     },
+    "GenaiVertexV1SmartTranscriptionMode": {
+      "description": "Configuration for smart transcription mode.",
+      "id": "GenaiVertexV1SmartTranscriptionMode",
+      "properties": {
+        "sourceText": {
+          "description": "The source text to be edited or rewritten via voice instructions. When provided, the model performs voice-driven editing and outputs the finalized replacement text.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GenaiVertexV1SpeakerConfig": {
       "description": "Configuration for multi-speaker and speech generation.",
       "id": "GenaiVertexV1SpeakerConfig",
@@ -40849,7 +41454,7 @@
         },
         "schema": {
           "$ref": "GenaiVertexV1Struct",
-          "description": "The JSON schema that the output should conform to. Only applicable when mime_type is application/json."
+          "description": "The JSON schema that the output should conform to. Only applicable when mime_type is application/json. Supports a subset of JSON Schema. `minLength`, `maxLength`, `minProperties`, `maxProperties`, `uniqueItems`, `contains`, `minContains`, and `maxContains` are ignored and not enforced; validate these in your application. `minItems` and `maxItems` are enforced. Schemas that are too complex to enforce (for example, large `maxItems` on nested arrays) return a 400 INVALID_ARGUMENT error."
         }
       },
       "type": "object"
@@ -41059,6 +41664,22 @@
           },
           "type": "array"
         },
+        "modeConfig": {
+          "$ref": "GenaiVertexV1TranscriptionMode"
+        },
+        "modeEnum": {
+          "enum": [
+            "MODE_UNSPECIFIED",
+            "VERBATIM",
+            "SMART"
+          ],
+          "enumDescriptions": [
+            "Unspecified transcription mode.",
+            "Verbatim transcription mode.",
+            "Smart transcription mode."
+          ],
+          "type": "string"
+        },
         "timestampGranularities": {
           "deprecated": true,
           "description": "Optional. The granularity of timestamps to include in the transcription output. Supported values: \"word\". If empty, no timestamps are generated.",
@@ -41066,6 +41687,19 @@
             "type": "string"
           },
           "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GenaiVertexV1TranscriptionMode": {
+      "description": "Configuration for transcription mode.",
+      "id": "GenaiVertexV1TranscriptionMode",
+      "properties": {
+        "smart": {
+          "$ref": "GenaiVertexV1SmartTranscriptionMode"
+        },
+        "verbatim": {
+          "$ref": "GenaiVertexV1VerbatimTranscriptionMode"
         }
       },
       "type": "object"
@@ -41287,6 +41921,24 @@
       },
       "type": "object"
     },
+    "GenaiVertexV1VerbatimTranscriptionMode": {
+      "description": "Configuration for verbatim transcription mode.",
+      "id": "GenaiVertexV1VerbatimTranscriptionMode",
+      "properties": {
+        "diarizationMode": {
+          "description": "Optional. Configures speaker diarization. Supported values: \"speaker\".",
+          "type": "string"
+        },
+        "timestampGranularities": {
+          "description": "Optional. The granularity of timestamps to include in the transcription output. Supported values: \"word\". If empty, no timestamps are generated.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
     "GenaiVertexV1VertexAISearchConfig": {
       "description": "Used to specify configuration for VertexAISearch.",
       "id": "GenaiVertexV1VertexAISearchConfig",
@@ -41317,7 +41969,8 @@
             "IMAGE_TO_VIDEO",
             "REFERENCE_TO_VIDEO",
             "EDIT",
-            "EXTEND"
+            "EXTEND",
+            "UPSCALE"
           ],
           "enumDescriptions": [
             "Unspecified task. The task is inferred from the input prompt and media.",
@@ -41325,7 +41978,8 @@
             "Generates video from one or two source images. The first image defines the starting frame, and the optional second image defines the ending frame.",
             "Generates video using reference media (such as images, audio, or video).",
             "Modifies an existing input video.",
-            "Extends an existing input video."
+            "Extends an existing input video.",
+            "Increases the resolution of an existing input video."
           ],
           "type": "string"
         }
@@ -41718,6 +42372,19 @@
       "description": "A Vertex agent contains instructions and configurations for the LLM to execute a certain task.",
       "id": "GoogleCloudAiplatformV1Agent",
       "properties": {
+        "agentIdentity": {
+          "$ref": "GoogleCloudAiplatformV1AgentIdentity",
+          "description": "Optional. Immutable. The identity configuration of the agent. Immutable: the agent's own identity determines the A2 (CoWorker) archetype and the minted SPIFFE, so it cannot change after creation (no A1<->A2 transition)."
+        },
+        "aiApplication": {
+          "description": "Output only. The resource name of the AI Application provisioned for this agent. Format: `projects/{project}/locations/{location}/aiApplications/{ai_application}`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "allowedTeammates": {
+          "$ref": "GoogleCloudAiplatformV1AllowedTeammates",
+          "description": "Optional. The identities this agent is allowed to contact outbound (for example over Gmail or Chat). Stored on the agent and always returned by `GetAgent`; see the field comments on `AllowedTeammates`."
+        },
         "base_agent": {
           "description": "Required. Immutable. The base agent for the agent. Supported values: * `antigravity-preview-05-2026` Immutable: `UpdateAgent` rejects a change, including clearing it. The kind of agent this is gets derived from this field when the agent is created and is recorded then; nothing recomputes it afterwards, so a later change would leave the agent described as one kind and behaving as another. Create a new agent instead.",
           "type": "string"
@@ -41741,9 +42408,17 @@
           "readOnly": true,
           "type": "string"
         },
+        "encryptionSpec": {
+          "$ref": "GoogleCloudAiplatformV1EncryptionSpec",
+          "description": "Optional. Immutable. Customer-managed encryption key spec for an Agent. If set, this agent's user data will be secured by this key; if not set, it is secured by a Google-managed key. Cannot be changed after the agent is created."
+        },
         "id": {
           "description": "Immutable. The user-specified ID for the agent. This ID becomes the final component of the agent resource name. If not provided, Vertex AI will generate a value for this ID. The ID can be up to 63 characters and must match the regular expression `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`.",
           "type": "string"
+        },
+        "memoryConfig": {
+          "$ref": "GoogleCloudAiplatformV1AgentMemoryConfig",
+          "description": "Optional. Memory settings for the agent."
         },
         "metadata": {
           "additionalProperties": {
@@ -41768,6 +42443,18 @@
         "observabilityConfig": {
           "$ref": "GoogleCloudAiplatformV1ObservabilityConfig",
           "description": "Optional. Observability settings for this agent's sessions."
+        },
+        "owner": {
+          "$ref": "GoogleCloudAiplatformV1Principal",
+          "description": "Optional. The human owner (principal) the agent acts on behalf of (A1 Personal). Mutable by design: ownership is meant to be reassignable (e.g. by an admin). On create an A1 (Personal) agent may omit it and the control plane defaults it to the caller; an A2 (CoWorker) agent must set it explicitly. `owner.id` must be an *obfuscated* Gaia id. A raw Gaia id is rejected with INVALID_ARGUMENT naming the rule -- both forms are strings of decimal digits, so the surface would otherwise have two indistinguishable spellings of one identity. Not yet: `UpdateAgent` currently rejects a change to this field. The control plane authorizes every agent method against the owner Gaia id it persists internally at create time, and the update path does not maintain that copy — so a field write here would move the reported owner without moving the one access control uses. The guard comes out once reassignment moves both, along with the Workspace identity provisioned under the owner."
+        },
+        "persona": {
+          "$ref": "GoogleCloudAiplatformV1Persona",
+          "description": "Optional. The persona (presentation) of the agent. Mutable: presentation only, not an archetype-derivation signal."
+        },
+        "status": {
+          "$ref": "GoogleCloudAiplatformV1AgentStatus",
+          "description": "Optional. The current operational state of the agent."
         },
         "system_instruction": {
           "description": "Optional. The instructions for the agent to follow. These instructions are passed to the LLM as a system instruction.",
@@ -41882,6 +42569,37 @@
       },
       "type": "object"
     },
+    "GoogleCloudAiplatformV1AgentIdentity": {
+      "description": "Identity configuration for an agent.",
+      "id": "GoogleCloudAiplatformV1AgentIdentity",
+      "properties": {
+        "email": {
+          "description": "Optional. The email address representing the agent's principal identity. For Google Workspace agents, the email should be on a verified customer domain.",
+          "type": "string"
+        },
+        "gaiaId": {
+          "description": "Output only. The agent's own obfuscated Gaia id. Set only for an A2 (CoWorker) agent, which is the only kind that has a first-class Gaia account of its own. An A1 (Personal) agent has no `AgentIdentity` at all: it acts on behalf of its owner, so the identity it runs as is `Agent.owner`, and there is no separate Gaia account to name. Populated asynchronously once the agent identity is provisioned, so it may be absent from the `CreateAgent` LRO response and present on `GetAgent`/`ListAgents`.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "tenant": {
+          "$ref": "GoogleCloudAiplatformV1Tenant",
+          "description": "Optional. The tenant / customer context under which this agent runs. For Google Workspace , this is the obfuscated Customer ID (e.g. \"C0123abcd\")."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1AgentMemoryConfig": {
+      "description": "Agent-level memory settings. These apply across every task the agent runs and every user of the agent: this is an agent-wide control, not a per-user one. To turn memory off for a single end user of a shared agent, the calling surface sets `TaskSpec.scope.memory_config.disable_memory` on that user's tasks.",
+      "id": "GoogleCloudAiplatformV1AgentMemoryConfig",
+      "properties": {
+        "disableMemory": {
+          "description": "Optional. If true, memory is disabled for the agent as a whole: across every task it runs, the agent neither reads existing memories into the prompt nor forms new ones. Memory is on by default, and this is the setting that wins. A task may turn memory off for itself alone with `TaskSpec.scope.memory_config.disable_memory`, but cannot turn it back on while this is true; the two are OR'ed. This level wins because it is the mutable one. Turning it on has to cover the tasks that already exist, whose stored specs still say whatever they were created with, so the agent's current value is re-applied every time a session opens, including on a resume. Memories already stored are retained and stay readable by the agent's users; this governs only whether the agent can access and modify them.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudAiplatformV1AgentModelConfig": {
       "description": "Selects the model configuration for an agent. Starts with just the model id/alias; extensible with further model parameters without a breaking change.",
       "id": "GoogleCloudAiplatformV1AgentModelConfig",
@@ -41909,6 +42627,74 @@
       },
       "type": "object"
     },
+    "GoogleCloudAiplatformV1AgentStatus": {
+      "description": "Operational state of the agent.",
+      "id": "GoogleCloudAiplatformV1AgentStatus",
+      "properties": {
+        "deleteTime": {
+          "description": "Output only. The time at which the agent was soft-deleted.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "state": {
+          "description": "Optional. The current state of the agent.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "ACTIVE",
+            "SUSPENDED",
+            "ARCHIVED",
+            "DELETED",
+            "PROVISIONING"
+          ],
+          "enumDescriptions": [
+            "Unspecified agent state.",
+            "The agent is active and ready to process requests.",
+            "The agent is suspended.",
+            "The agent is archived (read-only).",
+            "The agent is soft-deleted.",
+            "The agent has been created and is awaiting post-creation provisioning before becoming active."
+          ],
+          "type": "string"
+        },
+        "suspensionReason": {
+          "$ref": "GoogleCloudAiplatformV1AgentStatusSuspensionReason",
+          "description": "Output only. Context about the current active suspension.",
+          "readOnly": true
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1AgentStatusSuspensionReason": {
+      "description": "Details about the active suspension. This message is only populated if the state is SUSPENDED.",
+      "id": "GoogleCloudAiplatformV1AgentStatusSuspensionReason",
+      "properties": {
+        "reason": {
+          "description": "Output only. The reason for the current suspension.",
+          "enum": [
+            "REASON_UNSPECIFIED",
+            "ABUSE",
+            "ADMIN",
+            "USER_INITIATED"
+          ],
+          "enumDescriptions": [
+            "Unspecified suspension reason.",
+            "Suspended due to abuse or terms of service violations.",
+            "Suspended by a domain administrator.",
+            "Suspended by the owner/user."
+          ],
+          "readOnly": true,
+          "type": "string"
+        },
+        "suspensionTime": {
+          "description": "Output only. The time when the current suspension was applied.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudAiplatformV1AgentTool": {
       "description": "A tool provides a list of actions available to the Agent during the process of executing a task. Example JSON for an MCP server tool: { \"type\": \"mcp_server\", \"name\": \"my-mcp-server\", \"url\": \"https://api.example.com/mcp\", \"headers\": { \"Authorization\": \"Bearer token123\" } }",
       "id": "GoogleCloudAiplatformV1AgentTool",
@@ -41917,7 +42703,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Optional. The headers for the MCP server, such as for authentication. Only applicable when `type` is `mcp_server`.",
+          "description": "Optional. Not used; the tool is resolved from `name` via Agent Registry.",
           "type": "object"
         },
         "name": {
@@ -41925,11 +42711,11 @@
           "type": "string"
         },
         "type": {
-          "description": "Required. The type of the tool. Supported types: * `code_execution` * `endpoint` * `filesystem` * `google_search` * `mcp_server` * `url_context`",
+          "description": "Required. The type of the tool. Supported types: * `audio_generation` * `endpoint` * `google_search` * `image_generation` * `mcp_server` * `speech_generation` * `url_context` * `video_generation`",
           "type": "string"
         },
         "url": {
-          "description": "Optional. Fallback for the tool's runtime reference, consumed by `CreateAgent` to create the downstream AI App. Applicable when `type` is `mcp_server` or `endpoint`, and optional: the Agent service derives the runtime reference from `name` via Agent Registry (`GetMcpServer` / `GetEndpoint`), and reads this only when that lookup yields none.",
+          "description": "Optional. The runtime reference is resolved from `name` via Agent Registry (`GetMcpServer` / `GetEndpoint`), so this is not required.",
           "type": "string"
         }
       },
@@ -42010,6 +42796,20 @@
         "rougeMetricValue": {
           "$ref": "GoogleCloudAiplatformV1RougeMetricValue",
           "description": "Results for rouge metric."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1AllowedTeammates": {
+      "description": "The set of identities an agent is allowed to contact outbound -- who the agent may talk to, not who may talk to the agent (that is IAM's job). The membership is stored on the agent, so the Agents API is authoritative for what this field reports.",
+      "id": "GoogleCloudAiplatformV1AllowedTeammates",
+      "properties": {
+        "teammates": {
+          "description": "Optional. The teammates the agent is permitted to contact. At most 500. OUTPUT: always returned. An empty list means the agent has no teammates, not that the field went unread. INPUT: the complete desired set, not a delta -- teammates absent from it are removed. The backing roster is updated asynchronously and best-effort after the write returns, so it may briefly lag what `GetAgent` reports. What the agent is actually able to reach follows the roster, not this field, until the two converge.",
+          "items": {
+            "$ref": "GoogleCloudAiplatformV1Teammate"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -42481,6 +43281,10 @@
           ],
           "type": "string"
         },
+        "sourceText": {
+          "description": "Optional. The source text to be edited or rewritten via voice instructions. When provided in `SMART` mode, the model evaluates the audio input against this text and emits the complete replacement text in the candidate response rather than appending to it.",
+          "type": "string"
+        },
         "wordTimestamp": {
           "description": "Optional. Configures word-level timestamp generation.",
           "type": "boolean"
@@ -42948,6 +43752,53 @@
           "description": "Required. The names of the PipelineJobs to delete. A maximum of 32 PipelineJobs can be deleted in a batch. Format: `projects/{project}/locations/{location}/pipelineJobs/{pipelineJob}`",
           "items": {
             "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1BatchEmbedContentsRequest": {
+      "description": "Request message for PredictionService.BatchEmbedContents.",
+      "id": "GoogleCloudAiplatformV1BatchEmbedContentsRequest",
+      "properties": {
+        "requests": {
+          "description": "Required. Embed requests for the batch. The model in each of these requests must either be empty or match the model specified in `BatchEmbedContentsRequest.model`. All the requests in a batch must have the same output dimensionality and auto truncation parameters.",
+          "items": {
+            "$ref": "GoogleCloudAiplatformV1EmbedContentRequest"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1BatchEmbedContentsResponse": {
+      "description": "Response message for PredictionService.BatchEmbedContents.",
+      "id": "GoogleCloudAiplatformV1BatchEmbedContentsResponse",
+      "properties": {
+        "embeddings": {
+          "description": "The embeddings for each request, in the same order as provided in the batch request.",
+          "items": {
+            "$ref": "GoogleCloudAiplatformV1BatchEmbedContentsResponseEmbedding"
+          },
+          "type": "array"
+        },
+        "usageMetadata": {
+          "$ref": "GoogleCloudAiplatformV1UsageMetadata",
+          "description": "Usage metadata about the response(s)."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1BatchEmbedContentsResponseEmbedding": {
+      "description": "A list of floats representing an embedding.",
+      "id": "GoogleCloudAiplatformV1BatchEmbedContentsResponseEmbedding",
+      "properties": {
+        "values": {
+          "description": "Embedding vector values.",
+          "items": {
+            "format": "float",
+            "type": "number"
           },
           "type": "array"
         }
@@ -43924,7 +44775,8 @@
             "UNEXPECTED_TOOL_CALL",
             "NO_IMAGE",
             "MALFORMED_RESPONSE",
-            "CONTINUATION"
+            "CONTINUATION",
+            "TOO_MANY_TOOL_CALLS"
           ],
           "enumDescriptions": [
             "The finish reason is unspecified.",
@@ -43945,7 +44797,8 @@
             "The model generated a function call that is semantically invalid. This can happen, for example, if function calling is not enabled or the generated function is not in the function declaration.",
             "The model was expected to generate an image, but didn't.",
             "Finishes due to malformed response.",
-            "Token generation was stopped because the response reached the per-request token limit, but generation is not yet complete. The model response can be continued via a subsequent request using the returned `continuation_token`."
+            "Token generation was stopped because the response reached the per-request token limit, but generation is not yet complete. The model response can be continued via a subsequent request using the returned `continuation_token`.",
+            "The model made too many tool calls in a single request, so the server-side tool loop stopped before the model returned a final answer."
           ],
           "readOnly": true,
           "type": "string"
@@ -44207,6 +45060,56 @@
           "description": "Index in the input text where the claim starts (inclusive).",
           "format": "int32",
           "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1ClaudeFile": {
+      "description": "A file that can be referenced by ID from subsequent Claude model requests. The JSON representation of this message matches the Claude Files API File object field-for-field, so that code written against that API parses these responses unchanged.",
+      "id": "GoogleCloudAiplatformV1ClaudeFile",
+      "properties": {
+        "created_at": {
+          "description": "Output only. The time at which the file was created.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "downloadable": {
+          "description": "Output only. Whether the contents of this file can be retrieved with `DownloadFile`. False for user-uploaded files, true for tool-generated ones.",
+          "readOnly": true,
+          "type": "boolean"
+        },
+        "expires_at": {
+          "description": "Output only. The time at which the file expires and is deleted, set from the `expires_in_seconds` upload form field. Unset for files that do not expire, which is serialised as `null`.",
+          "format": "google-datetime",
+          "readOnly": true,
+          "type": "string"
+        },
+        "filename": {
+          "description": "Output only. The original name of the uploaded file, taken from the `Content-Disposition` header on upload. Between 1 and 255 characters. Control characters and the characters `<>:\"|?*\\/` are not accepted.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "id": {
+          "description": "Output only. The server-assigned identifier of the file, for example `file_abc123`. This is the ID to pass in subsequent model requests.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "mime_type": {
+          "description": "Output only. The media type of the file, taken from the `Content-Type` header of the file part on upload.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "size_bytes": {
+          "description": "Output only. The size of the file in bytes.",
+          "format": "int32",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "type": {
+          "description": "Output only. The object type. Always `file`.",
+          "readOnly": true,
+          "type": "string"
         }
       },
       "type": "object"
@@ -45189,6 +46092,12 @@
       },
       "type": "object"
     },
+    "GoogleCloudAiplatformV1CreateFileRequest": {
+      "description": "Request message for ClaudeFileService.CreateFile.",
+      "id": "GoogleCloudAiplatformV1CreateFileRequest",
+      "properties": {},
+      "type": "object"
+    },
     "GoogleCloudAiplatformV1CreateIndexEndpointOperationMetadata": {
       "description": "Runtime operation information for IndexEndpointService.CreateIndexEndpoint.",
       "id": "GoogleCloudAiplatformV1CreateIndexEndpointOperationMetadata",
@@ -45651,6 +46560,17 @@
         "returnRawOutput": {
           "description": "Optional. Whether to return raw output.",
           "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1DataAgentConfig": {
+      "description": "Config for scraping a Gemini Data Analytics data agent.",
+      "id": "GoogleCloudAiplatformV1DataAgentConfig",
+      "properties": {
+        "dataAgent": {
+          "description": "Required. The resource name of the Gemini Data Analytics data agent. Format: `projects/{project}/locations/{location}/dataAgents/{data_agent}`. For example: `projects/123/locations/us-central1/dataAgents/my-agent`.",
+          "type": "string"
         }
       },
       "type": "object"
@@ -46239,6 +47159,21 @@
         "onlineStorageModifiedEntityCount": {
           "description": "The count of modified entities in the online storage. Each entity ID corresponds to one entity. Within each entity, only the features specified in the request are deleted.",
           "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1DeleteFileResponse": {
+      "description": "Response message for ClaudeFileService.DeleteFile. Returns `{id, type: \"file_deleted\"}` rather than an empty body, matching the Claude Files API.",
+      "id": "GoogleCloudAiplatformV1DeleteFileResponse",
+      "properties": {
+        "id": {
+          "description": "The ID of the deleted file.",
+          "type": "string"
+        },
+        "type": {
+          "description": "The object type. Always `file_deleted`.",
           "type": "string"
         }
       },
@@ -47019,6 +47954,12 @@
       },
       "type": "object"
     },
+    "GoogleCloudAiplatformV1DownloadFileResponse": {
+      "description": "Response message for ClaudeFileService.DownloadFile.",
+      "id": "GoogleCloudAiplatformV1DownloadFileResponse",
+      "properties": {},
+      "type": "object"
+    },
     "GoogleCloudAiplatformV1DynamicRetrievalConfig": {
       "description": "Describes the options to customize dynamic retrieval.",
       "id": "GoogleCloudAiplatformV1DynamicRetrievalConfig",
@@ -47059,6 +48000,10 @@
         "embedContentConfig": {
           "$ref": "GoogleCloudAiplatformV1EmbedContentRequestEmbedContentConfig",
           "description": "Optional. Configuration for the EmbedContent request."
+        },
+        "model": {
+          "description": "Required. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/*/models/*`",
+          "type": "string"
         },
         "outputDimensionality": {
           "deprecated": true,
@@ -47578,6 +48523,10 @@
       "description": "Request message for EvaluationService.EvaluateInstances.",
       "id": "GoogleCloudAiplatformV1EvaluateInstancesRequest",
       "properties": {
+        "allowCrossRegionModel": {
+          "description": "Optional. Allows the evaluation run to use cross region models. When this flag is set, the service may route traffic to other regions if a model is unavailable in the current region (e.g., to a `global` endpoint). If a fully-qualified model endpoint resource name with a different region than the request location is provided elsewhere in the request, this flag must be set to true or the request will fail.",
+          "type": "boolean"
+        },
         "autoraterConfig": {
           "$ref": "GoogleCloudAiplatformV1AutoraterConfig",
           "description": "Optional. Autorater config used for evaluation. Not applicable for predefined metrics (PredefinedMetricSpec); the server uses its own model configuration for predefined metrics and this field is ignored."
@@ -48648,6 +49597,10 @@
           "description": "Identifier. The resource name of the EvaluationRun. This is a unique identifier. Format: `projects/{project}/locations/{location}/evaluationRuns/{evaluation_run}`",
           "type": "string"
         },
+        "serviceAccount": {
+          "description": "Optional. The service account to run the evaluation run as. If set, the run uses this service account to access Google Cloud resources. Access is limited to the IAM permissions that you grant to the service account. Must be provided if an inference config sets `harbor_run_config`, `data_agent_config`. If no inference config requires this field, setting it returns an error. The caller must have the `iam.serviceAccounts.actAs` permission on this service account, and the project's [Vertex AI Service Agent](https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) must have the `roles/iam.serviceAccountTokenCreator` role on it.",
+          "type": "string"
+        },
         "state": {
           "description": "Output only. The state of the evaluation run.",
           "enum": [
@@ -48840,6 +49793,10 @@
         "agentEngine": {
           "description": "Optional. The resource name of the Agent Engine. Format: projects/{project}/locations/{location}/reasoningEngines/{reasoning_engine} For example: projects/123/locations/us-central1/reasoningEngines/456",
           "type": "string"
+        },
+        "dataAgentConfig": {
+          "$ref": "GoogleCloudAiplatformV1DataAgentConfig",
+          "description": "Optional. Config for scraping a Gemini Data Analytics data agent. The scraping service runs the agent via the DataChatService Chat API and returns the resulting trajectory for evaluation."
         },
         "geminiAgentConfig": {
           "$ref": "GoogleCloudAiplatformV1GeminiAgentConfig",
@@ -52526,6 +53483,11 @@
           },
           "type": "array"
         },
+        "continuationToken": {
+          "description": "Optional. An opaque continuation token used to resume generation from a previous `GenerateContent` or `StreamGenerateContent` response that stopped with `finish_reason` set to `CONTINUATION`.",
+          "format": "byte",
+          "type": "string"
+        },
         "generationConfig": {
           "$ref": "GoogleCloudAiplatformV1GenerationConfig",
           "description": "Optional. Generation config."
@@ -52540,6 +53502,10 @@
         "modelArmorConfig": {
           "$ref": "GoogleCloudAiplatformV1ModelArmorConfig",
           "description": "Optional. Settings for prompt and response sanitization using the Model Armor service. If supplied, safety_settings must not be supplied."
+        },
+        "outputConfig": {
+          "$ref": "GoogleCloudAiplatformV1GenerateContentRequestOutputConfig",
+          "description": "Optional. Configuration for persisting output assets to external storage."
         },
         "safetySettings": {
           "description": "Optional. Per request settings for blocking unsafe content. Enforced on GenerateContentResponse.candidates.",
@@ -52562,6 +53528,17 @@
             "$ref": "GoogleCloudAiplatformV1Tool"
           },
           "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1GenerateContentRequestOutputConfig": {
+      "description": "Configuration for persisting output assets to external storage.",
+      "id": "GoogleCloudAiplatformV1GenerateContentRequestOutputConfig",
+      "properties": {
+        "outputUriPrefix": {
+          "description": "Optional. The Cloud Storage URI prefix or directory where generated media assets should be written (e.g. `gs://my-bucket/prefix/`). Supported URI schemes: `gs://`. When set, media bytes are written directly to this location and returned as `FileData` with a `file_uri` instead of raw inline bytes.",
+          "type": "string"
         }
       },
       "type": "object"
@@ -53481,7 +54458,7 @@
         },
         "groundingTypes": {
           "$ref": "GoogleCloudAiplatformV1GoogleMapsGroundingTypes",
-          "description": "Optional. Specifies the types of Google Maps grounding to enable. Defaults to `places` when unset."
+          "description": "Optional. Specifies the types of Google Maps grounding to enable. Defaults to `places` when unset, and to `places` and `routing` for Gemini 4 and later models. When set, only the listed types are enabled; for example, setting only `places` disables routing."
         }
       },
       "type": "object"
@@ -53496,7 +54473,7 @@
         },
         "routing": {
           "$ref": "GoogleCloudAiplatformV1GoogleMapsRouting",
-          "description": "Optional. Enables grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute)."
+          "description": "Optional. Enables grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute). Also enabled by default for Gemini 4 and later models when no `GroundingTypes` are specified."
         }
       },
       "type": "object"
@@ -53508,7 +54485,7 @@
       "type": "object"
     },
     "GoogleCloudAiplatformV1GoogleMapsRouting": {
-      "description": "Grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute).",
+      "description": "Grounding with Google Maps Routing APIs (ComputeRoutes and SearchAlongRoute). Also enabled by default for Gemini 4 and later models when no grounding type is specified.",
       "id": "GoogleCloudAiplatformV1GoogleMapsRouting",
       "properties": {},
       "type": "object"
@@ -54264,7 +55241,7 @@
         },
         "gcsDestination": {
           "$ref": "GoogleCloudAiplatformV1GcsDestination",
-          "description": "Required. The Cloud Storage location where the resulting EvaluationItem payloads will be stored."
+          "description": "Optional. The Cloud Storage location where the resulting EvaluationItem payloads will be stored. Required for every source except `harbor_dataset`, which must not set it."
         },
         "gcsSource": {
           "$ref": "GoogleCloudAiplatformV1ImportEvaluationSetRequestGcsSource",
@@ -55881,6 +56858,24 @@
         },
         "nextPageToken": {
           "description": "A token, which can be sent as ListFeaturestoresRequest.page_token to retrieve the next page. If this field is omitted, there are no subsequent pages.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1ListFilesResponse": {
+      "description": "Response message for ClaudeFileService.ListFiles.",
+      "id": "GoogleCloudAiplatformV1ListFilesResponse",
+      "properties": {
+        "data": {
+          "description": "The files.",
+          "items": {
+            "$ref": "GoogleCloudAiplatformV1ClaudeFile"
+          },
+          "type": "array"
+        },
+        "next_page": {
+          "description": "Opaque cursor for the next page. Unset on the last page, and always unset when `ids` was supplied, since batch fetch is single-page.",
           "type": "string"
         }
       },
@@ -60682,6 +61677,10 @@
       "description": "Observability settings for one agent's sessions.",
       "id": "GoogleCloudAiplatformV1ObservabilityConfig",
       "properties": {
+        "artifactGcsBucket": {
+          "description": "Optional. Customer bucket (`gs://bucket`) the media of observed turns is written to; unset means media is not persisted.",
+          "type": "string"
+        },
         "observabilityEnabled": {
           "description": "Optional. Enables observability for this agent's sessions: OpenTelemetry span emission covering tool names, model names, token counts, latencies and status. If `false`, the other fields here are ignored.",
           "type": "boolean"
@@ -61642,6 +62641,29 @@
       },
       "type": "object"
     },
+    "GoogleCloudAiplatformV1Persona": {
+      "description": "The persona (presentation) of an agent.",
+      "id": "GoogleCloudAiplatformV1Persona",
+      "properties": {
+        "avatarUrl": {
+          "description": "Optional. The URL of the agent's avatar.",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Required. The display name of the agent.",
+          "type": "string"
+        },
+        "personality": {
+          "description": "Optional. The personality style or behavioral trait of the agent.",
+          "type": "string"
+        },
+        "role": {
+          "description": "Optional. The role of the agent (e.g., \"Financial Analyst\").",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudAiplatformV1PipelineJob": {
       "description": "An instance of a machine learning PipelineJob.",
       "id": "GoogleCloudAiplatformV1PipelineJob",
@@ -62589,6 +63611,29 @@
           "enumDescriptions": [
             "More precise neighbors as a trade-off against slower response.",
             "Faster response as a trade-off against less precise neighbors."
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1Principal": {
+      "description": "Represents an identity principal (user or service).",
+      "id": "GoogleCloudAiplatformV1Principal",
+      "properties": {
+        "id": {
+          "description": "Optional. The system unique identifier of the principal.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Optional. The type of the principal.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "USER"
+          ],
+          "enumDescriptions": [
+            "Unspecified principal type.",
+            "A standard human user principal."
           ],
           "type": "string"
         }
@@ -64919,7 +65964,7 @@
       "id": "GoogleCloudAiplatformV1ReasoningEngineSpecBuildSpec",
       "properties": {
         "serviceAccount": {
-          "description": "Optional. The service account that Cloud Build uses to run the build. This field is only applicable when `worker_pool` is specified (i.e., for custom worker pools). If `worker_pool` is not specified, this field is ignored and the build runs using the Google-managed service agent. Format: `projects/{project}/serviceAccounts/{service_account}` or `{service_account}@{project}.iam.gserviceaccount.com`",
+          "description": "Optional. The service account that Cloud Build uses to run the build. This field is only applicable when `worker_pool` is specified (i.e., for private pools). If `worker_pool` is not specified, this field is ignored and the build runs using the Google-managed service agent. Format: `projects/{project}/serviceAccounts/{service_account}` or `{service_account}@{project}.iam.gserviceaccount.com`",
           "type": "string"
         },
         "workerPool": {
@@ -65072,6 +66117,10 @@
           "$ref": "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecDeveloperConnectSource",
           "description": "Source code is in a Git repository managed by Developer Connect."
         },
+        "gitSource": {
+          "$ref": "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecGitSource",
+          "description": "Source code is in a public Git repository."
+        },
         "imageSpec": {
           "$ref": "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecImageSpec",
           "description": "Optional. Configuration for building an image with custom config file."
@@ -65143,6 +66192,25 @@
         "config": {
           "$ref": "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecDeveloperConnectConfig",
           "description": "Required. The Developer Connect configuration that defines the specific repository, revision, and directory to use as the source code root."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecGitSource": {
+      "description": "Specifies source code to be fetched from a public Git repository.",
+      "id": "GoogleCloudAiplatformV1ReasoningEngineSpecSourceCodeSpecGitSource",
+      "properties": {
+        "dir": {
+          "description": "Optional. Directory, relative to the source root, in which to run the build.",
+          "type": "string"
+        },
+        "revision": {
+          "description": "Required. The revision to fetch from the Git repository: a branch, a tag, or a full commit SHA. Abbreviated commit SHAs are not supported.",
+          "type": "string"
+        },
+        "url": {
+          "description": "Required. The HTTPS URL of the public Git repository to clone.",
+          "type": "string"
         }
       },
       "type": "object"
@@ -69194,6 +70262,10 @@
           "description": "The model name.",
           "type": "string"
         },
+        "outputConfig": {
+          "$ref": "GoogleCloudAiplatformV1SchemaPromptSpecPromptMessageOutputConfig",
+          "description": "Optional. Configuration for persisting output assets to external storage."
+        },
         "safetySettings": {
           "description": "Per request settings for blocking unsafe content. Enforced on GenerateContentResponse.candidates.",
           "items": {
@@ -69215,6 +70287,17 @@
             "$ref": "GoogleCloudAiplatformV1Tool"
           },
           "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1SchemaPromptSpecPromptMessageOutputConfig": {
+      "description": "Configuration for persisting output assets to external storage.",
+      "id": "GoogleCloudAiplatformV1SchemaPromptSpecPromptMessageOutputConfig",
+      "properties": {
+        "outputUriPrefix": {
+          "description": "Optional. The Cloud Storage URI prefix or directory where generated media assets should be written (e.g. `gs://my-bucket/prefix/`).",
+          "type": "string"
         }
       },
       "type": "object"
@@ -71873,13 +72956,15 @@
             "SERVING_PROFILE_SCOPE_UNSPECIFIED",
             "GEMINI_LIVE",
             "INTERACTIONS_API",
-            "RESPONSE_API"
+            "RESPONSE_API",
+            "VOICES_API"
           ],
           "enumDescriptions": [
             "Default value. This value is unused. When users create a ServingProfile, they must choose a scope.",
             "The scope for Gemini Live.",
             "The scope for Interactions API.",
-            "The scope for Response API."
+            "The scope for Response API.",
+            "The scope for Voices API."
           ],
           "type": "string"
         },
@@ -72007,6 +73092,28 @@
           "description": "Required. Timestamp when the event was created on client side.",
           "format": "google-datetime",
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateRequest": {
+      "description": "Request message for NotebookService.SetDefaultNotebookRuntimeTemplate.",
+      "id": "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateRequest",
+      "properties": {
+        "name": {
+          "description": "Required. The resource name of the NotebookRuntimeTemplate to set as default. Format: `projects/{project}/locations/{location}/notebookRuntimeTemplates/{notebook_runtime_template}`",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateResponse": {
+      "description": "Response message for NotebookService.SetDefaultNotebookRuntimeTemplate.",
+      "id": "GoogleCloudAiplatformV1SetDefaultNotebookRuntimeTemplateResponse",
+      "properties": {
+        "notebookRuntimeTemplate": {
+          "$ref": "GoogleCloudAiplatformV1NotebookRuntimeTemplate",
+          "description": "The NotebookRuntimeTemplate that was set as default."
         }
       },
       "type": "object"
@@ -73613,6 +74720,60 @@
       "properties": {
         "taskDescription": {
           "description": "Required. A general description of the type of synthetic data you want to generate. For example, \"Generate customer reviews for a new smartphone.\"",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1Teammate": {
+      "description": "One identity an agent is allowed to contact. A message rather than a bare string so a teammate can carry more than an address -- a display name, a group rather than a person, a scope limiting which surfaces the agent may reach them on -- without a breaking change to `AllowedTeammates`. Every field is optional, but a teammate identifying nobody is meaningless: at least one identifier must be set, and `UpdateAgent` rejects a teammate with none.",
+      "id": "GoogleCloudAiplatformV1Teammate",
+      "properties": {
+        "email": {
+          "description": "Optional. Email address of the teammate.",
+          "type": "string"
+        },
+        "expansionMode": {
+          "description": "Optional. Expansion mode for group or space teammates.",
+          "enum": [
+            "EXPANSION_MODE_UNSPECIFIED",
+            "INFER",
+            "EXPANDED",
+            "NON_EXPANDED"
+          ],
+          "enumDescriptions": [
+            "Unspecified expansion mode.",
+            "Infer whether to expand based on roster type (e.g., expand Google Groups, do not expand Chat Spaces).",
+            "Transitive expansion: the agent can contact individual members of the group.",
+            "Non-expanded: the agent can contact the group or space as a channel, without expanding to individual members."
+          ],
+          "type": "string"
+        },
+        "gaiaId": {
+          "description": "Optional. Obfuscated Gaia id of the teammate. OBFUSCATED, never a raw Gaia id -- the same form as `Principal.id` and every other Gaia id this API surfaces, so the two are comparable. A string rather than an int64 for that reason: the obfuscated form is not a number.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudAiplatformV1Tenant": {
+      "description": "Represents an enterprise tenant.",
+      "id": "GoogleCloudAiplatformV1Tenant",
+      "properties": {
+        "id": {
+          "description": "Optional. The unique raw ID of the tenant.",
+          "type": "string"
+        },
+        "type": {
+          "description": "Optional. The type of the tenant.",
+          "enum": [
+            "TYPE_UNSPECIFIED",
+            "WORKSPACE_CUSTOMER"
+          ],
+          "enumDescriptions": [
+            "Unspecified tenant type.",
+            "Workspace customer domain tenant."
+          ],
           "type": "string"
         }
       },
