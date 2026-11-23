@@ -32,18 +32,10 @@ class HttpSubscriber private[http] (
     chunkSizeLimit
       .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
       .flatMap { c =>
-        val (ackIds, modifyDeadlines) = c.partitionMap {
-          case (id, AckOp.Ack)                     => Left(id)
-          case (id, AckOp.ModifyDeadline(seconds)) => Right((id, seconds))
-        }
+        val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(c)
 
-        // ModifyAckDeadlineRequest supports only a single deadline value per request
-        val modifyDeadlineReqs = modifyDeadlines
-          .groupMap(_._2)(_._1)
-          .toList
-          .flatMap((seconds, ids) => NonEmptyChunk.fromIterableOption(ids).map(sendModifyDeadline(_, seconds, subName)))
-
-        val requests = NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)).toList ++ modifyDeadlineReqs
+        val requests = NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)).toList ++
+          modifyDeadlines.map((seconds, ids) => sendModifyDeadline(ids, seconds, subName))
 
         ZIO
           .collectAllPar(requests)
@@ -158,6 +150,31 @@ class HttpSubscriber private[http] (
 }
 
 object HttpSubscriber {
+
+  /**
+   * Splits queued ack operations into ack ids and modify deadline requests
+   * grouped by deadline.
+   *
+   * ModifyAckDeadlineRequest supports only a single deadline value per request
+   * and the requests are sent in parallel. Only the latest queued deadline per
+   * ack id is kept so that an earlier modification can't override a later one.
+   */
+  private[http] def batchAckOps(ops: Chunk[(String, AckOp)]): (Chunk[String], List[(Int, NonEmptyChunk[String])]) = {
+    val (ackIds, modifyDeadlines) = ops.partitionMap {
+      case (id, AckOp.Ack)                     => Left(id)
+      case (id, AckOp.ModifyDeadline(seconds)) => Right((id, seconds))
+    }
+
+    val latestDeadlineById = modifyDeadlines.toMap // later entries take precedence
+
+    val modifyDeadlineGroups = latestDeadlineById.toList
+      .groupMap(_._2)(_._1)
+      .toList
+      .flatMap((seconds, ids) => NonEmptyChunk.fromIterableOption(ids).map((seconds, _)))
+
+    (ackIds, modifyDeadlineGroups)
+  }
+
   object defaults:
     val maxMessagesPerPull: Int                      = 100
     val retrySchedule: Schedule[Any, Throwable, Any] = Schedule.recurs(5)

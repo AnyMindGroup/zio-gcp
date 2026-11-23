@@ -2,7 +2,7 @@ package com.anymindgroup.pubsub
 package http
 
 import zio.test.*
-import zio.{Promise, Ref, Schedule, Scope, ZIO}
+import zio.{Chunk, Promise, Ref, Schedule, Scope, ZIO}
 
 import com.anymindgroup.gcp.auth.{AuthedBackend, TokenProvider}
 import com.anymindgroup.gcp.pubsub.v1.schemas.ModifyAckDeadlineRequest
@@ -41,6 +41,24 @@ object HttpPubsubSpec extends ZIOSpecDefault {
               yield assertCompletes
           }
       ),
+      test("only the latest queued deadline per ack id is sent when batching ack operations") {
+        val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(
+          Chunk(
+            "1" -> AckOp.ModifyDeadline(30),
+            "2" -> AckOp.ModifyDeadline(30),
+            "3" -> AckOp.Ack,
+            "1" -> AckOp.ModifyDeadline(300),
+            "2" -> AckOp.ModifyDeadline(0),
+            "1" -> AckOp.ModifyDeadline(45),
+          )
+        )
+        val sentDeadlines = modifyDeadlines.flatMap((seconds, ids) => ids.map(_ -> seconds))
+        assertTrue(
+          ackIds == Chunk("3"),
+          sentDeadlines.size == 2,
+          sentDeadlines.toMap == Map("1" -> 45, "2" -> 0),
+        )
+      },
       test("modifyAckDeadline sends modifyAckDeadline requests with clamped deadline per ack id") {
         val deadlineByAckId = Map("1" -> 30, "2" -> 30, "3" -> 45, "4" -> 1000)
         ZIO.scoped:
