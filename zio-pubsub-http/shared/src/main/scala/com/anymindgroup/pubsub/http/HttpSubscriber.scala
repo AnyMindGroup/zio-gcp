@@ -29,16 +29,19 @@ class HttpSubscriber private[http] (
   returnImmediatelyOnPull: Boolean,
 ) extends Subscriber {
   private def processAckQueue(waitForOps: Boolean, subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
-    (if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { c =>
-      val (ackBatches, modifyDeadlineBatches) = HttpSubscriber.batchAckOps(c)
+    // once taken from the queue, operations are processed uninterruptibly so that none get lost on interruption
+    ZIO.uninterruptibleMask { restore =>
+      restore(if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { c =>
+        val (ackBatches, modifyDeadlineBatches) = HttpSubscriber.batchAckOps(c)
 
-      val requests = ackBatches.map(sendAck(_, subName)) ++
-        modifyDeadlineBatches.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
+        val requests = ackBatches.map(sendAck(_, subName)) ++
+          modifyDeadlineBatches.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
 
-      ZIO
-        .collectAllPar(requests)
-        .withParallelism(HttpSubscriber.maxParallelAckRequests)
-        .map(_.flatten.reduceOption(_ && _))
+        ZIO
+          .collectAllPar(requests)
+          .withParallelism(HttpSubscriber.maxParallelAckRequests)
+          .map(_.flatten.reduceOption(_ && _))
+      }
     }
 
   private def sendModifyDeadline(

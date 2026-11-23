@@ -65,10 +65,13 @@ private[pubsub] object StreamingPullSubscriber {
     clientStream: ClientStream[StreamingPullRequest],
     waitForOps: Boolean,
   ): UIO[Option[Cause[Throwable]]] =
-    (if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { ops =>
-      // coalesce before splitting into requests so that an outdated deadline modification
-      // can't be sent in a later request than a newer one for the same ack id
-      sendAckBatches(ackQueue, clientStream, AckOp.coalesce(ops).grouped(AckOp.maxAckIdsPerRequest).toList)
+    // once taken from the queue, operations are processed uninterruptibly so that none get lost on interruption
+    ZIO.uninterruptibleMask { restore =>
+      restore(if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { ops =>
+        // coalesce before splitting into requests so that an outdated deadline modification
+        // can't be sent in a later request than a newer one for the same ack id
+        sendAckBatches(ackQueue, clientStream, AckOp.coalesce(ops).grouped(AckOp.maxAckIdsPerRequest).toList)
+      }
     }
 
   private def sendAckBatches(

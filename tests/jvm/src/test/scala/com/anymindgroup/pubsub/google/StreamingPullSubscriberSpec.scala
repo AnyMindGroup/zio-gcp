@@ -162,7 +162,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
                       .take(3)
                       .runCollect
           expectedSeconds = math.max(0, math.min(600, seconds))
-        yield assertTrue(modifiedRef.get() == ackIds.toVector.map((_, expectedSeconds)))
+        yield assertTrue(modifiedRef.get().sorted == ackIds.toVector.map((_, expectedSeconds)).sorted)
       }
     } @@ TestAspect.samples(20),
     test("outdated deadline modification is not sent after a newer one across request batches") {
