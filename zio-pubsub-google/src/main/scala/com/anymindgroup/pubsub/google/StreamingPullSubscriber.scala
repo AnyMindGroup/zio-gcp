@@ -60,36 +60,44 @@ private[pubsub] object StreamingPullSubscriber {
           }
       )
 
-  private def processAckQueue(
+  private[pubsub] def processAckQueue(
     ackQueue: Queue[(String, AckOp)],
     clientStream: ClientStream[StreamingPullRequest],
-    chunkSizeLimit: Option[Int],
+    waitForOps: Boolean,
   ): UIO[Option[Cause[Throwable]]] =
-    chunkSizeLimit
-      .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
-      .flatMap {
-        case chunk if chunk.isEmpty => ZIO.none
-        case chunk                  =>
-          ZIO.attempt {
-            // keep only the most recently requested deadline per ack id,
-            // failed operations may have been re-queued after newer ones
-            val (ackIds, latestModifications) = AckOp.partition(chunk)
-            val modifyDeadlines               = latestModifications.toList
+    (if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { ops =>
+      // coalesce before splitting into requests so that an outdated deadline modification
+      // can't be sent in a later request than a newer one for the same ack id
+      sendAckBatches(ackQueue, clientStream, AckOp.coalesce(ops).grouped(AckOp.maxAckIdsPerRequest).toList)
+    }
 
-            val req = StreamingPullRequest.newBuilder
-              .addAllAckIds(ackIds.asJava)
-              .addAllModifyDeadlineSeconds(modifyDeadlines.map((_, op) => Integer.valueOf(op.seconds)).asJava)
-              .addAllModifyDeadlineAckIds(modifyDeadlines.map(_._1).asJava)
-              .build()
+  private def sendAckBatches(
+    ackQueue: Queue[(String, AckOp)],
+    clientStream: ClientStream[StreamingPullRequest],
+    batches: List[Chunk[(String, AckOp)]],
+  ): UIO[Option[Cause[Throwable]]] =
+    batches match
+      case Nil           => ZIO.none
+      case batch :: rest =>
+        ZIO
+          .attempt(clientStream.send(toStreamingPullRequest(batch)))
+          .uninterruptible
+          .foldCauseZIO(
+            // place the failed and all remaining unsent operations back into the queue
+            c => ackQueue.offerAll(batches.flatten).as(Some(c)),
+            _ => sendAckBatches(ackQueue, clientStream, rest),
+          )
 
-            clientStream.send(req)
-          }.uninterruptible
-            .as(None)
-            .catchAllCause { c =>
-              // place back into the queue on failures
-              ackQueue.offerAll(chunk).as(Some(c))
-            }
-      }
+  private def toStreamingPullRequest(batch: Chunk[(String, AckOp)]): StreamingPullRequest = {
+    val (ackIds, modifications) = AckOp.partition(batch)
+    val modifyDeadlines         = modifications.toList
+
+    StreamingPullRequest.newBuilder
+      .addAllAckIds(ackIds.asJava)
+      .addAllModifyDeadlineSeconds(modifyDeadlines.map((_, op) => Integer.valueOf(op.seconds)).asJava)
+      .addAllModifyDeadlineAckIds(modifyDeadlines.map(_._1).asJava)
+      .build()
+  }
 
   private[pubsub] def makeStream(
     initBidiStream: Task[BidiStream[StreamingPullRequest, StreamingPullResponse]],
@@ -110,7 +118,7 @@ private[pubsub] object StreamingPullSubscriber {
                (message, ackReply)
              }
     ackStream = ZStream.repeatZIO(
-                  processAckQueue(ackQueue, bidiStream, Some(1024)).flatMap {
+                  processAckQueue(ackQueue, bidiStream, waitForOps = true).flatMap {
                     case None    => ZIO.unit
                     case Some(c) => ZIO.failCause(c)
                   }
@@ -124,7 +132,7 @@ private[pubsub] object StreamingPullSubscriber {
               for {
                 // cancel receiving stream before processing the rest of the queue
                 _ <- ZIO.succeed(bidiStream.cancel())
-                _ <- processAckQueue(ackQueue, bidiStream, None)
+                _ <- processAckQueue(ackQueue, bidiStream, waitForOps = false)
               } yield ()
             }
           _ <- ackStream.channel.drain.runIn(scope).catchAllCause(ackStreamFailed.failCause(_)).forkIn(scope)

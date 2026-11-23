@@ -2,7 +2,7 @@ package com.anymindgroup.pubsub
 
 import java.util.concurrent.atomic.AtomicLong
 
-import zio.{Chunk, UIO, ZIO}
+import zio.{Chunk, Queue, UIO, ZIO}
 
 opaque type AckId = String
 object AckId:
@@ -52,6 +52,20 @@ private[pubsub] object AckOp:
   def modifyDeadline(seconds: Int): UIO[AckOp] =
     ZIO.succeed(ModifyDeadline(AckReply.clampAckDeadline(seconds), seqNrCounter.incrementAndGet()))
 
+  // maximum number of ack ids sent within a single request
+  val maxAckIdsPerRequest: Int = 1024
+
+  /**
+   * Waits for at least one queued operation and then takes all of them.
+   *
+   * All currently queued operations are taken at once (instead of a limited
+   * amount) so that they can be coalesced before being split into requests.
+   * Otherwise an outdated deadline modification could be sent in a later
+   * request than a newer one for the same ack id.
+   */
+  def takeAllAvailable(queue: Queue[(String, AckOp)]): UIO[Chunk[(String, AckOp)]] =
+    queue.takeBetween(1, Int.MaxValue)
+
   /**
    * Splits operations into ack ids and the most recently requested deadline
    * modification per ack id.
@@ -64,3 +78,19 @@ private[pubsub] object AckOp:
           case Some(existing) if existing.seqNr > op.seqNr => (ackIds, modifications)
           case _                                           => (ackIds, modifications.updated(id, op))
     }
+
+  /**
+   * Coalesces operations so that each ack id is contained at most once:
+   *   - acks are kept (deadline modifications of acked ids are dropped as
+   *     acking makes them obsolete)
+   *   - for other ack ids only the most recently requested deadline
+   *     modification is kept
+   *
+   * Requests created from coalesced operations can be sent in any order.
+   */
+  def coalesce(ops: Chunk[(String, AckOp)]): Chunk[(String, AckOp)] =
+    val (ackIds, latestModifications) = partition(ops)
+    val distinctAckIds                = ackIds.distinct
+    val ackedIds                      = distinctAckIds.toSet
+    distinctAckIds.map((_, Ack)) ++
+      Chunk.fromIterable(latestModifications.collect { case (id, op) if !ackedIds.contains(id) => (id, op) })

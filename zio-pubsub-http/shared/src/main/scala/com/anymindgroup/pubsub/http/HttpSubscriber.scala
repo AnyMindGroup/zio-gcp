@@ -28,19 +28,18 @@ class HttpSubscriber private[http] (
   base64Decoder: Decoder,
   returnImmediatelyOnPull: Boolean,
 ) extends Subscriber {
-  private def processAckQueue(chunkSizeLimit: Option[Int], subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
-    chunkSizeLimit
-      .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
-      .flatMap { c =>
-        val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(c)
+  private def processAckQueue(waitForOps: Boolean, subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
+    (if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { c =>
+      val (ackBatches, modifyDeadlineBatches) = HttpSubscriber.batchAckOps(c)
 
-        val requests = NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)).toList ++
-          modifyDeadlines.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
+      val requests = ackBatches.map(sendAck(_, subName)) ++
+        modifyDeadlineBatches.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
 
-        ZIO
-          .collectAllPar(requests)
-          .map(_.flatten.reduceOption(_ && _))
-      }
+      ZIO
+        .collectAllPar(requests)
+        .withParallelism(HttpSubscriber.maxParallelAckRequests)
+        .map(_.flatten.reduceOption(_ && _))
+    }
 
   private def sendModifyDeadline(
     ops: NonEmptyChunk[(String, AckOp.ModifyDeadline)],
@@ -145,38 +144,46 @@ class HttpSubscriber private[http] (
 
     val ackStream: ZStream[Any, Throwable, Unit] = ZStream
       .repeatZIO:
-        processAckQueue(Some(1024), subscriptionName).flatMap {
+        processAckQueue(waitForOps = true, subscriptionName).flatMap {
           case None    => ZIO.unit
           case Some(c) => ZIO.failCause(c)
         }
 
-    pullStream.drainFork(ackStream).onError(_ => processAckQueue(None, subscriptionName)).retry(retrySchedule)
+    pullStream
+      .drainFork(ackStream)
+      .onError(_ => processAckQueue(waitForOps = false, subscriptionName))
+      .retry(retrySchedule)
   }
 }
 
 object HttpSubscriber {
 
+  private val maxParallelAckRequests = 8
+
   /**
-   * Splits queued ack operations into ack ids and modify deadline requests
-   * grouped by deadline.
+   * Coalesces queued ack operations and splits them into acknowledge requests
+   * and modify deadline requests grouped by deadline (ModifyAckDeadlineRequest
+   * supports only a single deadline value per request).
    *
-   * ModifyAckDeadlineRequest supports only a single deadline value per request
-   * and the requests are sent in parallel. Only the most recently requested
-   * deadline per ack id is kept so that an earlier modification can't override
-   * a later one, also when failed modifications were re-queued after newer
-   * ones.
+   * Each ack id is contained in at most one request, so the requests can be
+   * sent in parallel. Only the most recently requested deadline per ack id is
+   * kept so that an earlier modification can't override a later one, also when
+   * failed modifications were re-queued after newer ones.
    */
   private[http] def batchAckOps(
     ops: Chunk[(String, AckOp)]
-  ): (Chunk[String], List[(Int, NonEmptyChunk[(String, AckOp.ModifyDeadline)])]) = {
-    val (ackIds, latestModifications) = AckOp.partition(ops)
+  ): (List[NonEmptyChunk[String]], List[(Int, NonEmptyChunk[(String, AckOp.ModifyDeadline)])]) = {
+    val (ackIds, latestModifications) = AckOp.partition(AckOp.coalesce(ops))
 
-    val modifyDeadlineGroups = latestModifications.toList
+    val ackBatches = ackIds.grouped(AckOp.maxAckIdsPerRequest).flatMap(NonEmptyChunk.fromChunk).toList
+
+    val modifyDeadlineBatches = latestModifications.toList
       .groupBy(_._2.seconds)
       .toList
-      .flatMap((seconds, ops) => NonEmptyChunk.fromIterableOption(ops).map((seconds, _)))
+      .flatMap: (seconds, ops) =>
+        ops.grouped(AckOp.maxAckIdsPerRequest).flatMap(NonEmptyChunk.fromIterableOption).map((seconds, _))
 
-    (ackIds, modifyDeadlineGroups)
+    (ackBatches, modifyDeadlineBatches)
   }
 
   object defaults:

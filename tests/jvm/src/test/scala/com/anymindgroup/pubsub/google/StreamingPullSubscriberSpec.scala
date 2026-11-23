@@ -19,7 +19,7 @@ import zio.test.{
   assertZIO,
   check,
 }
-import zio.{Promise, Queue, Random, Ref, Schedule, Scope, ZIO, durationInt}
+import zio.{Chunk, Promise, Queue, Random, Ref, Schedule, Scope, ZIO, durationInt}
 
 import com.anymindgroup.pubsub.AckOp
 import com.google.pubsub.v1.{ReceivedMessage, StreamingPullRequest, StreamingPullResponse}
@@ -165,6 +165,56 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         yield assertTrue(modifiedRef.get() == ackIds.toVector.map((_, expectedSeconds)))
       }
     } @@ TestAspect.samples(20),
+    test("outdated deadline modification is not sent after a newer one across request batches") {
+      // newer 300s extension queued before an outdated 30s modification that was re-queued after a failure,
+      // separated by more operations than fit into a single request
+      val filler = Chunk.fromIterable((1 to 1500).map(i => s"filler-$i" -> AckOp.ModifyDeadline(60, seqNr = 100L + i)))
+      val ops    = ("x" -> AckOp.ModifyDeadline(300, seqNr = 2)) +: filler :+ ("x" -> AckOp.ModifyDeadline(30, seqNr = 1))
+      for
+        queue   <- Queue.unbounded[(String, AckOp)]
+        _       <- queue.offerAll(ops)
+        sent     = new AtomicReference(Vector.empty[StreamingPullRequest])
+        res     <- StreamingPullSubscriber.processAckQueue(queue, recordingClientStream(sent), waitForOps = true)
+        requests = sent.get()
+        modified = requests.flatMap(r =>
+                     r.getModifyDeadlineAckIdsList.asScala.zip(r.getModifyDeadlineSecondsList.asScala.map(_.intValue))
+                   )
+      yield assertTrue(
+        res.isEmpty,
+        requests.size == 2,
+        requests.forall(_.getModifyDeadlineAckIdsCount <= AckOp.maxAckIdsPerRequest),
+        modified.size == 1501,
+        modified.filter(_._1 == "x") == Vector("x" -> 300),
+      )
+    },
+    test("failed request re-queues only unsent coalesced operations") {
+      val ops = Chunk.fromIterable((1 to 1500).flatMap { i =>
+        List(
+          s"$i" -> AckOp.ModifyDeadline(30, seqNr = i.toLong),
+          s"$i" -> AckOp.ModifyDeadline(300, seqNr = 10_000L + i),
+        )
+      })
+      for
+        queue  <- Queue.unbounded[(String, AckOp)]
+        _      <- queue.offerAll(ops)
+        sent    = new AtomicReference(Vector.empty[StreamingPullRequest])
+        failed <- StreamingPullSubscriber.processAckQueue(
+                    queue,
+                    recordingClientStream(sent, failOnRequest = Some(2)),
+                    waitForOps = true,
+                  )
+        requeued <- queue.takeAll
+        sentIds   = sent.get().flatMap(_.getModifyDeadlineAckIdsList.asScala)
+      yield assertTrue(
+        failed.isDefined,
+        sentIds.size == AckOp.maxAckIdsPerRequest,
+        requeued.size == 1500 - AckOp.maxAckIdsPerRequest,
+        requeued.forall { case (_, op) =>
+          op.isInstanceOf[AckOp.ModifyDeadline] && op.asInstanceOf[AckOp.ModifyDeadline].seconds == 300
+        },
+        (sentIds ++ requeued.map(_._1)).sorted == (1 to 1500).map(_.toString).toVector.sorted,
+      )
+    },
     test("server stream is canceled on interruption (standalone)") {
       val cancelled      = new ju.concurrent.atomic.AtomicBoolean(false)
       val lock           = new AnyRef
@@ -218,6 +268,18 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
       yield assertTrue(cancelled.get)
     },
   ) @@ TestAspect.timeout(60.seconds)
+
+  def recordingClientStream(
+    sent: AtomicReference[Vector[StreamingPullRequest]],
+    failOnRequest: Option[Int] = None,
+  ): TestBidiStream[StreamingPullRequest, StreamingPullResponse] =
+    new TestBidiStream[StreamingPullRequest, StreamingPullResponse] {
+      private val count                                = new ju.concurrent.atomic.AtomicInteger(0)
+      override def send(r: StreamingPullRequest): Unit =
+        if failOnRequest.contains(count.incrementAndGet()) then throw new Throwable("failed send")
+        else { val _ = sent.updateAndGet(_ :+ r) }
+      override def iterator(): ju.Iterator[StreamingPullResponse] = ju.Collections.emptyIterator()
+    }
 
   def testBidiStream(
     failSend: Boolean = false,

@@ -42,7 +42,7 @@ object HttpPubsubSpec extends ZIOSpecDefault {
           }
       ),
       test("only the most recently requested deadline per ack id is sent when batching ack operations") {
-        val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(
+        val (ackBatches, modifyDeadlines) = HttpSubscriber.batchAckOps(
           Chunk(
             "1" -> AckOp.ModifyDeadline(30, seqNr = 1),
             "2" -> AckOp.ModifyDeadline(30, seqNr = 2),
@@ -54,7 +54,7 @@ object HttpPubsubSpec extends ZIOSpecDefault {
         )
         val sentDeadlines = modifyDeadlines.flatMap((seconds, ops) => ops.map((id, _) => id -> seconds))
         assertTrue(
-          ackIds == Chunk("3"),
+          ackBatches.map(_.toList) == List(List("3")),
           sentDeadlines.size == 2,
           sentDeadlines.toMap == Map("1" -> 45, "2" -> 0),
         )
@@ -68,6 +68,26 @@ object HttpPubsubSpec extends ZIOSpecDefault {
           )
         )
         assertTrue(modifyDeadlines.map((seconds, ops) => (seconds, ops.map(_._1).toList)) == List((300, List("1"))))
+      },
+      test("ack operations exceeding the request limit are split into requests containing each ack id once") {
+        val ids = (1 to 3000).map(_.toString)
+        val ops = Chunk.fromIterable(
+          // newer modifications first, then outdated modifications (e.g. re-queued after a failure), then acks
+          ids.take(2000).map(id => id -> AckOp.ModifyDeadline(300, seqNr = 10_000L + id.toLong)) ++
+            ids.take(2000).map(id => id -> AckOp.ModifyDeadline(30, seqNr = id.toLong)) ++
+            ids.drop(1500).map(id => id -> AckOp.Ack)
+        )
+        val (ackBatches, modifyDeadlines) = HttpSubscriber.batchAckOps(ops)
+        val ackedIds                      = ackBatches.flatMap(_.toList)
+        val modifiedIds                   = modifyDeadlines.flatMap((_, ops) => ops.map(_._1))
+        assertTrue(
+          ackBatches.forall(_.size <= AckOp.maxAckIdsPerRequest),
+          modifyDeadlines.forall(_._2.size <= AckOp.maxAckIdsPerRequest),
+          ackedIds.sorted == ids.drop(1500).toList.sorted,
+          // modifications of acked ids are dropped
+          modifiedIds.sorted == ids.take(1500).toList.sorted,
+          modifyDeadlines.map(_._1).distinct == List(300),
+        )
       },
       test("deadline modifications get clamped deadlines and increasing sequence numbers") {
         for ops <- ZIO.foreach(List(30, 300, 1000))(AckOp.modifyDeadline)
