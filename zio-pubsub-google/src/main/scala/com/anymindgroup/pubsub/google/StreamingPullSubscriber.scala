@@ -71,14 +71,14 @@ private[pubsub] object StreamingPullSubscriber {
         case chunk if chunk.isEmpty => ZIO.none
         case chunk                  =>
           ZIO.attempt {
-            val (ackIds, modifyDeadlines) = chunk.partitionMap {
-              case (id, AckOp.Ack)                     => Left(id)
-              case (id, AckOp.ModifyDeadline(seconds)) => Right((id, seconds))
-            }
+            // keep only the most recently requested deadline per ack id,
+            // failed operations may have been re-queued after newer ones
+            val (ackIds, latestModifications) = AckOp.partition(chunk)
+            val modifyDeadlines               = latestModifications.toList
 
             val req = StreamingPullRequest.newBuilder
               .addAllAckIds(ackIds.asJava)
-              .addAllModifyDeadlineSeconds(modifyDeadlines.map((_, s) => Integer.valueOf(s)).asJava)
+              .addAllModifyDeadlineSeconds(modifyDeadlines.map((_, op) => Integer.valueOf(op.seconds)).asJava)
               .addAllModifyDeadlineAckIds(modifyDeadlines.map(_._1).asJava)
               .build()
 
@@ -101,8 +101,9 @@ private[pubsub] object StreamingPullSubscriber {
                val ackReply = new AckReply {
                  override def ack(): UIO[Unit]                           = ackQueue.offer((message.getAckId(), AckOp.Ack)).uninterruptible.unit
                  override def modifyAckDeadline(seconds: Int): UIO[Unit] =
-                   ackQueue
-                     .offer((message.getAckId(), AckOp.ModifyDeadline(AckReply.clampAckDeadline(seconds))))
+                   AckOp
+                     .modifyDeadline(seconds)
+                     .flatMap(op => ackQueue.offer((message.getAckId(), op)))
                      .uninterruptible
                      .unit
                }

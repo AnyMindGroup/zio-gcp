@@ -35,25 +35,30 @@ class HttpSubscriber private[http] (
         val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(c)
 
         val requests = NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)).toList ++
-          modifyDeadlines.map((seconds, ids) => sendModifyDeadline(ids, seconds, subName))
+          modifyDeadlines.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
 
         ZIO
           .collectAllPar(requests)
           .map(_.flatten.reduceOption(_ && _))
       }
 
-  private def sendModifyDeadline(ackIds: NonEmptyChunk[String], seconds: Int, subName: SubscriptionName) =
+  private def sendModifyDeadline(
+    ops: NonEmptyChunk[(String, AckOp.ModifyDeadline)],
+    seconds: Int,
+    subName: SubscriptionName,
+  ) =
     p.Subscriptions
       .modifyAckDeadline(
         projectsId = subName.projectId,
         subscriptionsId = subName.subscription,
-        request = s.ModifyAckDeadlineRequest(ackIds = ackIds, ackDeadlineSeconds = seconds),
+        request = s.ModifyAckDeadlineRequest(ackIds = ops.map(_._1), ackDeadlineSeconds = seconds),
       )
       .send(backend)
       .flatMap(r => ZIO.fromEither(r.body))
       .uninterruptible
       .as(None)
-      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, AckOp.ModifyDeadline(seconds)))).as(Some(c)))
+      // re-queue the original operations to retain their sequence numbers
+      .catchAllCause(c => ackQueue.offerAll(ops).as(Some(c)))
 
   private def sendAck(ackIds: NonEmptyChunk[String], subName: SubscriptionName) =
     p.Subscriptions
@@ -127,7 +132,7 @@ class HttpSubscriber private[http] (
                         override def ack(): UIO[Unit] =
                           ackQueue.offer((ackId, AckOp.Ack)).unit
                         override def modifyAckDeadline(seconds: Int): UIO[Unit] =
-                          ackQueue.offer((ackId, AckOp.ModifyDeadline(AckReply.clampAckDeadline(seconds)))).unit
+                          AckOp.modifyDeadline(seconds).flatMap(op => ackQueue.offer((ackId, op))).unit
                       },
                     )
                 }
@@ -156,21 +161,20 @@ object HttpSubscriber {
    * grouped by deadline.
    *
    * ModifyAckDeadlineRequest supports only a single deadline value per request
-   * and the requests are sent in parallel. Only the latest queued deadline per
-   * ack id is kept so that an earlier modification can't override a later one.
+   * and the requests are sent in parallel. Only the most recently requested
+   * deadline per ack id is kept so that an earlier modification can't override
+   * a later one, also when failed modifications were re-queued after newer
+   * ones.
    */
-  private[http] def batchAckOps(ops: Chunk[(String, AckOp)]): (Chunk[String], List[(Int, NonEmptyChunk[String])]) = {
-    val (ackIds, modifyDeadlines) = ops.partitionMap {
-      case (id, AckOp.Ack)                     => Left(id)
-      case (id, AckOp.ModifyDeadline(seconds)) => Right((id, seconds))
-    }
+  private[http] def batchAckOps(
+    ops: Chunk[(String, AckOp)]
+  ): (Chunk[String], List[(Int, NonEmptyChunk[(String, AckOp.ModifyDeadline)])]) = {
+    val (ackIds, latestModifications) = AckOp.partition(ops)
 
-    val latestDeadlineById = modifyDeadlines.toMap // later entries take precedence
-
-    val modifyDeadlineGroups = latestDeadlineById.toList
-      .groupMap(_._2)(_._1)
+    val modifyDeadlineGroups = latestModifications.toList
+      .groupBy(_._2.seconds)
       .toList
-      .flatMap((seconds, ids) => NonEmptyChunk.fromIterableOption(ids).map((seconds, _)))
+      .flatMap((seconds, ops) => NonEmptyChunk.fromIterableOption(ops).map((seconds, _)))
 
     (ackIds, modifyDeadlineGroups)
   }

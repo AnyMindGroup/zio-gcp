@@ -1,6 +1,8 @@
 package com.anymindgroup.pubsub
 
-import zio.UIO
+import java.util.concurrent.atomic.AtomicLong
+
+import zio.{Chunk, UIO, ZIO}
 
 opaque type AckId = String
 object AckId:
@@ -40,4 +42,25 @@ object AckReply:
 // internal representation of acknowledgement operations queued for sending
 private[pubsub] enum AckOp:
   case Ack
-  case ModifyDeadline(seconds: Int)
+  // seqNr reflects the order in which deadline modifications were requested.
+  // It's kept when failed operations are re-queued, as those may end up in the queue after newer ones.
+  case ModifyDeadline(seconds: Int, seqNr: Long)
+
+private[pubsub] object AckOp:
+  private val seqNrCounter = new AtomicLong(0L)
+
+  def modifyDeadline(seconds: Int): UIO[AckOp] =
+    ZIO.succeed(ModifyDeadline(AckReply.clampAckDeadline(seconds), seqNrCounter.incrementAndGet()))
+
+  /**
+   * Splits operations into ack ids and the most recently requested deadline
+   * modification per ack id.
+   */
+  def partition(ops: Chunk[(String, AckOp)]): (Chunk[String], Map[String, ModifyDeadline]) =
+    ops.foldLeft((Chunk.empty[String], Map.empty[String, ModifyDeadline])) {
+      case ((ackIds, modifications), (id, Ack))                => (ackIds :+ id, modifications)
+      case ((ackIds, modifications), (id, op: ModifyDeadline)) =>
+        modifications.get(id) match
+          case Some(existing) if existing.seqNr > op.seqNr => (ackIds, modifications)
+          case _                                           => (ackIds, modifications.updated(id, op))
+    }

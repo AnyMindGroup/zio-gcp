@@ -41,23 +41,43 @@ object HttpPubsubSpec extends ZIOSpecDefault {
               yield assertCompletes
           }
       ),
-      test("only the latest queued deadline per ack id is sent when batching ack operations") {
+      test("only the most recently requested deadline per ack id is sent when batching ack operations") {
         val (ackIds, modifyDeadlines) = HttpSubscriber.batchAckOps(
           Chunk(
-            "1" -> AckOp.ModifyDeadline(30),
-            "2" -> AckOp.ModifyDeadline(30),
+            "1" -> AckOp.ModifyDeadline(30, seqNr = 1),
+            "2" -> AckOp.ModifyDeadline(30, seqNr = 2),
             "3" -> AckOp.Ack,
-            "1" -> AckOp.ModifyDeadline(300),
-            "2" -> AckOp.ModifyDeadline(0),
-            "1" -> AckOp.ModifyDeadline(45),
+            "1" -> AckOp.ModifyDeadline(300, seqNr = 3),
+            "2" -> AckOp.ModifyDeadline(0, seqNr = 4),
+            "1" -> AckOp.ModifyDeadline(45, seqNr = 5),
           )
         )
-        val sentDeadlines = modifyDeadlines.flatMap((seconds, ids) => ids.map(_ -> seconds))
+        val sentDeadlines = modifyDeadlines.flatMap((seconds, ops) => ops.map((id, _) => id -> seconds))
         assertTrue(
           ackIds == Chunk("3"),
           sentDeadlines.size == 2,
           sentDeadlines.toMap == Map("1" -> 45, "2" -> 0),
         )
+      },
+      test("re-queued failed deadline modification does not override a newer one") {
+        // 300s extension was queued while the earlier 30s request failed and got re-queued after it
+        val (_, modifyDeadlines) = HttpSubscriber.batchAckOps(
+          Chunk(
+            "1" -> AckOp.ModifyDeadline(300, seqNr = 2),
+            "1" -> AckOp.ModifyDeadline(30, seqNr = 1),
+          )
+        )
+        assertTrue(modifyDeadlines.map((seconds, ops) => (seconds, ops.map(_._1).toList)) == List((300, List("1"))))
+      },
+      test("deadline modifications get clamped deadlines and increasing sequence numbers") {
+        for ops <- ZIO.foreach(List(30, 300, 1000))(AckOp.modifyDeadline)
+        yield
+          val seqNrs = ops.collect { case AckOp.ModifyDeadline(_, seqNr) => seqNr }
+          assertTrue(
+            ops.collect { case AckOp.ModifyDeadline(seconds, _) => seconds } == List(30, 300, 600),
+            seqNrs == seqNrs.sorted,
+            seqNrs.distinct.size == 3,
+          )
       },
       test("modifyAckDeadline sends modifyAckDeadline requests with clamped deadline per ack id") {
         val deadlineByAckId = Map("1" -> 30, "2" -> 30, "3" -> 45, "4" -> 1000)
