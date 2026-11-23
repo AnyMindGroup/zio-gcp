@@ -2,9 +2,12 @@ package com.anymindgroup.pubsub
 package http
 
 import zio.test.*
-import zio.{Ref, Schedule, Scope, ZIO}
+import zio.{Promise, Ref, Schedule, Scope, ZIO}
 
 import com.anymindgroup.gcp.auth.{AuthedBackend, TokenProvider}
+import com.anymindgroup.gcp.pubsub.v1.schemas.ModifyAckDeadlineRequest
+import com.github.plokhotnyuk.jsoniter_scala.core.readFromString
+import sttp.client4.StringBody
 import sttp.client4.testing.ResponseStub
 import sttp.model.StatusCode
 
@@ -38,7 +41,64 @@ object HttpPubsubSpec extends ZIOSpecDefault {
               yield assertCompletes
           }
       ),
+      test("modifyAckDeadline sends modifyAckDeadline requests with clamped deadline per ack id") {
+        val deadlineByAckId = Map("1" -> 30, "2" -> 30, "3" -> 45, "4" -> 1000)
+        ZIO.scoped:
+          for
+            recorded   <- Ref.make(Map.empty[String, Int])
+            done       <- Promise.make[Nothing, Unit]
+            backend    <- modifyDeadlineBackendStub(deadlineByAckId.keys.toList, recorded, done)
+            subscriber <- makeSubscriber(backend = Some(backend))
+            _          <- subscriber
+                   .subscribe(SubscriptionName("any", "any"), Serde.utf8String)
+                   .mapZIO((msg, reply) => reply.modifyAckDeadline(deadlineByAckId(msg.meta.ackId.value)))
+                   .runDrain
+                   .race(done.await)
+            res <- recorded.get
+          yield assertTrue(res == deadlineByAckId.updated("4", 600))
+      },
     ) @@ TestAspect.native(TestAspect.sequential)
+
+  private def modifyDeadlineBackendStub(
+    ackIds: List[String],
+    recorded: Ref[Map[String, Int]],
+    done: Promise[Nothing, Unit],
+  ) =
+    Ref
+      .make(0)
+      .map: pullCount =>
+        AuthedBackend(
+          TokenProvider.noTokenProvider,
+          platformStub
+            .whenRequestMatches(r => r.uri.pathToString.endsWith(":pull"))
+            .thenRespondF {
+              pullCount.getAndIncrement.flatMap:
+                case 0 =>
+                  ZIO.succeed(
+                    ResponseStub.adjust(
+                      ackIds
+                        .map(id =>
+                          s"""{"ackId":"$id","message":{"data":"","messageId":"$id","publishTime":"2025-01-01T00:00:00Z"}}"""
+                        )
+                        .mkString("""{"receivedMessages":[""", ",", "]}"),
+                      StatusCode.Ok,
+                    )
+                  )
+                case _ => ZIO.never
+            }
+            .whenRequestMatches(r => r.uri.pathToString.endsWith(":modifyAckDeadline"))
+            .thenRespondF { r =>
+              val req = r.body match
+                case StringBody(b, _, _) => readFromString[ModifyAckDeadlineRequest](b)
+                case other               => throw new Exception(s"Unexpected body $other")
+              recorded
+                .updateAndGet(_ ++ req.ackIds.map(_ -> req.ackDeadlineSeconds))
+                .flatMap(m => ZIO.when(m.size == ackIds.size)(done.succeed(())))
+                .as(ResponseStub.adjust("{}", StatusCode.Ok))
+            }
+            .whenAnyRequest
+            .thenRespondNotFound(),
+        )
 
   private def backendStub(ackCounter: Ref[Int]) =
     Ref

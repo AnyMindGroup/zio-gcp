@@ -23,7 +23,7 @@ import sttp.client4.*
 class HttpSubscriber private[http] (
   backend: Backend[Task],
   maxMessagesPerPull: Int,
-  ackQueue: Queue[(String, Boolean)],
+  ackQueue: Queue[(String, AckOp)],
   retrySchedule: Schedule[Any, Throwable, ?],
   base64Decoder: Decoder,
   returnImmediatelyOnPull: Boolean,
@@ -32,38 +32,36 @@ class HttpSubscriber private[http] (
     chunkSizeLimit
       .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
       .flatMap { c =>
-        val (ackIds, nackIds) = c.partitionMap {
-          case (id, true)  => Left(id)
-          case (id, false) => Right(id)
+        val (ackIds, modifyDeadlines) = c.partitionMap {
+          case (id, AckOp.Ack)                     => Left(id)
+          case (id, AckOp.ModifyDeadline(seconds)) => Right((id, seconds))
         }
 
-        (
-          NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)),
-          NonEmptyChunk.fromChunk(nackIds).map(sendNack(_, subName)),
-        ) match {
-          case (Some(sendAckReq), Some(sendNackReq)) =>
-            (sendAckReq <&> sendNackReq).map {
-              case (Some(c1), Some(c2)) => Some(c1 && c2)
-              case (c1, c2)             => c1.orElse(c2)
-            }
-          case (Some(sendAckReq), _)  => sendAckReq
-          case (_, Some(sendNackReq)) => sendNackReq
-          case _                      => ZIO.none
-        }
+        // ModifyAckDeadlineRequest supports only a single deadline value per request
+        val modifyDeadlineReqs = modifyDeadlines
+          .groupMap(_._2)(_._1)
+          .toList
+          .flatMap((seconds, ids) => NonEmptyChunk.fromIterableOption(ids).map(sendModifyDeadline(_, seconds, subName)))
+
+        val requests = NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)).toList ++ modifyDeadlineReqs
+
+        ZIO
+          .collectAllPar(requests)
+          .map(_.flatten.reduceOption(_ && _))
       }
 
-  private def sendNack(nackIds: NonEmptyChunk[String], subName: SubscriptionName) =
+  private def sendModifyDeadline(ackIds: NonEmptyChunk[String], seconds: Int, subName: SubscriptionName) =
     p.Subscriptions
       .modifyAckDeadline(
         projectsId = subName.projectId,
         subscriptionsId = subName.subscription,
-        request = s.ModifyAckDeadlineRequest(ackIds = nackIds, ackDeadlineSeconds = 0),
+        request = s.ModifyAckDeadlineRequest(ackIds = ackIds, ackDeadlineSeconds = seconds),
       )
       .send(backend)
       .flatMap(r => ZIO.fromEither(r.body))
       .uninterruptible
       .as(None)
-      .catchAllCause(c => ackQueue.offerAll(nackIds.map((_, false))).as(Some(c)))
+      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, AckOp.ModifyDeadline(seconds)))).as(Some(c)))
 
   private def sendAck(ackIds: NonEmptyChunk[String], subName: SubscriptionName) =
     p.Subscriptions
@@ -76,7 +74,7 @@ class HttpSubscriber private[http] (
       .flatMap(r => ZIO.fromEither(r.body))
       .uninterruptible
       .as(None)
-      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, true))).as(Some(c)))
+      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, AckOp.Ack))).as(Some(c)))
 
   private[pubsub] def pull(
     subscriptionName: SubscriptionName,
@@ -135,9 +133,9 @@ class HttpSubscriber private[http] (
                       ),
                       new AckReply {
                         override def ack(): UIO[Unit] =
-                          ackQueue.offer((ackId, true)).unit
-                        override def nack(): UIO[Unit] =
-                          ackQueue.offer((ackId, false)).unit
+                          ackQueue.offer((ackId, AckOp.Ack)).unit
+                        override def modifyAckDeadline(seconds: Int): UIO[Unit] =
+                          ackQueue.offer((ackId, AckOp.ModifyDeadline(AckReply.clampAckDeadline(seconds)))).unit
                       },
                     )
                 }
@@ -177,7 +175,7 @@ object HttpSubscriber {
     returnImmediatelyOnPull: Boolean,
   ): ZIO[Scope, Nothing, HttpSubscriber] =
     ZIO
-      .acquireRelease(Queue.unbounded[(String, Boolean)])(_.shutdown)
+      .acquireRelease(Queue.unbounded[(String, AckOp)])(_.shutdown)
       .map: ackQueue =>
         HttpSubscriber(
           backend = authedBackend,

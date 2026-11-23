@@ -21,6 +21,7 @@ import zio.test.{
 }
 import zio.{Promise, Queue, Random, Ref, Schedule, Scope, ZIO, durationInt}
 
+import com.anymindgroup.pubsub.AckOp
 import com.google.pubsub.v1.{ReceivedMessage, StreamingPullRequest, StreamingPullResponse}
 object StreamingPullSubscriberSpec extends ZIOSpecDefault {
 
@@ -45,7 +46,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         initCountRef <- Ref.make(0)
         processedRef <- Ref.make(0)
         ackedRef      = new AtomicReference(Vector.empty[String])
-        ackQueue     <- Queue.unbounded[(String, Boolean)]
+        ackQueue     <- Queue.unbounded[(String, AckOp)]
         _            <- StreamingPullSubscriber
                .makeStream(
                  initStream(initCountRef, ackedRef),
@@ -73,7 +74,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         initCountRef <- Ref.make(0)
         processedRef <- Ref.make(0)
         ackedRef      = new AtomicReference(Vector.empty[String])
-        ackQueue     <- Queue.unbounded[(String, Boolean)]
+        ackQueue     <- Queue.unbounded[(String, AckOp)]
         _            <- StreamingPullSubscriber
                .makeStream(initStream(initCountRef, ackedRef), ackQueue, Schedule.recurs(5))
                .mapZIO(e => processedRef.getAndUpdate(_ + 1) *> e._2.ack())
@@ -100,7 +101,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
 
       for
         retryCounter <- Ref.make(-1)
-        queue        <- Queue.unbounded[(String, Boolean)]
+        queue        <- Queue.unbounded[(String, AckOp)]
         exit         <- StreamingPullSubscriber.makeStream(initStream(retryCounter), queue, schedule).runDrain.exit
         retries      <- retryCounter.get
         _            <- assert(retries)(equalTo(maxRetries))
@@ -112,7 +113,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
           processedRef     <- Ref.make(Vector.empty[String])
           ackedRef          = new AtomicReference(Vector.empty[String])
           nackedRef         = new AtomicReference(Vector.empty[String])
-          ackQueue         <- Queue.unbounded[(String, Boolean)]
+          ackQueue         <- Queue.unbounded[(String, AckOp)]
           interruptPromise <- Promise.make[Throwable, Unit]
           _                <- StreamingPullSubscriber
                  .makeStream(
@@ -146,6 +147,24 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         yield assertCompletes
       }
     } @@ TestAspect.samples(20) @@ TestAspect.flaky, // TODO fix flaky test
+    test("ack deadline of messages can be modified") {
+      check(Gen.int(-100, 1000)) { seconds =>
+        for
+          modifiedRef <- ZIO.succeed(new AtomicReference(Vector.empty[(String, Int)]))
+          ackQueue    <- Queue.unbounded[(String, AckOp)]
+          ackIds      <- StreamingPullSubscriber
+                      .makeStream(
+                        ZIO.succeed(testBidiStream(modifiedDeadlinesRef = modifiedRef)),
+                        ackQueue,
+                        Schedule.stop,
+                      )
+                      .mapZIO((msg, reply) => reply.modifyAckDeadline(seconds).as(msg.getAckId()))
+                      .take(3)
+                      .runCollect
+          expectedSeconds = math.max(0, math.min(600, seconds))
+        yield assertTrue(modifiedRef.get() == ackIds.toVector.map((_, expectedSeconds)))
+      }
+    } @@ TestAspect.samples(20),
     test("server stream is canceled on interruption (standalone)") {
       val cancelled      = new ju.concurrent.atomic.AtomicBoolean(false)
       val lock           = new AnyRef
@@ -189,7 +208,7 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
       }
 
       for
-        queue <- Queue.unbounded[(String, Boolean)]
+        queue <- Queue.unbounded[(String, AckOp)]
         _     <- Live.live(
                StreamingPullSubscriber
                  .makeStream(ZIO.succeed(testBidiStream), queue, Schedule.forever)
@@ -205,6 +224,8 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
     failPull: Boolean = false,
     ackedRef: AtomicReference[Vector[String]] = new AtomicReference[Vector[String]](Vector.empty),
     nackedRef: AtomicReference[Vector[String]] = new AtomicReference[Vector[String]](Vector.empty),
+    modifiedDeadlinesRef: AtomicReference[Vector[(String, Int)]] =
+      new AtomicReference[Vector[(String, Int)]](Vector.empty),
   ): BidiStream[StreamingPullRequest, StreamingPullResponse] =
     new TestBidiStream[StreamingPullRequest, StreamingPullResponse] {
       override def send(r: StreamingPullRequest): Unit =
@@ -212,16 +233,18 @@ object StreamingPullSubscriberSpec extends ZIOSpecDefault {
         else {
           val _ = ackedRef.updateAndGet(_ ++ r.getAckIdsList.asScala.toVector)
 
-          val nackIds = r.getModifyDeadlineAckIdsList.asScala.toVector
-          // deadline needs to be set to 0 to nack a message
-          val deadlines = r.getModifyDeadlineSecondsList.asScala.toVector.filter(_ == 0)
+          val modifyIds = r.getModifyDeadlineAckIdsList.asScala.toVector
+          val deadlines = r.getModifyDeadlineSecondsList.asScala.toVector.map(_.intValue())
 
           // both have to have the same size, otherwise it's not a valid request
-          if nackIds.length != deadlines.length then {
+          if modifyIds.length != deadlines.length then {
             throw new Throwable("getModifyDeadlineAckIdsList / getModifyDeadlineSecondsList don't match in size")
           }
 
-          val _ = nackedRef.updateAndGet(_ ++ nackIds)
+          val modified = modifyIds.zip(deadlines)
+          val _        = modifiedDeadlinesRef.updateAndGet(_ ++ modified)
+          // deadline needs to be set to 0 to nack a message
+          val _ = nackedRef.updateAndGet(_ ++ modified.collect { case (id, 0) => id })
         }
 
       override def iterator(): ju.Iterator[StreamingPullResponse] = streamingPullResIterator(

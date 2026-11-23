@@ -23,6 +23,18 @@ def process(message: ReceivedMessage[Int], reply: AckReply) =
   }
 ```
 
+If processing of a message can take longer than the subscription's ack deadline,
+the deadline can be extended to prevent the message from being redelivered in the meantime
+(values are in seconds and limited to the range 0 to 600):
+```scala
+def processLong(message: ReceivedMessage[Int], reply: AckReply) =
+  for
+    _ <- reply.modifyAckDeadline(300) // extend deadline to 5 minutes from now
+    _ <- printLine(s"Long running processing of $message...")
+    _ <- reply.ack()
+  yield ()
+```
+
 Processing can be controlled according to the needs.  
 E.g. to process all messages in sequence:
 ```scala
