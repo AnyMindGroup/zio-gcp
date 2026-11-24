@@ -24,10 +24,10 @@ object AuthedBackendSpec extends ZIOSpecDefault {
       .thenRespondOk()
 
     test("add token to request") {
-      for {
+      for
         res <- AuthedBackend(dummyTokenProvider, backendStub).send(basicRequest.get(uri"http://example.com"))
         _   <- assertTrue(res.is200)
-      } yield assertCompletes
+      yield assertCompletes
     }
   }
 }

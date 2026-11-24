@@ -10,12 +10,12 @@ object TokenSpec extends ZIOSpecDefault {
       val jsonStr     = """{ "access_token": "abc123", "expires_in": 3599 }"""
       val fromJsonRes = AccessToken.fromJsonString(jsonStr)
 
-      for {
+      for
         _    <- assert(fromJsonRes)(isRight)
         token = fromJsonRes.toOption.get
         _    <- assertTrue(token.token == "abc123")
         _    <- assertTrue(token.expiresIn == Duration.fromSeconds(3599))
-      } yield assertCompletes
+      yield assertCompletes
     },
     test("read id token from string") {
       // token data
@@ -29,13 +29,13 @@ object TokenSpec extends ZIOSpecDefault {
         """eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkxMjJ9.-fM8Z-u88K5GGomqJxRCilYkjXZusY_Py6kdyzh1EAg"""
       val fromStrRes = IdToken.fromString(tokenStr)
 
-      for {
+      for
         _    <- assert(fromStrRes)(isRight)
         token = fromStrRes.toOption.get
         _    <- assertTrue(token.token == tokenStr)
         _    <- assertTrue(token.expiresIn == Duration.fromSeconds(100))
         _    <- assertTrue(token.signature == "-fM8Z-u88K5GGomqJxRCilYkjXZusY_Py6kdyzh1EAg")
-      } yield assertCompletes
+      yield assertCompletes
     },
     test("calculate expiration by percentage") {
       val token = AccessToken("", Duration.fromSeconds(100))

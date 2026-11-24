@@ -29,22 +29,22 @@ object TokenProviderSpec extends ZIOSpecDefault {
 
   override def spec: Spec[TestEnvironment & Scope, Any] = suite("TokenProviderSpec")(
     test("no token provider") {
-      for {
+      for
         token <- TokenProvider.noTokenProvider.token
         _     <- assertTrue(token.token == Token.noop)
-      } yield assertCompletes
+      yield assertCompletes
     },
     test("request access token for user account") {
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         tp      <- TokenProvider.accessTokenProvider(okUserAccount, backend)
         token   <- tp.token
         _       <- assertTrue(token.token.token == "user")
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on service account as it's not supported (yet)") {
       val svcAcc = Credentials.ServiceAccountKey("email", Config.Secret("123"))
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         _       <- assertZIO(TokenProvider.accessTokenProvider(svcAcc, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
@@ -52,64 +52,64 @@ object TokenProviderSpec extends ZIOSpecDefault {
         _ <- assertZIO(TokenProvider.idTokenProvider("", svcAcc, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on getting id token for a user account as it's not supported (yet)") {
       val user = Credentials.UserAccount("", "", Config.Secret(""))
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         _       <- assertZIO(TokenProvider.idTokenProvider("", user, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("fail on getting id token for impersonated service account as it's not supported (yet)") {
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         _       <- assertZIO(TokenProvider.idTokenProvider("", impersonatedCreds, backend).exit)(
                failsWithA[TokenProviderException.CredentialsFailure]
              )
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request access token from compute metadata server") {
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         tp      <- TokenProvider.accessTokenProvider(Credentials.ComputeServiceAccount(""), backend)
         token   <- tp.token
         _       <- assertTrue(token.token.token == "compute")
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request id token from compute metadata server") {
       val audience = "http://test.com"
-      (for {
+      (for
         backend <- ZIO.service[Backend[Task]]
         tp      <- TokenProvider.idTokenProvider(audience = audience, Credentials.ComputeServiceAccount(""), backend)
         token   <- tp.token
         _       <- assertTrue(token.token.token == testIdToken)
-      } yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
+      yield assertCompletes).provideSome[Scope](googleStubBackendLayer(audience))
     },
     test("request access token using impersonated service account credentials") {
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         tp      <- TokenProvider.accessTokenProvider(impersonatedCreds, backend)
         token   <- tp.token
         _       <- assertTrue(token.token.token == "impersonated")
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("request access token using impersonated service account with delegates") {
       val credsWithDelegates = impersonatedCreds.copy(
         delegates = List("delegate@example-project.iam.gserviceaccount.com")
       )
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         tp      <- TokenProvider.accessTokenProvider(credsWithDelegates, backend)
         token   <- tp.token
         _       <- assertTrue(token.token.token == "impersonated")
-      } yield assertCompletes
+      yield assertCompletes
     }.provideSome[Scope](googleStubBackendLayer()),
     test("token is refreshed automatically at given expiry stage") {
       checkN(10)(Gen.double(0.1, 0.9)) { expiryPercent =>
-        for {
+        for
           backend <- ZIO.service[Backend[Task]]
           tp      <- TokenProvider.accessTokenProvider(
                   credentials = Credentials.ComputeServiceAccount(""),
@@ -121,11 +121,11 @@ object TokenProviderSpec extends ZIOSpecDefault {
           _        <- TestClock.adjust(adustSecs)
           tokenB   <- tp.token
           _        <- assertTrue(tokenA.receivedAt.isBefore(tokenB.receivedAt))
-        } yield assertCompletes
+        yield assertCompletes
       }
     }.provideSome[Scope](googleStubBackendLayer()),
     test("retry on failures by given schedule") {
-      for {
+      for
         retries   <- Ref.make(0)
         maxRetries = 5
         tp        <- ZIO
@@ -141,7 +141,7 @@ object TokenProviderSpec extends ZIOSpecDefault {
                 .exit
         _ <- assert(tp)(fails(anything))
         _ <- assertZIO(retries.get)(equalTo(maxRetries))
-      } yield assertCompletes
+      yield assertCompletes
     },
   ).provideSomeLayerShared[Scope](zio.Runtime.removeDefaultLoggers >>> ZLayer.succeed(ZLogger.none))
 
