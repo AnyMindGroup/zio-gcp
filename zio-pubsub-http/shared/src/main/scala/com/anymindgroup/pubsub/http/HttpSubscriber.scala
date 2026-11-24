@@ -94,26 +94,19 @@ class HttpSubscriber private[http] (
             ZIO.succeed(
               value.receivedMessages
                 .getOrElse(Chunk.empty)
-                .map(m =>
-                  (
-                    m.message.flatMap(_.messageId),
-                    m.message.flatMap(_.publishTime),
-                    m.message.flatMap(_.attributes),
-                    m.message.flatMap(_.data),
-                    m.message.flatMap(_.orderingKey),
-                    m.deliveryAttempt,
-                    m.ackId,
-                  )
-                )
                 .collect {
-                  case (
-                        Some(mId),
-                        Some(ts),
-                        attrs,
-                        data,
-                        orderingKey,
-                        deliveryAttempt,
-                        Some(ackId),
+                  case s.ReceivedMessage(
+                        ackId = Some(ackId),
+                        deliveryAttempt = deliveryAttempt,
+                        message = Some(
+                          s.PubsubMessage(
+                            messageId = Some(mId),
+                            publishTime = Some(ts),
+                            attributes = attrs,
+                            data = data,
+                            orderingKey = orderingKey,
+                          )
+                        ),
                       ) =>
                     (
                       ReceivedMessage(
