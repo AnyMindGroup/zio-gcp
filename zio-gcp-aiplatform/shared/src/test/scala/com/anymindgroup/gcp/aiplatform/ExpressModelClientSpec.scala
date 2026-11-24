@@ -114,7 +114,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
 
   def spec = suite("ExpressModelClientSpec")(
     test("send executes a provided function and returns the final text response") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         fnInputs <- Ref.make(Chunk.empty[City])
         responses = Chunk(
@@ -133,14 +133,14 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
                )
         sentRequests <- requests.get
         calledWith   <- fnInputs.get
-      } yield assertTrue(
+      yield assertTrue(
         res.text == "The weather in Tokyo is sunny, 22°C.",
         calledWith == Chunk(City("Tokyo")),
         sentRequests.size == 2,
       )
     },
     test("send attaches the function declarations as tools on the request") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         responses = Chunk(textResponse("done"))
         functions = Map(
@@ -155,14 +155,14 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         declarations  = firstReq.tools
                          .getOrElse(Chunk.empty)
                          .flatMap(_.functionDeclarations.getOrElse(Chunk.empty))
-      } yield assertTrue(
+      yield assertTrue(
         declarations.map(_.name) == Chunk("get_weather"),
         declarations.head.description == Some("Get the current weather for a given city"),
         declarations.head.parameters.flatMap(_.`type`) == Some(GoogleCloudAiplatformV1Schema.Type.OBJECT),
       )
     },
     test("send echoes the function call and its response back to the model on the next request") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         fnInputs <- Ref.make(Chunk.empty[City])
         responses = Chunk(
@@ -179,7 +179,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         sentRequests <- requests.get
         secondReq     = readFromString(sentRequests(1))(using requestCodec)
         parts         = secondReq.contents.flatMap(_.parts)
-      } yield assertTrue(
+      yield assertTrue(
         // the model's function call is echoed back with its thought signature
         parts.exists(p => p.functionCall.flatMap(_.name) == Some("get_weather") && p.thoughtSignature == Some("sig-1")),
         // the executed function result is sent back as a function response
@@ -187,7 +187,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
       )
     },
     test("send returns the text response directly when the model requests no function call") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         fnInputs <- Ref.make(Chunk.empty[City])
         responses = Chunk(textResponse("No tools needed here."))
@@ -200,14 +200,14 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         res          <- client(stubBackend(responses, requests)).send(GenerateContentRequest("hello"), functions)
         sentRequests <- requests.get
         calledWith   <- fnInputs.get
-      } yield assertTrue(
+      yield assertTrue(
         res.text == "No tools needed here.",
         calledWith.isEmpty,
         sentRequests.size == 1,
       )
     },
     test("send fails when the model requests an unknown function") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         responses = Chunk(functionCallResponse(("unknown_fn", Json.writeToJson(City("Tokyo")), "sig")))
         functions = Map(
@@ -217,13 +217,13 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
                       )
                     )
         error <- client(stubBackend(responses, requests)).send(GenerateContentRequest("hi"), functions).flip
-      } yield assertTrue(
+      yield assertTrue(
         error == FunctionCallException.UnknownFunction("unknown_fn"),
         error.getMessage == "Unknown function: unknown_fn",
       )
     },
     test("send executes a function call that carries no thought signature") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         fnInputs <- Ref.make(Chunk.empty[City])
         responses = Chunk(
@@ -239,14 +239,14 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         res          <- client(stubBackend(responses, requests)).send(GenerateContentRequest("weather?"), functions)
         sentRequests <- requests.get
         calledWith   <- fnInputs.get
-      } yield assertTrue(
+      yield assertTrue(
         res.text == "It is sunny.",
         calledWith == Chunk(City("Tokyo")),
         sentRequests.size == 2,
       )
     },
     test("send executes multiple function calls returned in a single turn") {
-      for {
+      for
         requests     <- Ref.make(Chunk.empty[String])
         weatherCalls <- Ref.make(Chunk.empty[City])
         timeCalls    <- Ref.make(Chunk.empty[TimeZone])
@@ -274,7 +274,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         sentRequests <- requests.get
         weather      <- weatherCalls.get
         time         <- timeCalls.get
-      } yield assertTrue(
+      yield assertTrue(
         res.text == "It is sunny at 10:00 in Tokyo.",
         weather == Chunk(City("Tokyo")),
         time == Chunk(TimeZone("JST")),
@@ -282,7 +282,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
       )
     },
     test("send loops over multiple function calling turns until a text response is returned") {
-      for {
+      for
         requests <- Ref.make(Chunk.empty[String])
         fnInputs <- Ref.make(Chunk.empty[City])
         responses = Chunk(
@@ -299,7 +299,7 @@ object ExpressModelClientSpec extends ZIOSpecDefault {
         res          <- client(stubBackend(responses, requests)).send(GenerateContentRequest("weather?"), functions)
         sentRequests <- requests.get
         calledWith   <- fnInputs.get
-      } yield assertTrue(
+      yield assertTrue(
         res.text == "Both cities checked.",
         calledWith == Chunk(City("Tokyo"), City("Osaka")),
         sentRequests.size == 3,

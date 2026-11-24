@@ -282,8 +282,8 @@ class CurlMultiZioBackend private (
 
   private def initEasy()(using Zone): Ptr[CURL] = {
     val easy = curl_easy_init()
-    if (easy == null) throw new RuntimeException("curl_easy_init failed")
-    if (verbose) curl_easy_setopt(easy, CURLoption.CURLOPT_VERBOSE, 1L)
+    if easy == null then throw new RuntimeException("curl_easy_init failed")
+    if verbose then curl_easy_setopt(easy, CURLoption.CURLOPT_VERBOSE, 1L)
     curl_easy_setopt(easy, CURLoption.CURLOPT_NOSIGNAL, 1L)
     curl_easy_setopt(easy, CURLoption.CURLOPT_FOLLOWLOCATION, 1L)
     easy
@@ -320,7 +320,7 @@ class CurlMultiZioBackend private (
     reqHeaders.foreach { h =>
       slist = curl_slist_append(slist, toCString(s"${h.name}: ${h.value}"))
     }
-    if (slist != null) curl_easy_setopt(easy, CURLoption.CURLOPT_HTTPHEADER, slist)
+    if slist != null then curl_easy_setopt(easy, CURLoption.CURLOPT_HTTPHEADER, slist)
 
     setRequestBody(easy, request.body)
     slist
@@ -333,7 +333,7 @@ class CurlMultiZioBackend private (
         curl_easy_setopt(easy, CURLoption.CURLOPT_COPYPOSTFIELDS, toCString(b.s))
       case b: ByteArrayBody =>
         val tmp = malloc(b.b.length.toUInt).asInstanceOf[CString]
-        var i   = 0; while (i < b.b.length) { !(tmp + i) = b.b(i); i += 1 }
+        var i   = 0; while i < b.b.length do { !(tmp + i) = b.b(i); i += 1 }
         curl_easy_setopt(easy, CURLoption.CURLOPT_POSTFIELDSIZE, b.b.length.toLong)
         curl_easy_setopt(easy, CURLoption.CURLOPT_COPYPOSTFIELDS, tmp)
         free(tmp.asInstanceOf[Ptr[Byte]])
@@ -353,22 +353,22 @@ class CurlMultiZioBackend private (
 
   private def parseHeadersAndStatus(raw: String): (String, List[Header]) = {
     val lines = raw.split("\n").map(_.trim).filter(_.nonEmpty)
-    if (lines.isEmpty) return ("", Nil)
+    if lines.isEmpty then return ("", Nil)
     // Skip any 1xx intermediate responses by finding the last HTTP/ status line
     val lastHttpIdx = lines.lastIndexWhere(_.startsWith("HTTP/"))
     val respLines   = if lastHttpIdx >= 0 then lines.drop(lastHttpIdx) else lines
     val statusLine  = respLines.head
     val statusText  = {
       val i = statusLine.indexOf(' ')
-      if (i < 0) ""
+      if i < 0 then ""
       else {
         val j = statusLine.indexOf(' ', i + 1)
-        if (j < 0) "" else statusLine.substring(j + 1).trim
+        if j < 0 then "" else statusLine.substring(j + 1).trim
       }
     }
     val headers = respLines.tail.flatMap { line =>
       val colon = line.indexOf(':')
-      if (colon > 0) Some(Header(line.substring(0, colon).trim, line.substring(colon + 1).trim))
+      if colon > 0 then Some(Header(line.substring(0, colon).trim, line.substring(colon + 1).trim))
       else None
     }.toList
     (statusText, headers)
@@ -395,7 +395,8 @@ object CurlMultiZioBackend {
   def layer(verbose: Boolean = false): ZLayer[Any, Throwable, CurlMultiZioBackend] =
     ZLayer.scoped(scoped(verbose))
 
-  private val curlBackendsCount: Synchronized[Int] = zio.Unsafe.unsafe(Ref.Synchronized.unsafe.make(0))
+  private val curlBackendsCount: Synchronized[Int] =
+    zio.Unsafe.unsafe(unsafe => Ref.Synchronized.unsafe.make(0)(using unsafe))
 
   def scoped(verbose: Boolean = false): ZIO[Scope, Throwable, CurlMultiZioBackend] =
     for

@@ -23,22 +23,22 @@ object CredentialsSpec extends ZIOSpecDefault {
     // honoured; the guard states the precondition instead of leaving the result
     // to depend on the ambient environment without saying so.
     test("return none if no credentials were found") {
-      for {
+      for
         _     <- TestSystem.putProperty("user.home", "non_existing")
         creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_)).exit
         _     <- assert(creds)(succeeds(isNone))
-      } yield assertCompletes
+      yield assertCompletes
     }.provideLayer(defaultTestLayer) @@ TestAspect.ifEnvNotSet("GCE_METADATA_HOST"),
     test("read credentials from internal google meta server") {
-      for {
+      for
         _     <- TestSystem.putProperty("user.home", "non_existing")
         creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _     <-
           assert(creds)(isSome(equalTo(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com"))))
-      } yield assertCompletes
+      yield assertCompletes
     }.provideLayer(metadataStubLayer),
     test("read credentials from default directory or internal google meta server based on config") {
-      for {
+      for
         backend <- ZIO.service[Backend[Task]]
         _       <- TestSystem.putProperty("user.home", resourcesDir.toString())
         _       <- Credentials
@@ -55,14 +55,14 @@ object CredentialsSpec extends ZIOSpecDefault {
                    case Some(Credentials.ComputeServiceAccount("test@gcp-project.iam.gserviceaccount.com")) => true
                    case _                                                                                   => false
                  })
-      } yield assertCompletes
+      yield assertCompletes
     }.provideLayer(metadataStubLayer),
     test("read credentials from path set by GOOGLE_APPLICATION_CREDENTIALS") {
       val userCredsPath =
         Path
           .of(resourcesDir.toString(), "application_default_credentials.json")
 
-      for {
+      for
         _         <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", userCredsPath.toString())
         userCreds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _         <- assertTrue(userCreds match {
@@ -76,13 +76,13 @@ object CredentialsSpec extends ZIOSpecDefault {
                case Some(Credentials.ServiceAccountKey("test@gcp-project.iam.gserviceaccount.com", _)) => true
                case _                                                                                  => false
              })
-      } yield assertCompletes
+      yield assertCompletes
     }.provideLayer(defaultTestLayer),
     test("read impersonated service account credentials from file") {
       val impersonatedCredsPath =
         Path.of(resourcesDir.toString(), "impersonated_service_account.json").toAbsolutePath()
 
-      for {
+      for
         _     <- TestSystem.putEnv("GOOGLE_APPLICATION_CREDENTIALS", impersonatedCredsPath.toString())
         creds <- ZIO.serviceWithZIO[Backend[Task]](Credentials.auto(_))
         _     <- assertTrue(creds match {
@@ -102,7 +102,7 @@ object CredentialsSpec extends ZIOSpecDefault {
                  .asInstanceOf[Credentials.ImpersonatedServiceAccount]
                  .serviceAccountEmail == "example@example-project.iam.gserviceaccount.com"
              )
-      } yield assertCompletes
+      yield assertCompletes
     }.provideLayer(defaultTestLayer),
   )
 

@@ -51,13 +51,13 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-val _scala3 = "3.3.9"
+val _scala3 = "3.9.0"
 
 val scala3Next = "3.9.0"
 
 val _zioVersion = "2.1.27"
 
-val sttpClient4Version = "4.0.27"
+val sttpClient4Version = "4.1.3"
 
 val jsoniterVersion = "2.43.0"
 
@@ -480,7 +480,7 @@ lazy val zioPubsubHttp = crossProject(JVMPlatform, NativePlatform)
   )
   .settings(commonSettings)
 
-val zioSchemaVersion             = "1.8.7"
+val zioSchemaVersion             = "1.9.2"
 lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
   .in(file("zio-pubsub-serde-zio-schema"))
   .settings(moduleName := "zio-pubsub-serde-zio-schema")
