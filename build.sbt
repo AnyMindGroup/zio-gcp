@@ -258,8 +258,7 @@ def codegenTask(
 
     logger.info(s"Generating Google client sources")
 
-    val errs = ListBuffer.empty[String]
-    List(
+    val cmd = List(
       s"${codegenBin.getPath()}",
       s"-out-dir=$outDir",
       s"-out-pkg=$targetBasePkg",
@@ -268,10 +267,27 @@ def codegenTask(
       s"-json-codec=$jsonCodec",
       s"-array-type=$arrayType",
       s"-jsoniter-json-type=_root_.com.anymindgroup.jsoniter.Json",
-    ).mkString(" ") ! ProcessLogger(i => logger.debug(i), e => errs += e) match {
-      case 0 => ()
-      case c => throw new InterruptedException(s"Failure on code generation:\n${errs.mkString("\n")}")
+    ).mkString(" ")
+
+    // The codegen binary (Scala Native) occasionally fails under heavy CPU load, e.g. while sbt compiles
+    // other modules in parallel: mostly with a segfault in the GC (exit code 139), but also with spurious
+    // I/O errors such as AccessDeniedException. Generation is deterministic, so retry a limited number of times.
+    val maxAttempts = 3
+    @tailrec
+    def generate(attempt: Int): Unit = {
+      val errs = ListBuffer.empty[String]
+      cmd ! ProcessLogger(i => logger.debug(i), e => errs += e) match {
+        case 0                          => ()
+        case c if attempt < maxAttempts =>
+          logger.warn(
+            s"Code generation for $apiName $apiVersion failed with exit code $c (attempt $attempt/$maxAttempts), retrying:\n${errs.mkString("\n")}"
+          )
+          IO.delete(outPkgDir)
+          generate(attempt + 1)
+        case _ => throw new InterruptedException(s"Failure on code generation:\n${errs.mkString("\n")}")
+      }
     }
+    generate(1)
 
     val files = listFilesRec(List(outPkgDir), Nil)
     logger.success(s"Generated ${files.length} files in ${outPkgDir.getPath()}")
