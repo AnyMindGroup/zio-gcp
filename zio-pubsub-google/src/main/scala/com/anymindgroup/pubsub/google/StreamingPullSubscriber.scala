@@ -7,7 +7,7 @@ import scala.jdk.CollectionConverters.*
 import zio.stream.{ZStream, ZStreamAspect}
 import zio.{Cause, Chunk, Promise, Queue, RIO, Schedule, Scope, Task, UIO, ZIO, ZIOAspect, durationInt}
 
-import com.anymindgroup.pubsub.{AckReply, PubsubConnectionConfig, SubscriptionName}
+import com.anymindgroup.pubsub.{AckOp, AckReply, PubsubConnectionConfig, SubscriptionName}
 import com.google.api.gax.rpc.{BidiStream as GBidiStream, ClientStream}
 import com.google.cloud.pubsub.v1.stub.{GrpcSubscriberStub, SubscriberStubSettings}
 import com.google.cloud.pubsub.v1.{SubscriptionAdminClient, SubscriptionAdminSettings}
@@ -60,52 +60,68 @@ private[pubsub] object StreamingPullSubscriber {
           }
       )
 
-  private def processAckQueue(
-    ackQueue: Queue[(String, Boolean)],
+  private[pubsub] def processAckQueue(
+    ackQueue: Queue[(String, AckOp)],
     clientStream: ClientStream[StreamingPullRequest],
-    chunkSizeLimit: Option[Int],
+    waitForOps: Boolean,
   ): UIO[Option[Cause[Throwable]]] =
-    chunkSizeLimit
-      .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
-      .flatMap {
-        case chunk if chunk.isEmpty => ZIO.none
-        case chunk                  =>
-          ZIO.attempt {
-            val (ackIds, nackIds) = chunk.partitionMap {
-              case (id, true)  => Left(id)
-              case (id, false) => Right(id)
-            }
-
-            val req = StreamingPullRequest.newBuilder
-              .addAllAckIds(ackIds.asJava)
-              .addAllModifyDeadlineSeconds(nackIds.map(_ => Integer.valueOf(0)).asJava)
-              .addAllModifyDeadlineAckIds(nackIds.asJava)
-              .build()
-
-            clientStream.send(req)
-          }.uninterruptible
-            .as(None)
-            .catchAllCause { c =>
-              // place back into the queue on failures
-              ackQueue.offerAll(chunk).as(Some(c))
-            }
+    // once taken from the queue, operations are processed uninterruptibly so that none get lost on interruption
+    ZIO.uninterruptibleMask { restore =>
+      restore(if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { ops =>
+        // coalesce before splitting into requests so that an outdated deadline modification
+        // can't be sent in a later request than a newer one for the same ack id
+        sendAckBatches(ackQueue, clientStream, AckOp.coalesce(ops).grouped(AckOp.maxAckIdsPerRequest).toList)
       }
+    }
+
+  private def sendAckBatches(
+    ackQueue: Queue[(String, AckOp)],
+    clientStream: ClientStream[StreamingPullRequest],
+    batches: List[Chunk[(String, AckOp)]],
+  ): UIO[Option[Cause[Throwable]]] =
+    batches match
+      case Nil           => ZIO.none
+      case batch :: rest =>
+        ZIO
+          .attempt(clientStream.send(toStreamingPullRequest(batch)))
+          .uninterruptible
+          .foldCauseZIO(
+            // place the failed and all remaining unsent operations back into the queue
+            c => ackQueue.offerAll(batches.flatten).as(Some(c)),
+            _ => sendAckBatches(ackQueue, clientStream, rest),
+          )
+
+  private def toStreamingPullRequest(batch: Chunk[(String, AckOp)]): StreamingPullRequest = {
+    val (ackIds, modifications) = AckOp.partition(batch)
+    val modifyDeadlines         = modifications.toList
+
+    StreamingPullRequest.newBuilder
+      .addAllAckIds(ackIds.asJava)
+      .addAllModifyDeadlineSeconds(modifyDeadlines.map((_, op) => Integer.valueOf(op.seconds)).asJava)
+      .addAllModifyDeadlineAckIds(modifyDeadlines.map(_._1).asJava)
+      .build()
+  }
 
   private[pubsub] def makeStream(
     initBidiStream: Task[BidiStream[StreamingPullRequest, StreamingPullResponse]],
-    ackQueue: Queue[(String, Boolean)],
+    ackQueue: Queue[(String, AckOp)],
     retrySchedule: Schedule[Any, Throwable, ?],
   ): ZStream[Any, Throwable, (GReceivedMessage, AckReply)] = (for {
     bidiStream <- ZStream.fromZIO(initBidiStream)
     stream      = makeServerStream(bidiStream).map { message =>
                val ackReply = new AckReply {
-                 override def ack(): UIO[Unit]  = ackQueue.offer((message.getAckId(), true)).uninterruptible.unit
-                 override def nack(): UIO[Unit] = ackQueue.offer((message.getAckId(), false)).uninterruptible.unit
+                 override def ack(): UIO[Unit]                           = ackQueue.offer((message.getAckId(), AckOp.Ack)).uninterruptible.unit
+                 override def modifyAckDeadline(seconds: Int): UIO[Unit] =
+                   AckOp
+                     .modifyDeadline(seconds)
+                     .flatMap(op => ackQueue.offer((message.getAckId(), op)))
+                     .uninterruptible
+                     .unit
                }
                (message, ackReply)
              }
     ackStream = ZStream.repeatZIO(
-                  processAckQueue(ackQueue, bidiStream, Some(1024)).flatMap {
+                  processAckQueue(ackQueue, bidiStream, waitForOps = true).flatMap {
                     case None    => ZIO.unit
                     case Some(c) => ZIO.failCause(c)
                   }
@@ -119,7 +135,7 @@ private[pubsub] object StreamingPullSubscriber {
               for {
                 // cancel receiving stream before processing the rest of the queue
                 _ <- ZIO.succeed(bidiStream.cancel())
-                _ <- processAckQueue(ackQueue, bidiStream, None)
+                _ <- processAckQueue(ackQueue, bidiStream, waitForOps = false)
               } yield ()
             }
           _ <- ackStream.channel.drain.runIn(scope).catchAllCause(ackStreamFailed.failCause(_)).forkIn(scope)
@@ -164,7 +180,7 @@ private[pubsub] object StreamingPullSubscriber {
     subscriptionId     <- ZIO.succeed(GSubscriptionName.of(subscriptionName.projectId, subscriptionName.subscription))
     ackDeadlineSeconds <- getAckDeadlineSeconds(connection, subscriptionId)
     subscriber         <- createStub(connection, SubscriberStubSettings.newBuilder, GrpcSubscriberStub.create(_))
-    ackQueue           <- ZIO.acquireRelease(Queue.unbounded[(String, Boolean)])(_.shutdown)
+    ackQueue           <- ZIO.acquireRelease(Queue.unbounded[(String, AckOp)])(_.shutdown)
     stream              =
       makeStream(
         initGrpcBidiStream(subscriber, subscriptionId, ackDeadlineSeconds),

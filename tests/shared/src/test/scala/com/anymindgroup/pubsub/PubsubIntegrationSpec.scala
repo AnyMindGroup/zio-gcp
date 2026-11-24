@@ -85,6 +85,27 @@ object PubsubIntegrationSpec {
             _ <- assertTrue(res == Chunk(mId, mId))
           yield assertCompletes
       },
+      test("Subscriber ack deadline can be extended") {
+        val ackDeadlineSeconds = 10 // minimum
+        ZIO.scoped:
+          for
+            (topic, sub) <- topicWithSubscriptionGen("any").runHead.map(_.get)
+            _            <-
+              PubsubTestSupport.createTopicWithSubscription(topic, sub, ackDeadlineSeconds = Some(ackDeadlineSeconds))
+            connection <- ZIO.service[PubsubConnectionConfig]
+            subscriber <- subscriberImpl(connection)
+            message    <- publishMessagesGen(1, 1).runHead.map(_.get.head)
+            _          <- PubsubTestSupport.publishEvent(message, topic)
+            consumed   <-
+              subscriber
+                .subscribe(sub, Serde.utf8String)
+                .tap(_._2.modifyAckDeadline(60)) // extend deadline without acking
+                .interruptAfter(
+                  (ackDeadlineSeconds + 3).seconds
+                ) // run consumer for longer than the original ack deadline to confirm that the message is not redelivered
+                .runCount
+          yield assertTrue(consumed == 1)
+      },
       test("Subscriber messages are acked") {
         val ackDeadlineSeconds = 10 // minimum
         ZIO.scoped:

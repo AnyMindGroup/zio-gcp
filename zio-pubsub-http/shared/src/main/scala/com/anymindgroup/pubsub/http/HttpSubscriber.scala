@@ -23,47 +23,44 @@ import sttp.client4.*
 class HttpSubscriber private[http] (
   backend: Backend[Task],
   maxMessagesPerPull: Int,
-  ackQueue: Queue[(String, Boolean)],
+  ackQueue: Queue[(String, AckOp)],
   retrySchedule: Schedule[Any, Throwable, ?],
   base64Decoder: Decoder,
   returnImmediatelyOnPull: Boolean,
 ) extends Subscriber {
-  private def processAckQueue(chunkSizeLimit: Option[Int], subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
-    chunkSizeLimit
-      .fold(ackQueue.takeAll)(ackQueue.takeBetween(1, _))
-      .flatMap { c =>
-        val (ackIds, nackIds) = c.partitionMap {
-          case (id, true)  => Left(id)
-          case (id, false) => Right(id)
-        }
+  private def processAckQueue(waitForOps: Boolean, subName: SubscriptionName): UIO[Option[Cause[Throwable]]] =
+    // once taken from the queue, operations are processed uninterruptibly so that none get lost on interruption
+    ZIO.uninterruptibleMask { restore =>
+      restore(if waitForOps then AckOp.takeAllAvailable(ackQueue) else ackQueue.takeAll).flatMap { c =>
+        val (ackBatches, modifyDeadlineBatches) = HttpSubscriber.batchAckOps(c)
 
-        (
-          NonEmptyChunk.fromChunk(ackIds).map(sendAck(_, subName)),
-          NonEmptyChunk.fromChunk(nackIds).map(sendNack(_, subName)),
-        ) match {
-          case (Some(sendAckReq), Some(sendNackReq)) =>
-            (sendAckReq <&> sendNackReq).map {
-              case (Some(c1), Some(c2)) => Some(c1 && c2)
-              case (c1, c2)             => c1.orElse(c2)
-            }
-          case (Some(sendAckReq), _)  => sendAckReq
-          case (_, Some(sendNackReq)) => sendNackReq
-          case _                      => ZIO.none
-        }
+        val requests = ackBatches.map(sendAck(_, subName)) ++
+          modifyDeadlineBatches.map((seconds, ops) => sendModifyDeadline(ops, seconds, subName))
+
+        ZIO
+          .collectAllPar(requests)
+          .withParallelism(HttpSubscriber.maxParallelAckRequests)
+          .map(_.flatten.reduceOption(_ && _))
       }
+    }
 
-  private def sendNack(nackIds: NonEmptyChunk[String], subName: SubscriptionName) =
+  private def sendModifyDeadline(
+    ops: NonEmptyChunk[(String, AckOp.ModifyDeadline)],
+    seconds: Int,
+    subName: SubscriptionName,
+  ) =
     p.Subscriptions
       .modifyAckDeadline(
         projectsId = subName.projectId,
         subscriptionsId = subName.subscription,
-        request = s.ModifyAckDeadlineRequest(ackIds = nackIds, ackDeadlineSeconds = 0),
+        request = s.ModifyAckDeadlineRequest(ackIds = ops.map(_._1), ackDeadlineSeconds = seconds),
       )
       .send(backend)
       .flatMap(r => ZIO.fromEither(r.body))
       .uninterruptible
       .as(None)
-      .catchAllCause(c => ackQueue.offerAll(nackIds.map((_, false))).as(Some(c)))
+      // re-queue the original operations to retain their sequence numbers
+      .catchAllCause(c => ackQueue.offerAll(ops).as(Some(c)))
 
   private def sendAck(ackIds: NonEmptyChunk[String], subName: SubscriptionName) =
     p.Subscriptions
@@ -76,7 +73,7 @@ class HttpSubscriber private[http] (
       .flatMap(r => ZIO.fromEither(r.body))
       .uninterruptible
       .as(None)
-      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, true))).as(Some(c)))
+      .catchAllCause(c => ackQueue.offerAll(ackIds.map((_, AckOp.Ack))).as(Some(c)))
 
   private[pubsub] def pull(
     subscriptionName: SubscriptionName,
@@ -135,9 +132,9 @@ class HttpSubscriber private[http] (
                       ),
                       new AckReply {
                         override def ack(): UIO[Unit] =
-                          ackQueue.offer((ackId, true)).unit
-                        override def nack(): UIO[Unit] =
-                          ackQueue.offer((ackId, false)).unit
+                          ackQueue.offer((ackId, AckOp.Ack)).unit
+                        override def modifyAckDeadline(seconds: Int): UIO[Unit] =
+                          AckOp.modifyDeadline(seconds).flatMap(op => ackQueue.offer((ackId, op))).unit
                       },
                     )
                 }
@@ -150,16 +147,48 @@ class HttpSubscriber private[http] (
 
     val ackStream: ZStream[Any, Throwable, Unit] = ZStream
       .repeatZIO:
-        processAckQueue(Some(1024), subscriptionName).flatMap {
+        processAckQueue(waitForOps = true, subscriptionName).flatMap {
           case None    => ZIO.unit
           case Some(c) => ZIO.failCause(c)
         }
 
-    pullStream.drainFork(ackStream).onError(_ => processAckQueue(None, subscriptionName)).retry(retrySchedule)
+    pullStream
+      .drainFork(ackStream)
+      .onError(_ => processAckQueue(waitForOps = false, subscriptionName))
+      .retry(retrySchedule)
   }
 }
 
 object HttpSubscriber {
+
+  private val maxParallelAckRequests = 8
+
+  /**
+   * Coalesces queued ack operations and splits them into acknowledge requests
+   * and modify deadline requests grouped by deadline (ModifyAckDeadlineRequest
+   * supports only a single deadline value per request).
+   *
+   * Each ack id is contained in at most one request, so the requests can be
+   * sent in parallel. Only the most recently requested deadline per ack id is
+   * kept so that an earlier modification can't override a later one, also when
+   * failed modifications were re-queued after newer ones.
+   */
+  private[http] def batchAckOps(
+    ops: Chunk[(String, AckOp)]
+  ): (List[NonEmptyChunk[String]], List[(Int, NonEmptyChunk[(String, AckOp.ModifyDeadline)])]) = {
+    val (ackIds, latestModifications) = AckOp.partition(AckOp.coalesce(ops))
+
+    val ackBatches = ackIds.grouped(AckOp.maxAckIdsPerRequest).flatMap(NonEmptyChunk.fromChunk).toList
+
+    val modifyDeadlineBatches = latestModifications.toList
+      .groupBy(_._2.seconds)
+      .toList
+      .flatMap: (seconds, ops) =>
+        ops.grouped(AckOp.maxAckIdsPerRequest).flatMap(NonEmptyChunk.fromIterableOption).map((seconds, _))
+
+    (ackBatches, modifyDeadlineBatches)
+  }
+
   object defaults:
     val maxMessagesPerPull: Int                      = 100
     val retrySchedule: Schedule[Any, Throwable, Any] = Schedule.recurs(5)
@@ -177,7 +206,7 @@ object HttpSubscriber {
     returnImmediatelyOnPull: Boolean,
   ): ZIO[Scope, Nothing, HttpSubscriber] =
     ZIO
-      .acquireRelease(Queue.unbounded[(String, Boolean)])(_.shutdown)
+      .acquireRelease(Queue.unbounded[(String, AckOp)])(_.shutdown)
       .map: ackQueue =>
         HttpSubscriber(
           backend = authedBackend,
