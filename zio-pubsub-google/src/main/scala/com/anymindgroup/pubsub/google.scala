@@ -29,7 +29,7 @@ private def acquireBackgroundReource[R <: BackgroundResource](
 
 def createEmulatorSettings(
   config: PubsubConnectionConfig.Emulator
-): RIO[Scope, (TransportChannelProvider, CredentialsProvider)] = for {
+): RIO[Scope, (TransportChannelProvider, CredentialsProvider)] = for
   channel <- acquireBackgroundReource(ZIO.attempt {
                val channel: ManagedChannel =
                  ManagedChannelBuilder.forTarget(s"${config.host}:${config.port}").usePlaintext().build()
@@ -37,7 +37,7 @@ def createEmulatorSettings(
              })
   channelProvider    <- ZIO.attempt(FixedTransportChannelProvider.create(channel))
   credentialsProvider = NoCredentialsProvider.create
-} yield (channelProvider, credentialsProvider)
+yield (channelProvider, credentialsProvider)
 
 def createClient[
   Settings <: ClientSettings[Settings],
@@ -55,7 +55,7 @@ def createClient[
           ZIO.attempt(create(builder.setBackgroundExecutorProvider(executor).build().asInstanceOf[Settings]))
         )
       case conf: PubsubConnectionConfig.Emulator =>
-        for {
+        for
           (channel, credentials) <- createEmulatorSettings(conf)
           client                 <- acquireBackgroundReource(
                       ZIO.attempt(
@@ -69,7 +69,7 @@ def createClient[
                         )
                       )
                     )
-        } yield client
+        yield client
 
 private def createStub[
   Settings <: StubSettings[Settings],
@@ -94,7 +94,7 @@ private def createStub[
           )
         )
       case conf: PubsubConnectionConfig.Emulator =>
-        for {
+        for
           (channel, credentials) <- createEmulatorSettings(conf)
           client                 <- acquireBackgroundReource(
                       ZIO.attempt(
@@ -108,7 +108,7 @@ private def createStub[
                         )
                       )
                     )
-        } yield client
+        yield client
 
 def makeTopicPublisher[R, E](
   topicName: TopicName,

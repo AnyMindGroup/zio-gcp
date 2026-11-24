@@ -17,16 +17,15 @@ def withTestSetupUpdate(j: Job) = if (j.id == "test") {
       "docker compose up -d && until curl -s http://localhost:8085; do printf 'waiting for pubsub...'; sleep 1; done && echo \"pubsub ready\""
     ),
   )
-  j.withSteps(j.steps.flatMap {
+  // native tests link against libcurl (and libidn2), install it as the first step
+  val installLibcurl = Step.SingleStep(
+    name = "Install libcurl",
+    run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
+  )
+  j.withSteps(installLibcurl +: j.steps.flatMap {
     case s: Step.SingleStep if s.name.contains("Git Checkout")  => Seq(s, startPubsub)
-    case s: Step.SingleStep if s.name.contains("Install libuv") =>
-      List(
-        Step.SingleStep(
-          name = "Install libcurl",
-          run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
-        )
-      )
-    case s => updatedBuildSetupStep(s)
+    case s: Step.SingleStep if s.name.contains("Install libuv") => Nil
+    case s                                                      => updatedBuildSetupStep(s)
   } *)
 } else j
 
@@ -51,13 +50,13 @@ def updatedBuildSetupStep(step: Step) = step match {
   case s => List(s)
 }
 
-val _scala3 = "3.3.9"
+val _scala3 = "3.9.0"
 
 val scala3Next = "3.9.0"
 
 val _zioVersion = "2.1.27"
 
-val sttpClient4Version = "4.0.27"
+val sttpClient4Version = "4.1.3"
 
 val jsoniterVersion = "2.43.0"
 
@@ -496,7 +495,7 @@ lazy val zioPubsubHttp = crossProject(JVMPlatform, NativePlatform)
   )
   .settings(commonSettings)
 
-val zioSchemaVersion             = "1.8.7"
+val zioSchemaVersion             = "1.9.2"
 lazy val zioPubsubSerdeZioSchema = crossProject(JVMPlatform, NativePlatform)
   .in(file("zio-pubsub-serde-zio-schema"))
   .settings(moduleName := "zio-pubsub-serde-zio-schema")
