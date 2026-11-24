@@ -17,16 +17,15 @@ def withTestSetupUpdate(j: Job) = if (j.id == "test") {
       "docker compose up -d && until curl -s http://localhost:8085; do printf 'waiting for pubsub...'; sleep 1; done && echo \"pubsub ready\""
     ),
   )
-  j.withSteps(j.steps.flatMap {
+  // native tests link against libcurl (and libidn2), install it as the first step
+  val installLibcurl = Step.SingleStep(
+    name = "Install libcurl",
+    run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
+  )
+  j.withSteps(installLibcurl +: j.steps.flatMap {
     case s: Step.SingleStep if s.name.contains("Git Checkout")  => Seq(s, startPubsub)
-    case s: Step.SingleStep if s.name.contains("Install libuv") =>
-      List(
-        Step.SingleStep(
-          name = "Install libcurl",
-          run = Some("sudo apt-get update && sudo apt-get install -y libidn2-dev libcurl3-dev"),
-        )
-      )
-    case s => updatedBuildSetupStep(s)
+    case s: Step.SingleStep if s.name.contains("Install libuv") => Nil
+    case s                                                      => updatedBuildSetupStep(s)
   } *)
 } else j
 
