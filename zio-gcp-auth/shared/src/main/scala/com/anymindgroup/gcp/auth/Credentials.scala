@@ -127,7 +127,7 @@ object Credentials {
         }
     }
 
-  def applicationCredentials: IO[CredentialsException, Option[Credentials]] = for {
+  def applicationCredentials: IO[CredentialsException, Option[Credentials]] = for
     path <- applicationCredentialsPath.tapSome { case Some(p) =>
               ZIO.log(s"Attempting to read application credentials from $p")
             }
@@ -142,7 +142,7 @@ object Credentials {
                        .map(Some(_))
                  }
                case None => ZIO.none
-  } yield creds
+  yield creds
 
   def computeServiceAccount(
     backend: GenericBackend[Task, Any]

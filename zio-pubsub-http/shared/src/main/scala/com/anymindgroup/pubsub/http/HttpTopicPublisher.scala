@@ -27,11 +27,11 @@ class HttpTopicPublisher[R, E] private[http] (
 ) extends Publisher[R, E] {
 
   override def publish(events: NonEmptyChunk[PublishMessage[E]]): RIO[R, NonEmptyChunk[MessageId]] =
-    for {
+    for
       request  <- toRequestBody(events)
       response <- request.send(backend)
       ids      <- ZIO.fromEither {
-               if (response.isSuccess) {
+               if response.isSuccess then {
                  response.body.map(r => NonEmptyChunk.fromChunk(r.messageIds.getOrElse(Chunk.empty))) match {
                    case Right(Some(msgIds)) => Right(msgIds.map(MessageId(_)))
                    case Right(_)            => Left(new Throwable("Missing id in response"))
@@ -39,22 +39,21 @@ class HttpTopicPublisher[R, E] private[http] (
                  }
                } else Left(new Throwable(s"Failed with ${response.code} ${response.statusText}"))
              }
-    } yield ids
+    yield ids
 
   override def publish(event: PublishMessage[E]): ZIO[R, Throwable, MessageId] =
     publish(NonEmptyChunk.single(event)).map(_.head)
 
-  private def toRequestBody(events: NonEmptyChunk[PublishMessage[E]]) = for {
-    messages <- ZIO.foreach(events) { event =>
-                  for {
-                    data <- serializer.serialize(event.data).map(c => base64Encoder.encodeToString(c.toArray))
-                  } yield s.PubsubMessage(
-                    data = Some(data),
-                    orderingKey = event.orderingKey.map(_.value),
-                    attributes = if (event.attributes.nonEmpty) Some(event.attributes) else None,
-                  )
-                }
-  } yield p.Topics.publish(
+  private def toRequestBody(events: NonEmptyChunk[PublishMessage[E]]) = for messages <-
+      ZIO.foreach(events) { event =>
+        for data <- serializer.serialize(event.data).map(c => base64Encoder.encodeToString(c.toArray))
+        yield s.PubsubMessage(
+          data = Some(data),
+          orderingKey = event.orderingKey.map(_.value),
+          attributes = if event.attributes.nonEmpty then Some(event.attributes) else None,
+        )
+      }
+  yield p.Topics.publish(
     projectsId = topic.projectId,
     topicsId = topic.topic,
     request = s.PublishRequest(messages),

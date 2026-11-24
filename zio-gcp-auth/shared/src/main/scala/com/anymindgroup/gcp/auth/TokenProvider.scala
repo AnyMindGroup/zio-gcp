@@ -96,18 +96,18 @@ object TokenProvider {
     refreshAtExpirationPercent: Double,
   ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
     def refreshTokenJob(ref: Ref[TokenReceipt[T]]) =
-      (for {
+      (for
         current   <- ref.get
         _         <- ZIO.sleep(current.token.expiresInOfPercent(refreshAtExpirationPercent))
         refreshed <- requestToken.retry(refreshRetrySchedule)
         _         <- ref.update(_ => refreshed)
-      } yield ()).repeat[Any, Long](Schedule.forever)
+      yield ()).repeat[Any, Long](Schedule.forever)
 
-    for {
+    for
       token <- requestToken
       ref   <- zio.Ref.make(token)
       _     <- refreshTokenJob(ref).forkScoped
-    } yield new TokenProvider[T] {
+    yield new TokenProvider[T] {
       override def token: UIO[TokenReceipt[T]] = ref.get
     }
   }
@@ -118,7 +118,7 @@ object TokenProvider {
     refreshRetrySchedule: Schedule[Any, Any, Any],
     refreshAtExpirationPercent: Double,
   ): ZIO[Scope, TokenProviderException, TokenProvider[T]] = {
-    def requestToken: IO[TokenProviderException, TokenReceipt[T]] = for {
+    def requestToken: IO[TokenProviderException, TokenReceipt[T]] = for
       _     <- ZIO.log("Requesting new access token...")
       token <- backend
                  .send(req)
@@ -126,7 +126,7 @@ object TokenProvider {
                  .flatMap(responseToToken)
       now <- Clock.instant
       _   <- ZIO.log(s"Retrieved new token with expiry in ${token.expiresIn.getSeconds()}s")
-    } yield TokenReceipt(token, now)
+    yield TokenReceipt(token, now)
 
     autoRefreshTokenProvider(requestToken, refreshRetrySchedule, refreshAtExpirationPercent)
   }
@@ -235,7 +235,7 @@ object TokenProvider {
           )
         )
       case impersonated: ImpersonatedServiceAccount =>
-        for {
+        for
           sourceProvider <- accessTokenProvider(
                               impersonated.sourceCredentials,
                               backend,
@@ -243,7 +243,7 @@ object TokenProvider {
                               refreshAtExpirationPercent,
                             )
           provider <- autoRefreshTokenProvider(
-                        requestToken = for {
+                        requestToken = for
                           sourceReceipt <- sourceProvider.token
                           _             <- ZIO.log("Requesting new impersonated access token...")
                           token         <- backend
@@ -260,11 +260,11 @@ object TokenProvider {
                           now <- Clock.instant
                           _   <-
                             ZIO.log(s"Retrieved new impersonated token with expiry in ${token.expiresIn.getSeconds()}s")
-                        } yield TokenReceipt(token, now),
+                        yield TokenReceipt(token, now),
                         refreshRetrySchedule = refreshRetrySchedule,
                         refreshAtExpirationPercent = refreshAtExpirationPercent,
                       )
-        } yield provider
+        yield provider
     }
 
   def noTokenProvider: TokenProvider[Token] = new TokenProvider[Token] {

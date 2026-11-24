@@ -25,7 +25,7 @@ class V4SignUrlRequestBuilder private (
     signAlgorithm: V4SignAlgorithm,
     expiresInSeconds: V4SignatureExpiration,
   ): Task[Request[Either[Throwable, Uri]]] =
-    for {
+    for
       now          <- Clock.instant
       canonicalReq <- ZIO.fromEither(
                         canonicalRequestBuilder
@@ -57,7 +57,7 @@ class V4SignUrlRequestBuilder private (
                     resourcePath = resourcePath,
                   )
               }
-    } yield req
+    yield req
 }
 
 object V4SignUrlRequestBuilder {

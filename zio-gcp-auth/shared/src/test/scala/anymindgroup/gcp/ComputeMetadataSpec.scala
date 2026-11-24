@@ -12,7 +12,7 @@ import sttp.model.*
 object ComputeMetadataSpec extends ZIOSpecDefault {
   override def spec: Spec[TestEnvironment, Any] = suite("ComputeMetadataSpec")(
     test("request compute metadata") {
-      for {
+      for
         backend      <- ZIO.service[Backend[Task]]
         projectId    <- ComputeMetadata.projectIdReq.send(backend).map(_.body)
         _            <- assertTrue(projectId == "gcp-project")
@@ -20,7 +20,7 @@ object ComputeMetadataSpec extends ZIOSpecDefault {
         _            <- assertTrue(numProjectId == "123456")
         instanceZone <- ComputeMetadata.instanceZoneReq.send(backend).map(_.body)
         _            <- assertTrue(instanceZone == "projects/123456/zones/asia-northeast1-b")
-      } yield assertCompletes
+      yield assertCompletes
     }.provide(metadataStubLayer),
     suite("baseUriForHost")(
       test("defaults to the metadata server when GCE_METADATA_HOST is unset or blank") {
