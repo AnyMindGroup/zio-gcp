@@ -3,7 +3,7 @@ val zioSbtVersion = "0.8.12"
 addSbtPlugin("dev.zio" % "zio-sbt-ci"        % zioSbtVersion)
 addSbtPlugin("dev.zio" % "zio-sbt-ecosystem" % zioSbtVersion)
 
-addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.12")
+addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.13")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
 
